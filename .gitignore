@@ -1,0 +1,26 @@
+# editor / tool state - may contain local settings or credentials
+.cline_storage/
+.cursor/
+.vscode/
+
+# python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# working files
+_backup*.md
+_verify*.py
+_v.py
+*.ps1
+
+# generated outputs
+*.png
+!docs/*.png
+
+# os
+Thumbs.db
+Desktop.ini
+.DS_Store
