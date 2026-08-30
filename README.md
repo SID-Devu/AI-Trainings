@@ -62,6 +62,20 @@ pip install numpy scipy matplotlib pytest
 
 
 
+## How to read the Week 1 textbook
+
+It is one file, read in this order:
+
+| Part | What it does |
+|---|---|
+| **T** | **The baseline** — what ML actually is, the training loop, the vocabulary, why these four maths branches, the ten-week arc, the standard, your starting scorecard |
+| **S** | How to read the maths — Greek letters, `Σ`, indices, set notation, logarithms from scratch |
+| **R** | Class 10 refresher + a 12-question prerequisite check |
+| **0–7** | Setup · Python · NumPy · Linear algebra · Calculus · Optimisation · Information theory · Advanced |
+
+Day 0 is theory only — no computer. There is a 15-day plan at the top of the file.
+
 ## Status
 
-Week 1 in progress.
+Week 1 textbook: ~4,900 lines, 117 concepts, 35 exercises with worked answers, 4 deliverables.
+Still being expanded — see "What is still being added" at the end of the textbook for the queue.
