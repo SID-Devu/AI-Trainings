@@ -48,29 +48,115 @@ Part R checks your Class 10 foundation. Only then do you install anything.
 | R.5 | **Straight lines, slope** | R.11 | **Prerequisite check** |
 | R.6 | Coordinates, distance, Pythagoras | | |
 
-## THE 15-DAY PLAN
+## THE 5-DAY PLAN
 
-| Day | Parts | You end the day able to |
-|---|---|---|
-| **0** | **T, S, R** | Explain what ML is and why; read `Σ`, `∇`, `∂`, `log`; pass the prerequisite check; baseline scorecard filled in |
-| 1 | 0, 1.1–1.5 | Run Python; variables, operators, float traps |
-| 2 | 1.6–1.13 | Strings, lists, dicts, sets, loops, conditions |
-| 3 | 1.14–1.23 | Functions, comprehensions, classes, dunders, generators, decorators |
-| 4 | 1.24–1.30 | Modules, exceptions, files, `pytest`, debugger — **18 exercises done** |
-| 5 | 2 | NumPy end to end — **17 exercises done** |
-| 6 | 3.1–3.7 | Vectors, norms, **the dot product**, cosine similarity |
-| 7 | 3.8–3.14 | Matrices, matmul, transpose, determinant, inverse |
-| 8 | 3.15–3.23 | Rank, span, basis, orthogonality, projection, **eigenvectors** |
-| 9 | 3.24–3.28 | SVD, low-rank, covariance, **PCA**, shape drill 20/20 |
-| 10 | 3.29, 3.30 | **Deliverables 1 and 2** |
-| 11 | 4.1–4.11 | Derivatives, **chain rule**, partials, **gradient** |
-| 12 | 4.12–4.16 | Jacobian, Hessian, VJP, **backpropagation by hand** |
-| 13 | 5 | Losses, **gradient descent**, optimisers — **Deliverable 3** |
-| 14 | 6, 7 | Entropy, cross-entropy, KL, perplexity — **Deliverable 4** |
-| 15 | Appendix C | Full completion gate; re-score the baseline table |
+**Nothing is cut. Every concept, every worked example, every exercise, every deliverable is in these
+five days.** Only the schedule is compressed.
 
-Week 1 is a **double-weight module** (the roadmap merged two maths weeks into it), so 15 days at four
-hours is the honest budget, not seven. Going slower is fine. Skipping a gate is not.
+### The arithmetic, stated honestly before you start
+
+This Part contains ~120 concepts, 35 exercises with answers, and 4 deliverables. Measured against
+what a beginner actually needs per section, the content is **60–65 hours** of work.
+
+| Your pace | Days needed |
+|---|---|
+| **12–13 hrs/day** | **5 days** ← this plan |
+| 8 hrs/day | 8 days |
+| 4 hrs/day | 15 days |
+
+Five days means **12–13 hours a day**. That is a full-time job plus a half. It is achievable if you
+have nothing else on and you sleep properly — and it is the plan below. If you cannot hold that,
+take 8 or 15 days and lose nothing but calendar time. **The gates matter; the date does not.**
+
+---
+
+### DAY 1 — Foundations and Python core  *(12 h)*
+
+| Block | Time | Sections | End state |
+|---|---|---|---|
+| 1 | 2.0 h | **Part T** | Can explain how ML inverts the programming arrow, recite the 5-step loop, define 18 terms, fill in the baseline scorecard |
+| 2 | 1.0 h | **Part S** | Can read `Σ`, `∇`, `∂`, `∈ ℝⁿ`, and logarithms |
+| 3 | 1.0 h | **Part R** | Prerequisite check scored 10+/12 |
+| 4 | 1.0 h | **Part 0** | Python installed, venv active, first program run, 3 errors caused deliberately |
+| 5 | 3.5 h | **1.1–1.10** | print, variables, types, operators, float traps, strings, lists, tuples, dicts, sets |
+| 6 | 3.5 h | **1.11–1.15** | if/for/while, functions, `*args`, mutable-default bug, comprehensions |
+
+**Gate:** write a program using a dict, a list comprehension and a function, with no reference.
+
+---
+
+### DAY 2 — Python advanced + all of NumPy  *(13 h)*
+
+| Block | Time | Sections | End state |
+|---|---|---|---|
+| 1 | 3.0 h | **1.16–1.19** | Classes, `__init__`, `__repr__`, `__call__`, `__len__`, `__getitem__`, `__iter__`, generators |
+| 2 | 2.0 h | **1.20–1.23** | Decorators, context managers, dataclasses, type hints |
+| 3 | 2.0 h | **1.24–1.29** | Modules, exceptions, files, **`pytest`**, debugger, `timeit`/`cProfile` |
+| 4 | 1.5 h | **§1.30** | **18 Python exercises**, answers checked |
+| 5 | 3.0 h | **2.1–2.15** | Arrays, dtype, shape, reshape, indexing, masks, views vs copies, **broadcasting**, axis, vectorisation, `einsum`, seeding |
+| 6 | 1.5 h | **§2.16** | **17 NumPy exercises**, answers checked |
+
+**Gate:** state the broadcasting rules from memory; explain view vs copy with a worked example.
+
+---
+
+### DAY 3 — Linear algebra, complete, + 2 deliverables  *(13 h)*
+
+| Block | Time | Sections | End state |
+|---|---|---|---|
+| 1 | 2.5 h | **3.1–3.7** | Scalars→tensors, vector arithmetic, norms, unit vectors, **dot product**, cosine similarity |
+| 2 | 2.5 h | **3.8–3.14** | Matrix ops, **matmul**, transformation, transpose, identity, determinant, inverse, `solve` |
+| 3 | 2.5 h | **3.15–3.20** | Independence, rank, column/null space, span, basis, orthogonality, projection, Gram-Schmidt |
+| 4 | 2.0 h | **3.21–3.27** | **Eigenvectors**, eigendecomposition, LU/QR, **SVD**, low-rank, covariance, **PCA** |
+| 5 | 1.0 h | **§3.28** | **Shape drill — repeat until 20/20** |
+| 6 | 2.5 h | **3.29, 3.30** | **Deliverable 1** (PCA explainer) and **Deliverable 2** (normal equation, 5 tests passing) |
+
+**Gate:** compute a dot product and a 2×2 matmul by hand; say in one sentence what an eigenvector is.
+
+---
+
+### DAY 4 — Calculus + Optimisation + 1 deliverable  *(13 h)*
+
+| Block | Time | Sections | End state |
+|---|---|---|---|
+| 1 | 2.5 h | **4.1–4.6** | Functions, limits, **the derivative**, power/product/quotient rules, **chain rule**, derivatives of exp/log/sigmoid/tanh/ReLU |
+| 2 | 2.5 h | **4.7–4.11** | Partial derivatives, **gradient**, directional derivative, Taylor, integration |
+| 3 | 2.5 h | **4.12–4.16** | Jacobian, Hessian, **VJP**, computation graph, **backpropagation by hand + numerical check** |
+| 4 | 2.0 h | **5.1–5.4** | MSE, MAE, cross-entropy, hinge |
+| 5 | 2.0 h | **5.5–5.13** | **Gradient descent**, batch/SGD/mini-batch, momentum, learning rate, convexity, Adam family, L1/L2/dropout |
+| 6 | 1.5 h | **§5.14** | **Deliverable 3** — gradient descent, 3 learning rates, curves + written explanation |
+
+**Gate:** do the §4.16 backprop by hand on paper and match the numerical check.
+
+---
+
+### DAY 5 — Information theory + consolidation  *(10 h)*
+
+| Block | Time | Sections | End state |
+|---|---|---|---|
+| 1 | 2.5 h | **6.1–6.4** | Bits, **entropy**, **cross-entropy**, **KL divergence** |
+| 2 | 1.5 h | **6.5–6.7** | Mutual information, Huffman, perplexity |
+| 3 | 1.5 h | **§6.8** | **Deliverable 4** — entropy/CE/KL, 10 tests passing incl. SciPy checks |
+| 4 | 0.5 h | **Part 7** | Advanced maths — recognition only |
+| 5 | 2.0 h | **Appendices A, B, C** | All assessment questions answered aloud; full completion gate |
+| 6 | 2.0 h | **Repair** | Re-score the T.11 baseline table. Redo every gate you failed |
+
+**Gate:** Appendix C at 90% or better. Below that, Day 6 is a repair day — take it.
+
+---
+
+### Rules for a 5-day run
+
+1. **Type every line. Still.** Compression is not permission to paste.
+2. **Deliverables are not optional.** They are the evidence. A day that skips its deliverable has
+   not been completed.
+3. **A failed gate stops the clock.** Repair before advancing. Building on a cracked foundation is
+   how five days becomes five wasted days.
+4. **Break every 90 minutes.** Twelve hours of study needs real breaks or hours 8–12 produce nothing.
+5. **Sleep eight hours.** Consolidation happens during sleep. Cutting sleep to add study hours is a
+   net loss and the research on this is not ambiguous.
+6. **If you fall behind, extend — do not skip.** Day 6 and Day 7 are free. Skipping Part 4 to stay on
+   schedule breaks Weeks 5 through 10.
 
 ## PART 0 — SETUP (Day 1)
 | § | Concept |
@@ -80,7 +166,7 @@ hours is the honest budget, not seven. Going slower is fine. Skipping a gate is 
 | 0.3 | Virtual environment, `pip` |
 | 0.4 | Reading an error |
 
-## PART 1 — PYTHON (Days 1–4)
+## PART 1 — PYTHON (Days 1–2)
 | § | Concept | § | Concept |
 |---|---|---|---|
 | 1.1 | `print`, comments | 1.16 | Classes |
@@ -99,7 +185,7 @@ hours is the honest budget, not seven. Going slower is fine. Skipping a gate is 
 | 1.14 | Functions | 1.29 | `timeit`, `cProfile` |
 | 1.15 | Comprehensions | **1.30** | **EXERCISES + answers (18)** |
 
-## PART 2 — NUMPY (Day 5)
+## PART 2 — NUMPY (Day 2)
 | § | Concept | § | Concept |
 |---|---|---|---|
 | 2.1 | Why NumPy exists | 2.9 | Views vs copies |
@@ -111,7 +197,7 @@ hours is the honest budget, not seven. Going slower is fine. Skipping a gate is 
 | 2.7 | Boolean masks | 2.15 | Random, seeding |
 | 2.8 | Fancy indexing | **2.16** | **EXERCISES + answers (17)** |
 
-## PART 3 — LINEAR ALGEBRA (Days 6–11)
+## PART 3 — LINEAR ALGEBRA (Day 3)
 | § | Concept | § | Concept |
 |---|---|---|---|
 | 3.1 | Scalar, vector, matrix, tensor | 3.16 | Span |
@@ -130,7 +216,7 @@ hours is the honest budget, not seven. Going slower is fine. Skipping a gate is 
 | 3.14 | Systems of linear equations | 3.29 | **Deliverable 1** — PCA explainer |
 | 3.15 | Linear independence, rank, spaces | 3.30 | **Deliverable 2** — normal equation |
 
-## PART 4 — CALCULUS (Day 12)
+## PART 4 — CALCULUS (Day 4)
 | § | Concept | § | Concept |
 |---|---|---|---|
 | 4.1 | Functions and graphs | 4.9 | Directional derivative |
@@ -142,7 +228,7 @@ hours is the honest budget, not seven. Going slower is fine. Skipping a gate is 
 | 4.7 | Partial derivatives | 4.15 | Computation graph |
 | 4.8 | **Gradient** | 4.16 | **Backpropagation by hand** |
 
-## PART 5 — OPTIMISATION (Day 13)
+## PART 5 — OPTIMISATION (Day 4)
 | § | Concept | § | Concept |
 |---|---|---|---|
 | 5.1 | MSE | 5.8 | Learning rate, scheduling, annealing |
@@ -153,7 +239,7 @@ hours is the honest budget, not seven. Going slower is fine. Skipping a gate is 
 | 5.6 | Batch vs SGD vs mini-batch | 5.13 | L1, L2, dropout |
 | 5.7 | Momentum | 5.14 | **Deliverable 3** — gradient descent from scratch |
 
-## PART 6 — INFORMATION THEORY (Day 14)
+## PART 6 — INFORMATION THEORY (Day 5)
 | § | Concept | § | Concept |
 |---|---|---|---|
 | 6.1 | Bits and information content | 6.5 | Mutual information |
@@ -4835,7 +4921,7 @@ the precise gap.
 | Added | Where | Why it mattered |
 |---|---|---|
 | **The theory baseline** | **Part T** | The book started at "install Python" with no account of what ML *is*, why the maths is that maths, or what standard you are working to. Nothing else had a frame to hang on |
-| **The 15-day plan** | Contents | A concrete schedule, with Day 0 for theory before any tooling |
+| **The 5-day plan** | Contents | An hour-blocked schedule covering every concept, with the honest hours-per-day arithmetic and 8-day / 15-day alternatives |
 | **Notation and symbol glossary** | Part S | You could not read `Σ`, `∇`, `∂`, `∈ ℝⁿ`. That blocked Parts 3–6 entirely |
 | **Logarithms from scratch** | §S.6 | Class 10 may not cover them; Parts 5 and 6 are unreadable without them |
 | **Formula-attack procedure** | §S.7 | A repeatable method for any unfamiliar formula |

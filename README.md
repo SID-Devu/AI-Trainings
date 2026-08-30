@@ -73,7 +73,16 @@ It is one file, read in this order:
 | **R** | Class 10 refresher + a 12-question prerequisite check |
 | **0–7** | Setup · Python · NumPy · Linear algebra · Calculus · Optimisation · Information theory · Advanced |
 
-Day 0 is theory only — no computer. There is a 15-day plan at the top of the file.
+There is an hour-blocked **5-day plan** at the top of the file (~12–13 hrs/day), with 8-day and
+15-day alternatives at lower intensity. Nothing is cut at any pace — only the calendar changes.
+
+| Day | Covers |
+|---|---|
+| 1 | Theory baseline, notation, refresher, setup, Python core |
+| 2 | Python advanced, all of NumPy, 35 exercises |
+| 3 | Linear algebra complete + deliverables 1 and 2 |
+| 4 | Calculus + optimisation + deliverable 3 |
+| 5 | Information theory + deliverable 4 + completion gate |
 
 ## Status
 
