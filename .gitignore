@@ -10,10 +10,8 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
-# working files
-_backup*.md
-_verify*.py
-_v.py
+# working / scratch files - any file starting with underscore
+_*
 *.ps1
 
 # generated outputs
