@@ -12,6 +12,27 @@ Every code output in this file was executed and verified, not guessed.
 
 # CONTENTS
 
+## PART S — HOW TO READ THE MATHS (start here)
+| § | Concept |
+|---|---|
+| S.1 | Greek letters |
+| S.2 | **Σ summation, decoded** |
+| S.3 | Subscripts, superscripts, indices |
+| S.4 | Set and logic notation |
+| S.5 | Operators and functions |
+| S.6 | **Logarithms from scratch** |
+| S.7 | How to attack any formula |
+
+## PART R — CLASS 10 REFRESHER
+| § | Concept | § | Concept |
+|---|---|---|---|
+| R.1 | Number types | R.7 | Trigonometry (one fact) |
+| R.2 | Order of operations | R.8 | Percentages, fractions |
+| R.3 | Powers and roots | R.9 | Mean, median, mode, variance |
+| R.4 | Algebra | R.10 | Probability basics |
+| R.5 | **Straight lines, slope** | R.11 | **Prerequisite check** |
+| R.6 | Coordinates, distance, Pythagoras | | |
+
 ## PART 0 — SETUP (Day 1)
 | § | Concept |
 |---|---|
@@ -37,7 +58,7 @@ Every code output in this file was executed and verified, not guessed.
 | 1.12 | `for`, `range` | 1.27 | `pytest` |
 | 1.13 | `while`, `break`, `continue` | 1.28 | Debugger |
 | 1.14 | Functions | 1.29 | `timeit`, `cProfile` |
-| 1.15 | Comprehensions | | |
+| 1.15 | Comprehensions | **1.30** | **EXERCISES + answers (18)** |
 
 ## PART 2 — NUMPY (Day 5)
 | § | Concept | § | Concept |
@@ -49,7 +70,7 @@ Every code output in this file was executed and verified, not guessed.
 | 2.5 | `reshape`, `-1`, `T` | 2.13 | Vectorisation |
 | 2.6 | Indexing, slicing | 2.14 | `einsum` |
 | 2.7 | Boolean masks | 2.15 | Random, seeding |
-| 2.8 | Fancy indexing | | |
+| 2.8 | Fancy indexing | **2.16** | **EXERCISES + answers (17)** |
 
 ## PART 3 — LINEAR ALGEBRA (Days 6–11)
 | § | Concept | § | Concept |
@@ -111,8 +132,407 @@ geometry · `7.5` measure theory
 
 ---
 
-**This file is complete.** All 7 Parts, all of roadmap sections 1.1–1.18. Every code output below
-was executed on a real machine and pasted in — none is guessed.
+**Build status.** All 7 Parts present, roadmap sections 1.1–1.18 covered. Every code output was
+executed on a real machine — none is guessed. **Currently being expanded** from a crisp reference
+into a complete self-study text: Part S, Part R and the exercise banks below are the new layer.
+See "What is still being added" at the very end.
+
+---
+---
+
+# PART S — HOW TO READ THE MATHS
+
+**Read this before Part 0. It takes 40 minutes and it unlocks the rest of the book.**
+
+You cannot learn from a maths text you cannot pronounce. Most beginners fail not because the ideas
+are hard, but because a page of `∇f = Σᵢ ∂L/∂θᵢ` looks like a wall. It is not a wall. It is six
+symbols, and you can learn all six in an afternoon.
+
+## S.1 The Greek letters you will actually meet
+
+| Symbol | Name | Say it | In this book it means |
+|---|---|---|---|
+| `α` | alpha | AL-fa | learning rate (§5.5) |
+| `β` | beta | BAY-ta | momentum coefficient (§5.7) |
+| `Δ` | delta (capital) | DEL-ta | "change in" — `Δx` = change in x |
+| `δ` | delta (small) | DEL-ta | a tiny amount |
+| `ε` | epsilon | EP-si-lon | a very small number, e.g. `1e-8`, used to avoid dividing by zero |
+| `θ` | theta | THAY-ta | the parameters of a model (§3.30); also an angle (§3.5) |
+| `λ` | lambda | LAM-da | eigenvalue (§3.21); regularisation strength (§5.13) |
+| `μ` | mu | MEW | the mean (average) |
+| `π` | pi | PIE | 3.14159… |
+| `Π` | pi (capital) | PIE | "multiply all of these together" |
+| `σ` | sigma (small) | SIG-ma | standard deviation; also the sigmoid function (§4.6) |
+| `Σ` | sigma (capital) | SIG-ma | **"add all of these together"** — the most important symbol here |
+| `∇` | nabla / del | NAB-la | the gradient (§4.8) |
+| `∂` | partial | PAR-shal | partial derivative (§4.7) |
+
+**A warning that trips everyone.** `σ` means standard deviation in statistics and the sigmoid
+function in deep learning. `Σ` and `σ` are the same letter in different cases and mean completely
+different things. Context decides. This is genuinely confusing and it is not your fault.
+
+## S.2 Σ — summation, decoded properly
+
+This one symbol appears in nearly every formula in Parts 3 to 6. Learn it completely.
+
+```
+   n
+   Σ  xᵢ
+  i=1
+```
+
+Read it as: **"start i at 1, go up to n, and add up all the xᵢ."**
+
+Three parts:
+- **below** `i=1` — the counter and where it starts
+- **above** `n` — where it stops (inclusive)
+- **after** `xᵢ` — the thing being added, once per value of i
+
+**Fully worked.** If `x = [4, 7, 2]` then:
+```
+ 3
+ Σ xᵢ  =  x₁ + x₂ + x₃  =  4 + 7 + 2  =  13
+i=1
+```
+
+**Now a real one — the dot product from §3.5:**
+```
+a · b  =  Σᵢ aᵢbᵢ
+```
+means: multiply each matching pair, then add the results. With `a=[1,2,3]`, `b=[4,5,6]`:
+`(1×4) + (2×5) + (3×6) = 4 + 10 + 18 = 32`. That is all it says.
+
+**And the scary-looking one — entropy from §6.2:**
+```
+H(p) = − Σᵢ pᵢ log₂(pᵢ)
+```
+Decode it piece by piece:
+1. `Σᵢ` — for every outcome i, work something out and add them all up
+2. `pᵢ log₂(pᵢ)` — the thing to work out: probability × log of that probability
+3. `−` in front — flip the sign at the end (logs of probabilities are negative, so this makes the
+   answer positive)
+
+With `p = [0.5, 0.5]`: `−[0.5×log₂(0.5) + 0.5×log₂(0.5)] = −[0.5×(−1) + 0.5×(−1)] = −(−1) = 1`. ✓
+
+**In code, `Σ` is a loop or `np.sum`:**
+```python
+import numpy as np
+x = [4, 7, 2]
+total = 0
+for xi in x:          # this IS sigma notation
+    total += xi
+print(total, np.sum(x))
+```
+```
+13 13
+```
+
+**`Π` (capital pi) is the same idea with multiplication instead of addition.** It appears once, in
+§6.7 perplexity.
+
+## S.3 Subscripts, superscripts and indices
+
+| Written | Means | Not to be confused with |
+|---|---|---|
+| `xᵢ` | the i-th item of the list x | — |
+| `x²` | x squared | `x₂`, which is the second item |
+| `x⁽ⁱ⁾` | the i-th **training example** (brackets!) | `xᵢ`, the i-th feature |
+| `Aᵢⱼ` | matrix A, row i, column j | row first, always |
+| `Aᵀ` | A transposed (§3.11) | not a power |
+| `A⁻¹` | A inverse (§3.13) | not `1/A` |
+| `x̂` | "x hat" — an estimate, or a unit vector | plain x |
+| `ȳ` | "y bar" — the mean of y | — |
+
+**Row before column, always.** `A₂₃` is row 2, column 3. Mixing this up is a rite of passage.
+
+## S.4 Set and logic notation
+
+| Symbol | Read as | Example |
+|---|---|---|
+| `∈` | "is in" / "belongs to" | `x ∈ ℝ` — x is a real number |
+| `∉` | "is not in" | |
+| `ℝ` | the real numbers (any decimal) | |
+| `ℝⁿ` | a list of n real numbers — a vector | `x ∈ ℝ³` means x is a 3-element vector |
+| `ℝ^{m×n}` | an m-by-n matrix | `A ∈ ℝ^{2×3}` — 2 rows, 3 columns |
+| `∀` | "for all" | |
+| `∃` | "there exists" | |
+| `⇒` | "implies" | |
+| `≈` | approximately equal | |
+| `∝` | proportional to | |
+| `≡` | identical to, by definition | |
+| `≫` | much greater than | |
+
+**`x ∈ ℝⁿ` is the single most common line in a machine learning paper.** It just means "x is a
+vector of n numbers." Nothing more.
+
+## S.5 Operators and functions
+
+| Written | Means |
+|---|---|
+| `\|x\|` | absolute value — distance from zero, always positive |
+| `‖x‖` | norm — the length of a vector (§3.3). Double bars |
+| `a · b` | dot product (§3.5) |
+| `a × b` | cross product (§3.7) — rare |
+| `A ⊙ B` | elementwise multiply (Hadamard) — this is `*` in NumPy |
+| `AB` or `A @ B` | matrix multiplication (§3.9) |
+| `exp(x)` or `eˣ` | e to the power x, where e ≈ 2.71828 |
+| `ln(x)` | natural log — log to base e |
+| `log₂(x)` | log to base 2 |
+| `max(0, x)` | the bigger of the two — this is ReLU |
+| `argmax` | **which position** holds the biggest value, not the value itself |
+| `E[X]` | the expected value (average) of X |
+| `P(A)` | the probability of A |
+| `P(A\|B)` | probability of A **given** B |
+
+**`max` vs `argmax` — a real interview distinction.** For `[3, 9, 4]`: `max` is `9`, `argmax` is `1`
+(the position, counting from 0). A classifier uses `argmax` to pick the predicted class.
+
+## S.6 Logarithms — taught properly, because you will need them
+
+Class 10 may not have covered logs. Parts 5 and 6 cannot be understood without them, so here they
+are from scratch.
+
+**A logarithm asks: "what power do I raise the base to, to get this number?"**
+
+```
+log₂(8) = 3     because 2³ = 8
+log₂(1) = 0     because 2⁰ = 1
+log₂(0.5) = −1  because 2⁻¹ = 0.5
+log₁₀(1000) = 3 because 10³ = 1000
+```
+
+**The three bases you will see:**
+
+| Written | Base | Called | Used for |
+|---|---|---|---|
+| `log₂(x)` | 2 | binary log | information theory — answers come out in **bits** (§6.2) |
+| `ln(x)` | e ≈ 2.718 | natural log | everything in machine learning — answers in **nats** |
+| `log₁₀(x)` | 10 | common log | decibels, scientific scales |
+
+In Python: `np.log` is **natural log** (`ln`), not base 10. `np.log2` and `np.log10` are the others.
+This catches people constantly.
+
+**The laws of logs** — these three are why logs exist:
+
+| Law | Meaning |
+|---|---|
+| `log(ab) = log(a) + log(b)` | **multiplication becomes addition** |
+| `log(a/b) = log(a) − log(b)` | division becomes subtraction |
+| `log(aⁿ) = n·log(a)` | powers come down as multipliers |
+
+**Why this matters enormously in AI.** The probability of many independent things happening is a
+product: `p₁ × p₂ × p₃ × …`. Multiply a thousand numbers each below 1 and you get something like
+`1e-300`, which underflows to zero in floating point (§1.5) and destroys your computation. Take logs
+and the product becomes a *sum*, which is numerically safe. That is why loss functions are built
+from logs — it is not decoration, it is survival.
+
+**Two facts to memorise:**
+- `log(1) = 0` in every base — a certain event carries zero information (§6.1)
+- `log(x) → −∞` as `x → 0` — this is why code clips probabilities away from zero before taking logs
+
+```python
+import numpy as np
+print(np.log2(8), np.log2(1), np.log2(0.5))
+print(np.log(np.e), np.log10(1000))
+print("law check:", np.log2(4*8), np.log2(4) + np.log2(8))
+```
+```
+3.0 0.0 -1.0
+1.0 3.0
+law check: 5.0 5.0
+```
+
+## S.7 How to attack any formula you have never seen
+
+A procedure. Use it every time; it always works.
+
+1. **Name every symbol** using the tables above. Write the names next to it.
+2. **Find the Σ or Π** and say out loud what is being added or multiplied, and over what.
+3. **Shrink it.** Replace n with 2 or 3. Invent tiny numbers.
+4. **Compute it by hand** on paper. Completely. No shortcuts.
+5. **Write the code** and check it matches your hand answer.
+6. **Only then** ask what it means.
+
+**Demonstration — MSE, from §5.1:**
+```
+MSE = (1/n) Σᵢ (yᵢ − ŷᵢ)²
+```
+1. `n` = how many examples. `yᵢ` = true value i. `ŷᵢ` = predicted value i ("y hat").
+2. Σ says: for each example, work out `(true − predicted)²`, and add them all.
+3. Shrink: n=2, `y=[3,5]`, `ŷ=[2,5]`.
+4. By hand: `(3−2)² + (5−5)² = 1 + 0 = 1`. Then `(1/2)×1 = 0.5`.
+5. Code: `np.mean((np.array([3,5]) - np.array([2,5]))**2)` → `0.5` ✓
+6. Meaning: average squared mistake.
+
+Six steps, no fear.
+
+---
+---
+
+# PART R — CLASS 10 REFRESHER
+
+**What you already know, restated in the form this book uses.** Skim it. Do the check at the end.
+Anything you fail here will hurt you in Part 3 or Part 4, so fix it now while it is cheap.
+
+## R.1 Number types
+
+| Type | Examples |
+|---|---|
+| Natural | 1, 2, 3 … |
+| Integer | … −2, −1, 0, 1, 2 … |
+| Rational | any fraction: 1/2, 0.75, −3/4 |
+| Irrational | π, √2 — decimals that never repeat |
+| Real (`ℝ`) | all of the above together |
+
+Machine learning lives almost entirely in the reals, stored as `float` (§1.3).
+
+## R.2 Order of operations
+
+**BODMAS / BIDMAS:** Brackets → Orders (powers) → Division and Multiplication → Addition and
+Subtraction. Left to right within the same level.
+
+`7 + 3 × 2 = 13`, not 20.
+
+**One difference from school:** powers group **right to left**, so `2^3^2 = 2^(3^2) = 2⁹ = 512`,
+not `(2³)² = 64`. Verified in §1.4.
+
+## R.3 Powers and roots
+
+| Law | Example |
+|---|---|
+| `aᵐ · aⁿ = aᵐ⁺ⁿ` | `2³·2⁴ = 2⁷` |
+| `aᵐ / aⁿ = aᵐ⁻ⁿ` | `2⁵/2² = 2³` |
+| `(aᵐ)ⁿ = aᵐⁿ` | `(2³)² = 2⁶` |
+| `a⁰ = 1` | anything to the zero is 1 |
+| `a⁻ⁿ = 1/aⁿ` | `2⁻³ = 1/8` |
+| `a^(1/2) = √a` | fractional powers are roots |
+
+`√25 = 5`. In code: `25 ** 0.5` or `np.sqrt(25)`.
+
+**Where you need this:** §3.3 norms (`√(x₁²+x₂²)`), §4.4 the power rule, §5.11 the `√` in Adam.
+
+## R.4 Algebra you must be fluent in
+
+**Solving.** `3x + 5 = 20` → `3x = 15` → `x = 5`.
+
+**Expanding.** `(a+b)² = a² + 2ab + b²` — needed to understand why MSE has the derivative it has.
+
+**Factorising.** `x² − 9 = (x−3)(x+3)`.
+
+**Substituting.** If `f(x) = x² + 1`, then `f(3) = 10`. Function notation is just substitution.
+
+## R.5 Straight lines — the foundation of everything
+
+```
+y = mx + c
+```
+- `m` = **slope** = rise ÷ run = how steep
+- `c` = **intercept** = where it crosses the y-axis
+
+**Slope between two points:** `m = (y₂ − y₁) / (x₂ − x₁)`
+
+**Why this is the most important thing in Part R.** Three separate ideas later are this same formula
+wearing a different hat:
+- §4.3 the **derivative** is the slope of a curve at one point
+- §3.30 **linear regression** finds the best `m` and `c` for your data
+- §5.5 **gradient descent** walks downhill using the slope
+
+If `y = mx + c` is shaky, fix it before Part 3.
+
+## R.6 Coordinates, distance, Pythagoras
+
+A point is `(x, y)`. Distance between two points:
+```
+d = √((x₂−x₁)² + (y₂−y₁)²)
+```
+From `(0,0)` to `(3,4)`: `√(9+16) = √25 = 5`.
+
+**That is exactly the L2 norm in §3.3.** The same formula, extended to more than two dimensions.
+
+## R.7 Basic trigonometry
+
+You need only one fact, for §3.5:
+
+```
+a · b = ‖a‖ ‖b‖ cos θ
+```
+where θ is the angle between the two vectors, and:
+
+| θ | cos θ | Meaning |
+|---|---|---|
+| 0° | 1 | same direction |
+| 90° | 0 | perpendicular |
+| 180° | −1 | opposite |
+
+That is the whole trigonometry requirement for Week 1.
+
+## R.8 Percentages and fractions
+
+`18% of 2499` = `2499 × 18/100 = 449.82`.
+A probability is a fraction between 0 and 1; 0.25 is the same as 25%.
+
+## R.9 Mean, median, mode
+
+For `[2, 4, 4, 9]`: mean `= 19/4 = 4.75`; median `= (4+4)/2 = 4`; mode `= 4`.
+
+**Variance** (new to you, needed in §3.26): average squared distance from the mean.
+`σ² = (1/n) Σ (xᵢ − μ)²`. Standard deviation `σ` is its square root.
+
+For `[2,4,4,9]` with μ=4.75: squared distances are `7.5625, 0.5625, 0.5625, 18.0625`, summing to
+`26.75`; `/4 = 6.6875`; `√6.6875 ≈ 2.586`.
+
+```python
+import numpy as np
+x = np.array([2,4,4,9])
+print(x.mean(), np.median(x), x.var(), x.std())
+```
+```
+4.75 4.0 6.6875 2.5860201081971503
+```
+
+## R.10 Probability basics
+
+- A probability is between 0 and 1
+- All outcomes must sum to 1
+- Independent events: `P(A and B) = P(A) × P(B)`
+
+Fair coin: `P(heads) = 0.5`. Fair die: `P(3) = 1/6 ≈ 0.1667`.
+
+Part 6 is built entirely on probabilities summing to 1.
+
+## R.11 Prerequisite check
+
+Answer all twelve on paper. Answers below. **Score below 10 and you should revise before Part 3.**
+
+1. `12 + 6 ÷ 3 × 2`
+2. `2³ × 2⁴` as a single power
+3. `5⁻²` as a fraction
+4. Solve `4x − 7 = 21`
+5. Expand `(x + 3)²`
+6. Slope of the line through `(1,2)` and `(4,11)`
+7. Distance from `(0,0)` to `(6,8)`
+8. `log₂(16)`
+9. `log₂(1)`
+10. Write out `Σᵢ₌₁³ 2i` fully and compute it
+11. Mean of `[3, 7, 8, 2]`
+12. `cos θ` when two vectors are perpendicular
+
+### Answers
+
+1. **16.** Division and multiplication before addition, left to right: `6÷3=2`, `2×2=4`, `12+4=16`.
+2. **2⁷.** Same base, powers add.
+3. **1/25.** Negative power means reciprocal.
+4. **x = 7.** `4x = 28`.
+5. **x² + 6x + 9.**
+6. **3.** `(11−2)/(4−1) = 9/3`.
+7. **10.** `√(36+64) = √100`.
+8. **4.** Because `2⁴ = 16`.
+9. **0.** Anything to the power 0 is 1, so `log(1) = 0` in every base.
+10. `2(1) + 2(2) + 2(3) = 2+4+6 =` **12.**
+11. **5.** `20/4`.
+12. **0.**
+
+Missed 8, 9 or 10? Re-read §S.2 and §S.6 — those three are load-bearing for Part 6.
 
 ---
 ---
@@ -1001,6 +1421,181 @@ Read the `cumtime` column top-down — that is where the time went.
 **Rule.** Never optimise before measuring. Week 10 is built on this.
 
 ---
+
+## 1.30 EXERCISES — Part 1
+
+Cover the answers. Attempt every one on paper or in the editor first. **25 minutes stuck is the
+limit** — then read the answer, close it, and redo it from nothing.
+
+**Easy**
+1. Predict, then check: `17 // 5`, `17 % 5`, `-17 // 5`, `-17 % 5`, `2 ** 2 ** 3`.
+2. `x = 7`; then `x += 3`; then `x *= 2`; then `x %= 7`. What is `x`?
+3. Why is `0.1 + 0.2 == 0.3` False? Write the correct test.
+4. From `s = "deep learning"`, produce: length, first character, last character, `"DEEP"`, and the
+   list `['deep', 'learning']`.
+5. Build `[1, 4, 9, 16, 25]` in one line.
+6. Count how many times each character appears in `"mississippi"`.
+7. Given `nums = [5, 3, 8, 1]`, produce a **new** sorted list without changing `nums`.
+
+**Medium**
+8. Write `is_even(n)` returning True/False using `%`, with a type hint.
+9. Write `safe_div(a, b)` returning `None` instead of crashing when `b` is 0.
+10. Explain why this prints `[1, 2, 3]` and how to make it print `[1, 2]`:
+    ```python
+    a = [1, 2]; b = a; b.append(3); print(a)
+    ```
+11. Write `mean(xs)` that raises `ValueError` on an empty list, plus three `pytest` tests for it.
+12. Write a `Vector2` class with `__init__`, `__repr__`, `__add__` and `__eq__`.
+13. Write a generator `evens(n)` yielding even numbers below n. Show that draining it twice gives
+    nothing the second time.
+14. Write a decorator `@count_calls` that reports how many times a function has been called.
+
+**Hard**
+15. Explain, with output, why this is a bug and fix it:
+    ```python
+    def add_item(item, box=[]):
+        box.append(item); return box
+    ```
+16. Write `Dataset` supporting `len(d)`, `d[i]`, `for x in d`, and `d(x)`.
+17. Using a context manager, write a `Timer` that prints elapsed time on exit.
+18. Why does `sum([0.1]*10) != 1.0`? What is the correct assertion?
+
+### Answers — Part 1
+
+**1.** `3`, `2`, `-4`, `3`, `256`.
+`-17 // 5` rounds **down** to −4 (not −3). Check: `−4×5 = −20`, and `−20 + 3 = −17`, so the
+remainder is `+3` — Python's `%` takes the divisor's sign. `2**2**3` is right-associative:
+`2**(2**3) = 2**8 = 256`.
+
+**2.** `x = 6`. Trace: 7 → 10 → 20 → `20 % 7` = 6.
+
+**3.** `0.1` has no exact binary form, so the stored value is slightly off and the errors add
+(§1.5). Correct test: `abs((0.1+0.2) - 0.3) < 1e-9`.
+
+**4.**
+```python
+s = "deep learning"
+print(len(s), s[0], s[-1], s[:4].upper(), s.split())
+```
+```
+13 d g DEEP ['deep', 'learning']
+```
+
+**5.** `[x**2 for x in range(1, 6)]`
+
+**6.**
+```python
+counts = {}
+for ch in "mississippi":
+    counts[ch] = counts.get(ch, 0) + 1
+print(counts)
+```
+```
+{'m': 1, 'i': 4, 's': 4, 'p': 2}
+```
+
+**7.** `new = sorted(nums)`. Using `nums.sort()` would mutate `nums` and return `None`.
+
+**8.**
+```python
+def is_even(n: int) -> bool:
+    return n % 2 == 0
+```
+
+**9.**
+```python
+def safe_div(a, b):
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return None
+```
+
+**10.** `b = a` copies the *reference*, not the list — both names point at one object, so appending
+through `b` is visible through `a`. Fix: `b = a.copy()` (or `a[:]`, or `list(a)`).
+
+**11.**
+```python
+def mean(xs):
+    if not xs:
+        raise ValueError("mean of empty sequence")
+    return sum(xs) / len(xs)
+
+# test_mean.py
+import pytest
+def test_basic():   assert mean([1,2,3]) == 2
+def test_float():   assert abs(mean([1,2]) - 1.5) < 1e-9
+def test_empty():
+    with pytest.raises(ValueError):
+        mean([])
+```
+
+**12.**
+```python
+class Vector2:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+    def __repr__(self):
+        return f"Vector2({self.x}, {self.y})"
+    def __add__(self, o):
+        return Vector2(self.x + o.x, self.y + o.y)
+    def __eq__(self, o):
+        return self.x == o.x and self.y == o.y
+```
+
+**13.**
+```python
+def evens(n):
+    for i in range(n):
+        if i % 2 == 0:
+            yield i
+g = evens(6)
+print(list(g))     # [0, 2, 4]
+print(list(g))     # []  <- exhausted
+```
+A generator holds a position, not the data. Once it reaches the end it stays there.
+
+**14.**
+```python
+def count_calls(fn):
+    def wrapper(*a, **k):
+        wrapper.calls += 1
+        print(f"{fn.__name__} call #{wrapper.calls}")
+        return fn(*a, **k)
+    wrapper.calls = 0
+    return wrapper
+```
+
+**15.** The default `[]` is created **once**, when the function is defined — not per call. So every
+call shares one list: `add_item(1)` → `[1]`, `add_item(2)` → `[1, 2]`. Fix with the `None` sentinel:
+```python
+def add_item(item, box=None):
+    if box is None:
+        box = []
+    box.append(item)
+    return box
+```
+This is a standard interview question.
+
+**16.** See §1.18 — `__len__`, `__getitem__`, `__iter__`, `__call__`.
+
+**17.**
+```python
+import time
+from contextlib import contextmanager
+
+@contextmanager
+def Timer(name):
+    t0 = time.perf_counter()
+    yield
+    print(f"{name}: {time.perf_counter()-t0:.4f}s")
+```
+
+**18.** Ten inexact `0.1` values accumulate ten small errors that compound rather than cancel,
+giving `0.9999999999999999`. Correct assertion: `assert abs(total - 1.0) < 1e-9`, or in NumPy
+`np.isclose(total, 1.0)`.
+
+---
 ---
 
 # PART 2 — NUMPY
@@ -1388,6 +1983,144 @@ True
 ```
 **Rule.** Always seed. Unseeded randomness makes a bug irreproducible, and an irreproducible bug
 cannot be fixed.
+
+---
+
+## 2.16 EXERCISES — Part 2
+
+Throughout, `a = np.arange(12).reshape(3,4)`:
+```
+[[ 0  1  2  3]
+ [ 4  5  6  7]
+ [ 8  9 10 11]]
+```
+
+**Easy**
+1. State `a.shape`, `a.ndim`, `a.size` without running anything.
+2. Extract column 2. What shape comes back, and why is it not `(3,1)`?
+3. Extract the 2×2 block containing 5, 6, 9, 10.
+4. Sum down the columns. Sum across the rows. Give both shapes.
+5. Select every element divisible by 3.
+6. Convert `np.array([1,2])` to `float32` and show the dtype.
+7. Flatten `a` back to 1-D.
+
+**Medium**
+8. Normalise `a` so each **row** sums to 1. (This needs `keepdims`.)
+9. Add `[1,2,3,4]` to `a`. Then try adding `[1,2,3]` and explain the error precisely.
+10. Build the outer product of `v = [1,2,3]` with itself, twice: with `np.outer`, and with `einsum`.
+11. Write a numerically stable `softmax(v)` and apply it to `[1,2,3]`.
+12. Show that slicing gives a **view** but fancy indexing gives a **copy**, with evidence.
+13. For `[[1,9],[7,3]]`, give `argmax()` and `argmax(axis=1)`. Explain the difference.
+14. Replace negatives with 0 in two different ways.
+
+**Hard**
+15. Predict all of these, then verify: `(32,512)@(512,128)` · `(2,3)+(3,)` · `(2,3)+(2,)` ·
+    `(3,1)@(1,4)` · `(10,3,4)@(10,4,5)` · `(2,3).sum(axis=1,keepdims=True)`.
+16. Why is `np.allclose` preferred over `==` for float arrays?
+17. Explain `axis=0` in one sentence that would satisfy an interviewer.
+
+### Answers — Part 2
+
+**1.** `(3, 4)`, `2`, `12`.
+
+**2.** `a[:,2]` → `[2, 6, 10]`, shape `(3,)`. **Slicing with a plain integer drops that axis.** To
+keep it: `a[:,2:3]` → shape `(3,1)`.
+
+**3.** `a[1:3, 1:3]` →
+```
+[[ 5  6]
+ [ 9 10]]
+```
+
+**4.** `a.sum(axis=0)` → `[12 15 18 21]`, shape `(4,)` — one number per column.
+`a.sum(axis=1)` → `[ 6 22 38]`, shape `(3,)` — one per row.
+
+**5.** `a[a % 3 == 0]` → `[0 3 6 9]`
+
+**6.** `np.array([1,2]).astype(np.float32).dtype` → `float32` (was `int64`).
+
+**7.** `a.ravel()` → `[0 1 2 3 4 5 6 7 8 9 10 11]`
+
+**8.**
+```python
+np.round(a / a.sum(axis=1, keepdims=True), 3)
+```
+```
+[[0.    0.167 0.333 0.5  ]
+ [0.182 0.227 0.273 0.318]
+ [0.211 0.237 0.263 0.289]]
+```
+`keepdims=True` gives shape `(3,1)`, which broadcasts against `(3,4)`. Without it you get `(3,)`,
+which right-aligns as `(1,3)` against `(3,4)` — 3 vs 4 — and raises.
+
+**9.** `a + [1,2,3,4]` works: `(3,4)` and `(4,)` right-align to 4 vs 4. ✓
+```
+[[ 1  3  5  7]
+ [ 5  7  9 11]
+ [ 9 11 13 15]]
+```
+`a + [1,2,3]` raises:
+```
+ValueError: operands could not be broadcast together with shapes (3,4) (3,) 
+```
+Right-aligned, the last axes are 4 and 3 — not equal, and neither is 1.
+
+**10.** Both give the same result:
+```python
+v = np.array([1.,2.,3.])
+np.outer(v, v)
+np.einsum('i,j->ij', v, v)
+```
+```
+[[1. 2. 3.]
+ [2. 4. 6.]
+ [3. 6. 9.]]
+```
+Read the einsum: `i` and `j` are different letters, both appear in the output, so nothing is summed —
+every pair is multiplied.
+
+**11.**
+```python
+def softmax(v):
+    e = np.exp(v - v.max())      # subtract max: prevents overflow
+    return e / e.sum()
+print(np.round(softmax(np.array([1.,2.,3.])), 6))
+```
+```
+[0.090031 0.244728 0.665241]
+```
+Outputs are positive and sum to 1. The `- v.max()` is the same stability trick as §8.10; without it,
+large logits overflow `exp`.
+
+**12.**
+```python
+x = np.arange(6); sl = x[1:4]; sl[0] = 99; print(x)     # [ 0 99  2  3  4  5]  <- changed
+y = np.arange(6); cp = y[[1,2,3]]; cp[0] = 99; print(y) # [0 1 2 3 4 5]        <- unchanged
+```
+Slicing returns a view sharing memory; fancy indexing builds a new array.
+
+**13.** `argmax()` → `1`; `argmax(axis=1)` → `[1 0]`.
+Without an axis, NumPy flattens first, so `1` is the position in the flattened array. With `axis=1`
+you get the winning column **per row**: row 0's max is 9 at column 1, row 1's is 7 at column 0.
+
+**14.** `np.maximum(a, 0)` or `a[a < 0] = 0` (in place) or `np.where(a > 0, a, 0)`.
+
+**15.**
+| Expression | Result |
+|---|---|
+| `(32,512)@(512,128)` | `(32,128)` |
+| `(2,3)+(3,)` | `(2,3)` |
+| `(2,3)+(2,)` | **ValueError** |
+| `(3,1)@(1,4)` | `(3,4)` |
+| `(10,3,4)@(10,4,5)` | `(10,3,5)` batched |
+| `(2,3).sum(axis=1,keepdims=True)` | `(2,1)` |
+
+**16.** Floats are inexact (§1.5), so `==` fails on values that are mathematically equal.
+`np.allclose` compares within a tolerance and returns one bool for the whole array, rather than an
+elementwise array you would then have to reduce.
+
+**17.** *"`axis=k` is the axis that gets collapsed. `axis=0` runs down the rows and returns one value
+per column."*
 
 ---
 ---
@@ -3722,5 +4455,59 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 ---
 
-**END OF WEEK 1.** All 7 Parts, roadmap sections 1.1–1.18, 110 concepts, 4 deliverables.
-Every output above was executed on a real machine before being written here.
+---
+
+# WHAT IS STILL BEING ADDED
+
+**Honest status, so you know exactly what you have and what is coming.**
+
+You said this must be the one document you learn from end to end — encyclopedic, basics through
+advanced, nothing outsourced to other sources. The version you are reading is not there yet. Here is
+the precise gap.
+
+## Done in this pass
+
+| Added | Where | Why it mattered |
+|---|---|---|
+| **Notation and symbol glossary** | Part S | You could not read `Σ`, `∇`, `∂`, `∈ ℝⁿ`. That blocked Parts 3–6 entirely |
+| **Logarithms from scratch** | §S.6 | Class 10 may not cover them; Parts 5 and 6 are unreadable without them |
+| **Formula-attack procedure** | §S.7 | A repeatable method for any unfamiliar formula |
+| **Class 10 refresher + prerequisite check** | Part R | Finds your gaps before they cost you a day in Part 3 |
+| **Python exercises + full answers (18)** | §1.30 | Self-study without exercises is reading, not learning |
+| **NumPy exercises + full answers (17)** | §2.16 | Same |
+
+## Still missing — the queue
+
+| Priority | What | Where it goes |
+|---|---|---|
+| 1 | **Exercise banks + answers** for Parts 3, 4, 5, 6 | §3.31, §4.17, §5.15, §6.9 |
+| 2 | **"Going deeper" advanced boxes** on every major concept — derivations, proofs, complexity, numerical stability | throughout |
+| 3 | **Interview question bank** per topic, with model answers | end of each Part |
+| 4 | Linear algebra depth: condition number, pseudo-inverse, positive-definiteness, trace, matrix norms, operation costs | Part 3 |
+| 5 | Calculus depth: matrix calculus rules, forward vs reverse mode autodiff compared, formal gradient checking | Part 4 |
+| 6 | Optimisation depth: convergence rates, ill-conditioning, line search, learning-rate finder | Part 5 |
+| 7 | Information theory depth: Jensen's inequality, proof that KL ≥ 0, joint and conditional entropy, cross-entropy ↔ maximum likelihood | Part 6 |
+| 8 | Python depth: the GIL, memory model, `__slots__`, shallow vs deep copy, `collections`, `itertools` | Part 1 |
+| 9 | NumPy depth: strides, C vs Fortran memory order, ufunc internals, `np.newaxis` vs `reshape` | Part 2 |
+| 10 | **Worked mini-projects** joining several concepts end to end | new Part 8 |
+
+## The realistic size
+
+At the depth you have asked for, this file lands somewhere around **12,000–15,000 lines**. It is at
+roughly 4,300 now. That is three or four more working sessions.
+
+**Nothing above is optional and nothing will be skipped.** Ask me to continue and I will work down
+the queue in order. Priority 1 is next — exercise banks for Parts 3 to 6 — because exercises are what
+convert reading into ability, and Part 3 (linear algebra) is where you will actually be on Day 6.
+
+## Reading order while it is being built
+
+The teaching content for all 7 Parts is complete and usable **today**. Nothing in the queue blocks
+you. Start at Part S, do the Part R check, then Part 0 and work forward. By the time you reach Part 3
+on Day 6, its exercise bank will be here.
+
+---
+
+**END OF WEEK 1.** Parts S, R, 0–7. Roadmap sections 1.1–1.18. 117 concepts, 35 exercises with
+worked answers, 4 deliverables. Every output above was executed on a real machine before being
+written here.
