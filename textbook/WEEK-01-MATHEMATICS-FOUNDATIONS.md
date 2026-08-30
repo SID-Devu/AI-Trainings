@@ -12,7 +12,23 @@ Every code output in this file was executed and verified, not guessed.
 
 # CONTENTS
 
-## PART S — HOW TO READ THE MATHS (start here)
+## PART T — THE THEORY BASELINE (read first — this is the map)
+| § | Concept |
+|---|---|
+| T.1 | What AI, ML and DL actually are |
+| T.2 | **Learning is function approximation** |
+| T.3 | What a model is made of — architecture, parameters, hyperparameters |
+| T.4 | **The learning loop** — forward, loss, gradient, update |
+| T.5 | Supervised, unsupervised, self-supervised, reinforcement |
+| T.6 | Why exactly these four branches of mathematics |
+| T.7 | Training versus inference |
+| T.8 | **Generalisation, overfitting, and the actual goal** |
+| T.9 | From raw data to prediction |
+| T.10 | **How Week 1 feeds Weeks 2–10** |
+| T.11 | **The working standard for all ten weeks** |
+| T.12 | Theory self-check |
+
+## PART S — HOW TO READ THE MATHS
 | § | Concept |
 |---|---|
 | S.1 | Greek letters |
@@ -136,6 +152,451 @@ geometry · `7.5` measure theory
 executed on a real machine — none is guessed. **Currently being expanded** from a crisp reference
 into a complete self-study text: Part S, Part R and the exercise banks below are the new layer.
 See "What is still being added" at the very end.
+
+---
+---
+
+# PART T — THE THEORY BASELINE
+
+**Read this before anything else. It is the map. Everything in all ten weeks hangs off it.**
+
+You are about to spend ten weeks learning Python, matrices, derivatives and probability. If nobody
+tells you *what those are for*, you will learn a pile of disconnected procedures and forget them.
+This Part is the frame that holds them together. It contains almost no code, and it is the most
+important Part in the book.
+
+**Ambition note.** You said you want to be the best at this. Then you need the thing most beginners
+never get: the *theory* underneath, not just the recipes. People who plateau are the ones who learned
+to call `model.fit()` without ever understanding what a model is. People who go far understood the
+frame first, and slotted every new technique into it. This Part is that frame.
+
+## T.1 What AI, ML and DL actually are
+
+They are not synonyms. They are nested.
+
+```
+┌─ ARTIFICIAL INTELLIGENCE ─────────────────────────┐
+│  Any technique making machines behave "smartly"   │
+│  including hand-written rules                     │
+│                                                   │
+│  ┌─ MACHINE LEARNING ──────────────────────────┐  │
+│  │  Systems that improve at a task by being    │  │
+│  │  shown data, rather than being programmed   │  │
+│  │                                             │  │
+│  │  ┌─ DEEP LEARNING ───────────────────────┐  │  │
+│  │  │  ML using many-layered neural          │  │  │
+│  │  │  networks that learn their own         │  │  │
+│  │  │  features from raw data                │  │  │
+│  │  └────────────────────────────────────────┘  │  │
+│  └─────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────┘
+```
+
+**The distinction that matters.** In ordinary programming, *you* write the rules:
+
+```python
+def is_spam(email):
+    if "free money" in email: return True
+    if "click here now" in email: return True
+    return False
+```
+You thought of every rule. If spammers write "fr€e mon€y", you must think of that too, forever.
+
+In machine learning you write the **procedure for finding rules**, then show the machine 100,000
+labelled emails and it derives the rules itself — including ones you would never have thought of.
+
+**The formal definition** (Tom Mitchell, 1997) — worth memorising, because interviewers use it:
+
+> A computer program learns from experience **E** with respect to some task **T** and performance
+> measure **P**, if its performance at T, as measured by P, improves with E.
+
+For spam: T = classify emails; E = labelled examples; P = accuracy on emails it has never seen.
+
+**Why the "never seen" matters** is the whole of §T.8. Hold that thought.
+
+## T.2 The central idea: learning is function approximation
+
+**This is the single sentence that unlocks the entire field.**
+
+> There exists some true function `f` mapping inputs to correct outputs. We do not know it. We build
+> an approximation `f̂` from data, and try to make `f̂` as close to `f` as possible.
+
+| Task | Input `x` | True output `f(x)` |
+|---|---|---|
+| Spam detection | an email | spam / not spam |
+| House pricing | size, location, age | the price |
+| Image recognition | 224×224×3 numbers | "cat" |
+| Language modelling | the words so far | the next word |
+| Speech | an audio waveform | the text |
+
+In every single case: **something goes in, something comes out, and there is a correct answer we
+cannot write down as rules.** That is when you reach for machine learning — and only then. If you
+*can* write the rules, write the rules; they will be faster, cheaper and easier to debug.
+
+**Why it is called "approximation."** `f̂` will never exactly equal `f`. The goal is not perfection,
+it is *useful closeness*. An engineer who understands this stops chasing 100% accuracy and starts
+asking "how close is close enough for this product?"
+
+**A remarkable fact you should know now.** The *universal approximation theorem* says a neural
+network with a single hidden layer can approximate any continuous function to arbitrary accuracy,
+given enough neurons. So the shape of the network is not the fundamental limit — **finding the right
+parameters from finite data is.** That is why this whole book is about optimisation and data, not
+about exotic architectures.
+
+## T.3 What a model is actually made of
+
+Strip away the mystique. A model has exactly three things.
+
+| Part | What it is | Example |
+|---|---|---|
+| **Architecture** | the *shape* of the function — what form `f̂` may take | `f̂(x) = wx + b` (a straight line) |
+| **Parameters** (`θ`) | the numbers inside it that get adjusted | `w` and `b` |
+| **Learned values** | what those numbers become after training | `w = 3.05`, `b = 1.75` |
+
+**That is a model. Nothing more.** A large language model is this with 10¹¹ parameters instead of 2,
+and a much more elaborate architecture. The kind of thing it is has not changed.
+
+**Vocabulary you must get right, because beginners mix them up:**
+
+| Term | Meaning | Who sets it |
+|---|---|---|
+| **Parameter** | a number learned *from data* | the training process |
+| **Hyperparameter** | a setting chosen *before* training | you |
+| **Weight** | a parameter that multiplies an input | learned |
+| **Bias** | a parameter that shifts the output | learned |
+
+`w` and `b` are parameters. The learning rate is a hyperparameter. Saying "hyperparameter" when you
+mean "parameter" marks you instantly in an interview.
+
+## T.4 The learning loop
+
+**Memorise this. Every model in existence is trained by this loop.**
+
+```
+        ┌──────────────────────────────────────────┐
+        │                                          │
+        ▼                                          │
+   ┌─────────┐    ┌──────┐    ┌──────────┐    ┌─────────┐
+   │ FORWARD │───►│ LOSS │───►│ GRADIENT │───►│ UPDATE  │
+   │ predict │    │ how  │    │  which   │    │  turn   │
+   │         │    │ wrong│    │  way is  │    │  the    │
+   │ ŷ=f(x,θ)│    │ am I │    │ downhill │    │  knobs  │
+   └─────────┘    └──────┘    └──────────┘    └─────────┘
+                                                   │
+                                          repeat ──┘
+```
+
+| Step | Question it answers | Maths that does it | Where in this book |
+|---|---|---|---|
+| **1 Forward** | What does my model predict? | linear algebra — matrix multiply | Part 3 |
+| **2 Loss** | How wrong is that? | statistics, information theory | Part 5, Part 6 |
+| **3 Gradient** | Which way should each knob turn? | calculus — the chain rule | Part 4 |
+| **4 Update** | Turn the knobs a little | optimisation | Part 5 |
+
+**Look at that table again.** The four branches of mathematics in Week 1 are not an arbitrary
+syllabus. They are the four steps of the loop, one each. That is why Week 1 contains exactly these
+four and nothing else.
+
+### A complete learning system, in 15 lines
+
+You will not understand every line yet. You will by Day 13. Read it now anyway, so you know what you
+are building toward.
+
+```python
+import numpy as np
+rng = np.random.default_rng(0)
+X = rng.uniform(0, 10, 50)
+y = 3.0 * X + 2.0 + rng.normal(0, 1, 50)      # hidden truth: slope 3, intercept 2
+
+w, b, lr = 0.0, 0.0, 0.01                     # start knowing nothing
+for epoch in range(1000):
+    yhat = w * X + b                          # 1 FORWARD
+    err  = yhat - y
+    loss = np.mean(err**2)                    # 2 LOSS
+    dw   = 2 * np.mean(err * X)               # 3 GRADIENT
+    db   = 2 * np.mean(err)
+    w   -= lr * dw                            # 4 UPDATE
+    b   -= lr * db
+    if epoch in (0, 9, 99, 999):
+        print(f"epoch {epoch:4d} : w={w:.3f} b={b:.3f} loss={loss:.4f}")
+```
+```
+epoch    0 : w=2.398 b=0.357 loss=398.3387
+epoch    9 : w=3.232 b=0.532 loss=1.3488
+epoch   99 : w=3.171 b=0.947 loss=1.1487
+epoch  999 : w=3.054 b=1.745 loss=0.9934
+```
+The hidden truth was `w=3.0, b=2.0`. **It started at zero, knowing nothing, and found 3.054 and 1.745
+by itself.** Nobody told it the answer. It only ever saw noisy data and the four steps above.
+
+Three things to notice, because each is a real lesson:
+- **Loss fell from 398 to 0.99** — almost all of it in the first 10 epochs. Learning is front-loaded.
+- **It stopped at ~0.99, not 0.** We added noise with standard deviation 1, so an MSE near 1 *is*
+  the floor. A model that reached 0 would have memorised the noise, which is the disease of §T.8.
+- **`b` converged much more slowly than `w`** (1.745 vs a true 2.0, after `w` was already right).
+  Different parameters learn at different speeds — which is exactly the problem adaptive optimisers
+  like Adam exist to solve (§5.11).
+
+## T.5 The kinds of learning
+
+| Kind | What the data has | The question | Week |
+|---|---|---|---|
+| **Supervised** | inputs **and** correct answers | "predict the label" | 3, 6, 7 |
+| **Unsupervised** | inputs only | "find the structure" | 4 |
+| **Self-supervised** | inputs only, but the label is hidden *inside* them | "predict the missing part" | 7, 8 |
+| **Reinforcement** | no answers, only rewards after actions | "find the best behaviour" | 8 |
+
+**Self-supervised deserves special attention**, because it is how modern AI actually got good. Take a
+sentence, hide the last word, ask the model to predict it. The label came free from the data itself —
+no human labelled anything. That single trick is why language models could be trained on the whole
+internet, and it is the reason the field changed after 2018.
+
+## T.6 Why exactly these four branches of mathematics
+
+Not tradition. Each one answers a question you cannot avoid.
+
+### Linear algebra (Part 3) — *how data is represented and transformed*
+A computer cannot hold "a photograph" or "a sentence." It holds **numbers in arrays**. An image is a
+grid of numbers; a word becomes a vector; a dataset is a matrix. And a model layer *transforms* those
+arrays — which is matrix multiplication. Without linear algebra you cannot represent your data or
+compute a single prediction.
+
+### Calculus (Part 4) — *how learning happens*
+Learning means adjusting millions of knobs in the right direction. The derivative answers exactly
+one question: *if I nudge this knob, does the error rise or fall, and how fast?* No calculus, no
+learning. It is not an optional mathematical flourish; it is the mechanism.
+
+### Optimisation (Part 5) — *how to actually get to the bottom*
+Knowing which way is downhill is not the same as arriving. How big a step? What if the surface is a
+narrow ravine? What if you overshoot? Optimisation is the engineering of the descent.
+
+### Information theory (Part 6) — *how to score a prediction*
+When a model outputs "70% cat, 30% dog" and the answer was cat, how wrong was it? Not obvious.
+Information theory gives the principled answer — cross-entropy — and it is the loss function behind
+essentially every classifier and every language model.
+
+**Probability and statistics (Week 2)** is the fifth pillar: how to handle uncertainty and how to
+evaluate honestly. It gets its own week.
+
+## T.7 Training versus inference
+
+Two completely different regimes. Confusing them causes real production failures.
+
+| | **Training** | **Inference** |
+|---|---|---|
+| When | once (or periodically) | every single request, forever |
+| Data | the whole dataset, many passes | one input |
+| Gradients | computed | **not** computed |
+| Parameters | changing | frozen |
+| Cost driver | total compute | latency per request |
+| Optimise for | throughput | **response time** |
+| Runs on | big clusters | maybe a phone |
+
+**Why this is on the syllabus in Week 1.** The economics of AI are dominated by inference, not
+training: you train once and serve billions of times. Week 10 of the roadmap is entirely about making
+inference fast, and it is the single most hireable skill in the programme. It begins with
+understanding that these are two different problems.
+
+## T.8 Generalisation — the actual goal
+
+**Everything else in this Part is setup for this section. This is the central problem of machine
+learning.**
+
+The goal is **not** to do well on the data you trained on. That is trivial — just memorise it. The
+goal is to do well on data you have **never seen**. That is called **generalisation**, and it is the
+only thing that matters.
+
+### The demonstration
+
+Twelve training points from a straight line plus noise. We fit polynomials of increasing flexibility,
+then test on points the model never saw.
+
+```python
+import numpy as np
+rng = np.random.default_rng(1)
+Xtr = np.linspace(0, 10, 12)
+ytr = 2.0*Xtr + 1.0 + rng.normal(0, 2, 12)
+Xte = np.linspace(0, 10, 12) + 0.4
+yte = 2.0*Xte + 1.0 + rng.normal(0, 2, 12)
+
+for deg in (1, 3, 11):
+    coef = np.polyfit(Xtr, ytr, deg)
+    tr = np.mean((np.polyval(coef, Xtr) - ytr)**2)
+    te = np.mean((np.polyval(coef, Xte) - yte)**2)
+    print(f"degree {deg:2d}: train MSE {tr:10.4f}   test MSE {te:12.4f}")
+```
+```
+degree  1: train MSE     1.3662   test MSE       1.7541
+degree  3: train MSE     1.2820   test MSE       1.7381
+degree 11: train MSE     0.0000   test MSE    1381.4915
+```
+
+**Stop and look at the last row properly.**
+
+The degree-11 model achieved **perfect** training error — exactly `0.0000`. It passes through all
+twelve training points without missing by a hair. By the only measure it was shown, it is flawless.
+
+On data it had not seen, its error is **1381**, roughly **800 times worse** than the simple straight
+line.
+
+It did not learn the pattern. It memorised the twelve points, noise included, and between them it
+does something wild and useless. This is **overfitting**, and it is the disease that ruins more real
+projects than any other.
+
+### The vocabulary
+
+| Term | Meaning | Symptom |
+|---|---|---|
+| **Underfitting** | model too simple to capture the pattern | train error high, test error high |
+| **Overfitting** | model memorised the data, including noise | train error low, **test error high** |
+| **Good fit** | learned the pattern, ignored the noise | both low and close together |
+| **Generalisation gap** | test error − train error | the number that tells you which |
+
+### The three consequences that shape everything else
+
+1. **You must hold data back.** Split into train / validation / test. Never let the model see the
+   test set. This is why Week 2 is about honest evaluation, and why the roadmap is fierce about
+   "leakage."
+2. **A model that fits perfectly is a warning, not a triumph.** Training error of zero should make
+   you suspicious, not pleased.
+3. **Simpler is safer.** Between two models that explain the data equally well, prefer the simpler
+   one. This is why regularisation (§5.13) exists — it deliberately penalises complexity.
+
+**The bias–variance tradeoff** names the tension: too simple → high bias (misses the pattern); too
+flexible → high variance (chases the noise). Every design choice in machine learning is somewhere on
+that dial. You will meet it formally in Week 2 and use it for the rest of your career.
+
+**And a caution against magic thinking.** The *no free lunch* theorem states that no single algorithm
+is best across all possible problems. There is no universally correct model. Choosing well for *this*
+problem is the job, and that is why judgement — not memorised technique — is what separates engineers.
+
+## T.9 From raw data to prediction
+
+The full pipeline. Most beginners think ML is only the "model" box. In real work the boxes on the
+left take the most time and cause the most failures.
+
+```
+RAW DATA ─► CLEANING ─► FEATURES ─► MODEL ─► PREDICTION ─► DECISION
+   │           │           │          │          │            │
+ messy      missing     turn into   learn      output      act on it
+ real       values,     numbers     f̂ from     ŷ = f̂(x)    (and measure
+ world      outliers    (Part 3)    data                    the result)
+```
+
+| Stage | Where in the programme |
+|---|---|
+| Raw data, cleaning | Week 2 |
+| Features | Weeks 2, 3 |
+| Model | Weeks 3–8 |
+| Prediction, serving | Weeks 9, 10 |
+| Decision, measurement | Week 2 (experimentation), Week 9 |
+
+**Deep learning changed one box.** Instead of humans hand-crafting features, the network learns its
+own representations from raw data. That is the actual meaning of "deep" — layers of learned
+representation, each built on the one below.
+
+## T.10 How Week 1 feeds Weeks 2 to 10
+
+This is the baseline. Nothing later stands without it.
+
+```
+                    ┌─────────────────────────────────┐
+                    │        WEEK 1 (this book)       │
+                    │  Python · NumPy · linear alg.   │
+                    │  calculus · optim. · info th.   │
+                    └────────────────┬────────────────┘
+                                     │
+        ┌────────────────┬───────────┼───────────┬────────────────┐
+        ▼                ▼           ▼           ▼                ▼
+   Wk 2 Prob/           Wk 3        Wk 5        Wk 7           Wk 10
+   Stats/SQL           Classic ML   Neural nets Transformers   Systems/GPU
+        │                │           │           │                │
+        └────────────────┴───────────┴───────────┴────────────────┘
+                    every one of them uses Week 1 daily
+```
+
+Concretely, and check these against the sections you have already read:
+
+| Week 1 concept | Reappears as |
+|---|---|
+| Dot product (§3.5) | every neuron; attention scores in Week 7; similarity search in Week 8 |
+| Matrix multiply (§3.9) | every layer of every network, Weeks 5–8 |
+| Shape reasoning (§3.28) | the most frequent bug you will hit in Weeks 5–8 |
+| Eigenvectors, SVD (§3.21, §3.24) | PCA in Week 4; **LoRA** fine-tuning in Week 8 |
+| Chain rule (§4.5) | backpropagation, Weeks 5–8; `loss.backward()` |
+| Vector-Jacobian product (§4.14) | how `torch.autograd` actually works |
+| Gradient descent (§5.5) | training, every week from 5 onward |
+| Cross-entropy (§6.3) | the loss for every classifier and every language model |
+| Float inexactness (§1.5) | numerical-parity debugging in Week 10 — a paid job at hardware companies |
+
+**If Week 1 is shaky, Weeks 5 to 8 become impossible rather than merely hard.** That is why Week 1 is
+double weight and why its completion gate (Appendix C) is strict.
+
+## T.11 The working standard — the baseline for all ten weeks
+
+These rules start now and do not change. They are what separates someone who *studied* AI from
+someone who can *do* it.
+
+**1. Implementation over consumption.** A video watched is not a skill. If you cannot write it, you
+do not know it.
+
+**2. Never accept a number you did not measure.** Not from a blog, not from a tutorial, not from me.
+This book has been wrong about its own outputs several times, caught only by running the code. Run
+the code.
+
+**3. Every performance claim needs a method.** "It's faster" is not a claim. "1.8× faster on this
+hardware, this input size, averaged over 10 runs after warm-up" is.
+
+**4. Three depth tiers, and be honest about which you are at.**
+
+| Tier | Test |
+|---|---|
+| **[BUILD]** | working code you wrote, from scratch, no reference |
+| **[KNOW]** | can explain it to another person in five minutes with no notes |
+| **[AWARE]** | recognise the term and know what problem it solves |
+
+**5. Explain it simply or you do not understand it.** If your explanation needs jargon, you are
+hiding a gap.
+
+**6. Pass the gate before moving on.** Partial understanding compounds into confusion. Each Part ends
+with a checkpoint; each week ends with a gate. They are not decoration.
+
+**7. Time-box being stuck.** Twenty-five minutes, then read the answer, close it, and rebuild from
+nothing. Struggling past that point stops teaching.
+
+**8. Write it down in your own words.** If you can only repeat my sentences, it is my understanding,
+not yours.
+
+**9. Commit your work publicly, weekly.** Work not in the repository does not exist as evidence.
+
+**10. Suspect anything that looks too good.** Zero training error, a 100× speedup, a perfect
+accuracy — each is far more likely to be a bug than a triumph. §T.8 is the reason.
+
+## T.12 Theory self-check
+
+No code. Answer aloud, in your own words. If you cannot, re-read the section listed.
+
+1. What is the difference between AI, ML and DL? → §T.1
+2. Give Mitchell's definition of learning, and map it onto spam detection. → §T.1
+3. "Learning is function approximation." Explain that sentence to a friend. → §T.2
+4. What are the three things a model consists of? → §T.3
+5. What is the difference between a parameter and a hyperparameter? Give one of each. → §T.3
+6. Name the four steps of the learning loop and the branch of maths each needs. → §T.4
+7. In the 15-line example, why did the loss stop falling at about 1.0 instead of 0? → §T.4
+8. What makes self-supervised learning so important? → §T.5
+9. Why is linear algebra needed at all? Answer in one sentence. → §T.6
+10. Give three differences between training and inference. → §T.7
+11. **A model gets 100% on training data and 40% on test data. What has happened, what is it
+    called, and what would you do?** → §T.8
+12. Why is a training error of exactly zero a warning sign? → §T.8
+13. What did "deep" in deep learning originally refer to? → §T.9
+14. Name three places the dot product reappears after Week 1. → §T.10
+15. Why must you never accept a performance number you did not measure? → §T.11
+
+**Question 11 is the one that matters most.** It is asked in real interviews, in almost those words.
+A complete answer: the model has overfitted; it memorised the training data including its noise
+rather than learning the underlying pattern; the fix is more data, a simpler model, regularisation,
+or early stopping — and I would first confirm the split is clean and there is no leakage.
 
 ---
 ---
