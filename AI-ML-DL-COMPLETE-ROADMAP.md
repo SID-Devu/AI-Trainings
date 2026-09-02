@@ -670,6 +670,53 @@ Kaggle https://www.kaggle.com · UCI ML Repository https://archive.ics.uci.edu �
 Google Colab https://colab.research.google.com · LeetCode https://leetcode.com ·
 Devpost https://devpost.com · Zindi https://zindi.africa · StrataScratch · Codeforces
 
+**Graded ML implementation practice** *(added in v2.3 — this closed a real gap)*
+
+Until now this document had LeetCode for algorithms and Kaggle for end-to-end projects, but **no
+source of graded, test-checked ML implementation exercises** — "implement scaled dot-product
+attention and pass the tests." That is a distinct skill from both, and it was unresourced.
+
+**TensorTonic** — https://www.tensortonic.com/study-plans (pricing verified 2026-09-02)
+
+| Tier | Cost | What it gives |
+|---|---|---|
+| **Free** | $0 | 300+ core ML problems · **all 35 CUDA/GPU kernel problems** · 13 research-paper implementations · theory per problem · interactive visualisations · unlimited submissions · Discord |
+| Pro | ~$8.33/mo, $100/yr | The structured study plans · 700+ problems · 500+ quiz questions · mock interviews |
+| Plus | ~$14/mo, $168/yr | 850+ problems · modern LLM architectures in PyTorch · ML system design with a design canvas |
+
+**How its plans map onto this programme:**
+
+| Their plan | Problems | Our module |
+|---|---|---|
+| Linear Algebra · Calculus for ML · Optimization | 30 · 30 · 25 | **Week 1** (Parts 3, 4, 5) |
+| NumPy Sheet | 25 | Week 1 Part 2 |
+| Probability & Statistics · Pandas · SQL | 30 · 25 · 25 | **Week 2** |
+| Cracking ML | 35 | Weeks 3–4 |
+| PyTorch Sheet · Build Micrograd from Scratch | 30 · 25 | **Week 5** — the roadmap already names Karpathy's micrograd as the highest-value exercise in that module |
+| Cracking Deep Learning · Cracking CV | 35 · 35 | Weeks 6, 8 |
+| Build LLM from Scratch | 62 | Weeks 7–8 |
+| Cracking NLP · Cracking RL | 35 · 30 | Week 8 Tracks A and C |
+| **CUDA Kernels · Triton Kernels · Inference Engineering** | 35 · 30 · 30 | **Week 10 and Section 10.17** |
+| ML System Design (Plus tier) | — | Week 9 Part D |
+| Mock interview assessments | — | Section 10.16 |
+
+**Guidance on using it.**
+
+1. **It is practice, not teaching.** Attempting problems before understanding the material produces
+   copied solutions and false confidence. Work the module first, then use the problems as a
+   second pass — solve without notes to *verify* understanding.
+2. **Do not pay early.** The free tier's 300+ problems exceed what you can consume before Week 5.
+   Revisit the paid tiers only when the free problems genuinely run out, and decide with evidence
+   that the platform suits you.
+3. **The 35 free GPU/CUDA kernel problems are the standout item.** Practice material for kernel
+   authoring is scarce, and this is the hardest part of Section 10.17 to rehearse. Note it now; use
+   it at Week 10.
+4. **It does not replace the artefacts.** A platform profile is invisible to a reviewer. The 19
+   artefacts in Overview C are the hiring signal, because they are yours and they carry measured
+   results. Solving 300 problems on a website is worth nothing you can point at.
+5. **It does not replace the algorithms track.** Part 8.1's 150+ problems are data structures and
+   algorithms — a different assessment, still required.
+
 ### Research
 arXiv https://arxiv.org · Papers With Code https://paperswithcode.com ·
 Distill.pub https://distill.pub ·
