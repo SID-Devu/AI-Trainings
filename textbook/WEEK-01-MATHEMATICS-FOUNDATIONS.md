@@ -196,6 +196,7 @@ take 8 or 15 days and lose nothing but calendar time. **The gates matter; the da
 | 2.6 | Indexing, slicing | 2.14 | `einsum` |
 | 2.7 | Boolean masks | 2.15 | Random, seeding |
 | 2.8 | Fancy indexing | **2.16** | **EXERCISES + answers (17)** |
+| | | **2.17** | **PROBLEM BANK — 25 problems (NumPy Sheet)** |
 
 ## PART 3 — LINEAR ALGEBRA (Day 3)
 | § | Concept | § | Concept |
@@ -237,6 +238,7 @@ take 8 or 15 days and lose nothing but calendar time. **The gates matter; the da
 | 4.6 | Derivatives of exp, log, sigmoid, tanh, ReLU | 4.14 | Vector-Jacobian product |
 | 4.7 | Partial derivatives | 4.15 | Computation graph |
 | 4.8 | **Gradient** | 4.16 | **Backpropagation by hand** |
+| | | **4.17** | **PROBLEM BANK — 30 problems (Calculus for ML)** |
 
 ## PART 5 — OPTIMISATION (Day 4)
 | § | Concept | § | Concept |
@@ -248,6 +250,7 @@ take 8 or 15 days and lose nothing but calendar time. **The gates matter; the da
 | 5.5 | **Gradient descent** | 5.12 | Newton's method, BFGS |
 | 5.6 | Batch vs SGD vs mini-batch | 5.13 | L1, L2, dropout |
 | 5.7 | Momentum | 5.14 | **Deliverable 3** — gradient descent from scratch |
+| | | **5.15** | **PROBLEM BANK — 25 problems (Optimization)** |
 
 ## PART 6 — INFORMATION THEORY (Day 5)
 | § | Concept | § | Concept |
@@ -2582,6 +2585,176 @@ elementwise array you would then have to reduce.
 
 **17.** *"`axis=k` is the axis that gets collapsed. `axis=0` runs down the rows and returns one value
 per column."*
+
+---
+
+## 2.17 PROBLEM BANK — NumPy: array computing from scratch
+
+**25 problems, five sections.** Modelled on the reference plan's *NumPy Sheet*. Throughout,
+`m = np.arange(12).reshape(3,4)`.
+
+| § | Problems | Level |
+|---|---|---|
+| A — Creation and properties | 1–5 | Easy |
+| B — Indexing and selection | 6–12 | Easy → Medium |
+| C — Broadcasting | 13–16 | Medium |
+| D — Aggregation | 17–20 | Easy → Medium |
+| E — Real ML operations | 21–25 | Medium → Hard |
+
+### A — Creation and properties
+
+1. Build a 2×3 array; report `shape`, `ndim`, `size`, `dtype`.
+2. Create `zeros((2,2))`, `ones(2)`, `full((2,),7)`, `eye(2)`.
+3. Contrast `arange(0,10,3)` with `linspace(0,1,5)`.
+4. Reshape `arange(6)` two ways using `-1`.
+5. Cast to `float32`; then cast `[1.7, 2.7]` to `int` and explain the result.
+
+```python
+import numpy as np
+a = np.array([[1,2,3],[4,5,6]])
+print("1", a.shape, a.ndim, a.size, a.dtype)
+print("2", np.zeros((2,2)).tolist(), np.ones(2).tolist(), np.full((2,),7).tolist(), np.eye(2).tolist())
+print("3", np.arange(0,10,3), np.linspace(0,1,5))
+print("4", np.arange(6).reshape(2,-1).shape, np.arange(6).reshape(-1,2).shape)
+print("5", np.array([1,2]).astype(np.float32).dtype, np.array([1.7,2.7]).astype(int))
+```
+```
+1 (2, 3) 2 6 int64
+2 [[0.0, 0.0], [0.0, 0.0]] [1.0, 1.0] [7, 7] [[1.0, 0.0], [0.0, 1.0]]
+3 [0 3 6 9] [0.   0.25 0.5  0.75 1.  ]
+4 (2, 3) (3, 2)
+5 float32 [1 2]
+```
+**Problem 5 is the trap:** `[1.7, 2.7] → [1, 2]`. Casting to int **truncates toward zero**, it does
+not round. `2.7` becomes `2`, not `3`. Silent data loss.
+**Problem 3:** `arange` excludes the stop; `linspace` **includes** it.
+
+### B — Indexing and selection
+
+6. Get element at row 1 col 2, and the last element, two ways.
+7. Every other row; then every other column starting at 1.
+8. Select all elements divisible by 3.
+9. Zero out all odd elements (in place).
+10. Fancy-index the pairs `(0,1)` and `(2,3)`.
+11. Use `np.where` to map `>6 → 1`, else `0`.
+12. Prove slicing gives a view and fancy indexing gives a copy.
+
+```python
+m = np.arange(12).reshape(3,4)
+print("6 ", m[1,2], m[-1,-1])
+print("7 ", m[::2].tolist(), m[:,1::2].tolist())
+print("8 ", m[m%3==0])
+r = m.copy(); r[r%2==1] = 0
+print("9 ", r.tolist())
+print("10", m[[0,2],[1,3]])
+print("11", np.where(m>6,1,0).tolist())
+v = np.arange(5); s = v[1:4];      s[0]=99
+w = np.arange(5); c = w[[1,2,3]];  c[0]=99
+print("12 view ->", v.tolist(), " copy ->", w.tolist())
+```
+```
+6  6 11
+7  [[0, 1, 2, 3], [8, 9, 10, 11]] [[1, 3], [5, 7], [9, 11]]
+8  [0 3 6 9]
+9  [[0, 0, 2, 0], [4, 0, 6, 0], [8, 0, 10, 0]]
+10 [ 1 11]
+11 [[0, 0, 0, 0], [0, 0, 0, 1], [1, 1, 1, 1]]
+12 view -> [0, 99, 2, 3, 4]  copy -> [0, 1, 2, 3, 4]
+```
+**Problem 12 is the one that silently corrupts real code.** The slice wrote through to `v`; the
+fancy index did not touch `w`.
+
+### C — Broadcasting
+
+13. Add a scalar.
+14. Add a `(4,)` row vector.
+15. Add a `(3,1)` column vector.
+16. Add a `(3,)` vector — predict the failure, then read the message.
+
+```python
+print("13", (m+100)[0].tolist())
+print("14", (m + np.array([10,20,30,40]))[0].tolist())
+print("15", (m + np.array([[1],[2],[3]]))[:,0].tolist())
+try:
+    m + np.array([1,2,3])
+except ValueError as e:
+    print("16", e)
+```
+```
+13 [100, 101, 102, 103]
+14 [10, 21, 32, 43]
+15 [1, 6, 11]
+16 operands could not be broadcast together with shapes (3,4) (3,) 
+```
+**Why 16 fails and 14 does not.** Shapes right-align. `(3,4)` vs `(4,)` → last axes 4 and 4, match.
+`(3,4)` vs `(3,)` → last axes 4 and 3, neither equal nor 1. Fix by reshaping to `(3,1)`, which is
+problem 15.
+
+### D — Aggregation
+
+17. Total; per-column sum; per-row sum; per-column mean.
+18. `argmax()` with and without an axis — explain the difference.
+19. Normalise each row to sum to 1 (needs `keepdims`).
+20. Cumulative sum of row 0.
+
+```python
+print("17", m.sum(), m.sum(axis=0).tolist(), m.sum(axis=1).tolist(), m.mean(axis=0).tolist())
+print("18", m.argmax(), m.argmax(axis=1).tolist())
+print("19", np.round(m/m.sum(axis=1,keepdims=True),4)[0].tolist())
+print("20", m[0].cumsum().tolist())
+```
+```
+17 66 [12, 15, 18, 21] [6, 22, 38] [4.0, 5.0, 6.0, 7.0]
+18 11 [3, 3, 3]
+19 [0.0, 0.1667, 0.3333, 0.5]
+20 [0, 1, 3, 6]
+```
+**Problem 18:** without an axis NumPy **flattens first**, so `11` is a position in the flattened
+array. With `axis=1` you get the winning column per row.
+**Problem 19:** drop `keepdims` and you get `(3,)`, which right-aligns as `(1,3)` against `(3,4)` and
+raises.
+
+### E — Real ML operations
+
+21. Standardise columns to zero mean, unit variance. Prove it worked.
+22. Pairwise Euclidean distance matrix, **no loops**.
+23. One-hot encode `[0,2,1]` into 3 classes, in one line.
+24. Row-wise numerically stable softmax. Prove rows sum to 1.
+25. Prove seeded randomness is reproducible.
+
+```python
+X = np.array([[1.,2.],[3.,4.],[5.,6.]])
+Z = (X - X.mean(0)) / X.std(0)
+print("21", np.round(Z,4).tolist(), np.round(Z.mean(0),10).tolist(), np.round(Z.std(0),10).tolist())
+
+P = np.array([[0.,0.],[3.,4.],[6.,8.]])
+D = np.sqrt(((P[:,None,:] - P[None,:,:])**2).sum(-1))
+print("22", np.round(D,4).tolist())
+
+print("23", np.eye(3)[np.array([0,2,1])].astype(int).tolist())
+
+L = np.array([[1.,2.,3.],[1.,1.,1.]])
+e = np.exp(L - L.max(1, keepdims=True))
+sm = e / e.sum(1, keepdims=True)
+print("24", np.round(sm,6).tolist(), np.round(sm.sum(1),10).tolist())
+
+print("25", np.allclose(np.random.default_rng(0).random(3), np.random.default_rng(0).random(3)))
+```
+```
+21 [[-1.2247, -1.2247], [0.0, 0.0], [1.2247, 1.2247]] [0.0, 0.0] [1.0, 1.0]
+22 [[0.0, 5.0, 10.0], [5.0, 0.0, 5.0], [10.0, 5.0, 0.0]]
+23 [[1, 0, 0], [0, 0, 1], [0, 1, 0]]
+24 [[0.090031, 0.244728, 0.665241], [0.333333, 0.333333, 0.333333]] [1.0, 1.0]
+25 True
+```
+**Problem 22 is the highest-value line in this bank.** `P[:,None,:] - P[None,:,:]` broadcasts
+`(3,1,2)` against `(1,3,2)` to give `(3,3,2)` — every pair, no loop. Check the answer: `(0,0)` to
+`(3,4)` is 5 ✓, and `(0,0)` to `(6,8)` is 10 ✓. The matrix is symmetric with a zero diagonal, as any
+distance matrix must be.
+**Problem 24:** row 2 is `[1,1,1]` — all equal logits give a uniform `0.3333` distribution, exactly
+as it should.
+
+**Scoring:** 22+/25 → go to Part 3. Under 18 → redo §2.1–2.15.
 
 ---
 ---
@@ -5052,6 +5225,252 @@ Both weights moved *down* the error slope. Repeat, and the model learns. **That 
 intermediate values cached from the forward pass. Nothing more.
 
 ---
+
+## 4.17 PROBLEM BANK — Calculus for ML
+
+**30 problems, five sections.** Modelled on the reference plan's *Calculus for ML*. Two helpers used
+throughout:
+
+```python
+import numpy as np
+def fwd(f, x, h=1e-5):  return (f(x+h) - f(x)) / h          # forward difference
+def cen(f, x, h=1e-6):  return (f(x+h) - f(x-h)) / (2*h)    # central: more accurate
+```
+
+| § | Problems | Level |
+|---|---|---|
+| A — Derivatives and rules | 1–5 | Easy |
+| B — Chain rule and ML functions | 6–13 | Easy → Medium |
+| C — Partials and gradients | 14–19 | Medium |
+| D — Jacobian, Hessian, VJP, Taylor | 20–25 | Medium → Hard |
+| E — Backpropagation | 26–30 | Hard |
+
+### A — Derivatives and rules (1–5)
+
+1. Forward-difference derivative of `x²` at 3.
+2. Central-difference the same. Which is closer to the exact 6?
+3. Power rule: `d/dx x³` at 2 vs `3x²`.
+4. Product rule: `d/dx (x²·x³)` at 2 vs `5x⁴`.
+5. Quotient rule: `d/dx (x²/(x+1))` at 1 vs the formula.
+
+```python
+f = lambda x: x**2
+print("1", fwd(f, 3.0))
+print("2", cen(f, 3.0), "| exact 6")
+print("3", cen(lambda x: x**3, 2.0), 3*2**2)
+print("4", cen(lambda x: x**2 * x**3, 2.0), 5*2**4)
+print("5", cen(lambda x: x**2/(x+1), 1.0), (2*1*(1+1) - 1**2)/(1+1)**2)
+```
+```
+1 6.000009999951316
+2 6.000000000838668 | exact 6
+3 12.000000000789157 12
+4 80.00000000230045 80
+5 0.7499999999383 0.75
+```
+**Problem 2 is the point.** Forward difference is off by `1e-5`; central is off by `8e-10` —
+**four orders of magnitude better** for the same one extra function call. Central difference is what
+gradient-checking uses, and this is why.
+
+### B — Chain rule and ML functions (6–13)
+
+6. `d/dx (3x+1)²` at 2. Check against `2(3x+1)·3`.
+7. Three-deep chain: `d/dx sin((3x+1)²)` at 1.
+8. `d/dx eˣ` at 1. What is special about the answer?
+9. `d/dx ln x` at 2.
+10. `d/dx sigmoid` at 0.5 vs `σ(1−σ)`.
+11. `d/dx tanh` at 0.5 vs `1−tanh²`.
+12. `d/dx ReLU` at +2 and at −2.
+13. Diagonal of the softmax Jacobian vs `p(1−p)`.
+
+```python
+sig = lambda x: 1/(1+np.exp(-x))
+def softmax(z):
+    e = np.exp(z - z.max()); return e/e.sum()
+
+print("6 ", cen(lambda x: (3*x+1)**2, 2.0), 2*(3*2+1)*3)
+print("7 ", cen(lambda x: np.sin((3*x+1)**2), 1.0), np.cos(16.0)*2*4*3)
+print("8 ", cen(np.exp, 1.0), np.exp(1.0))
+print("9 ", cen(np.log, 2.0), 0.5)
+print("10", cen(sig, 0.5), sig(0.5)*(1-sig(0.5)))
+print("11", cen(np.tanh, 0.5), 1-np.tanh(0.5)**2)
+print("12", cen(lambda x: np.maximum(x,0), 2.0), cen(lambda x: np.maximum(x,0), -2.0))
+p = softmax(np.array([1.,2.,3.]))
+Jac = np.diag(p) - np.outer(p, p)
+print("13", np.round(np.diag(Jac),6).tolist(), np.round(p*(1-p),6).tolist())
+```
+```
+6  41.99999999698889 42
+7  -22.983827522748967 -22.983827527761232
+8  2.718281828295588 2.718281828459045
+9  0.5000000000143778 0.5
+10 0.23500371221230054 0.2350037122015945
+11 0.7864477329644348 0.7864477329659274
+12 1.0000000000287557 0.0
+13 [0.081925, 0.184836, 0.222695] [0.081925, 0.184836, 0.222695]
+```
+**Problem 8:** `eˣ` is its own derivative — the value and the slope are both 2.71828.
+**Problem 12:** ReLU's derivative is exactly 1 when active and 0 when not. That 1 is why ReLU beat
+sigmoid: sigmoid's derivative maxes at 0.25 (problem 10), so multiplying many of them along a deep
+chain vanishes the gradient.
+**Problem 13:** the softmax Jacobian is `diag(p) − ppᵀ`, and its diagonal is `pᵢ(1−pᵢ)`. Confirmed
+to six decimals.
+
+### C — Partials and gradients (14–19)
+
+For `g(x,y) = x² + 3xy + y²`:
+
+14. `∂g/∂x` and `∂g/∂y` at `(1,2)`, numerically and by formula.
+15. Assemble the gradient vector.
+16. Its length — the steepness.
+17. Directional derivative along `u = [1,0]`.
+18. Write a general `numgrad(fn, v)` for vector input.
+19. **Gradient check:** analytic vs numerical.
+
+```python
+g = lambda x, y: x**2 + 3*x*y + y**2
+grad = lambda x, y: np.array([2*x + 3*y, 3*x + 2*y])
+h = 1e-6
+print("14", (g(1+h,2)-g(1-h,2))/(2*h), 2*1+3*2, (g(1,2+h)-g(1,2-h))/(2*h), 3*1+2*2)
+print("15", grad(1.,2.).tolist())
+print("16", float(np.linalg.norm(grad(1.,2.))))
+print("17", float(grad(1.,2.) @ np.array([1.,0.])))
+
+def numgrad(fn, v, h=1e-6):
+    v = np.asarray(v, float); out = np.zeros_like(v)
+    for i in range(len(v)):
+        vp, vm = v.copy(), v.copy(); vp[i]+=h; vm[i]-=h
+        out[i] = (fn(vp) - fn(vm)) / (2*h)
+    return out
+
+F = lambda v: v[0]**2 + 3*v[0]*v[1] + v[1]**2
+print("18", np.round(numgrad(F,[1.,2.]),6).tolist())
+print("19 gradcheck passes:", np.allclose(numgrad(F,[1.,2.]), grad(1.,2.), atol=1e-6))
+```
+```
+14 7.999999999341867 8 7.000000000090267 7
+15 [8.0, 7.0]
+16 10.63014581273465
+17 8.0
+18 [8.0, 7.0]
+19 gradcheck passes: True
+```
+**Problem 19 is the professional habit.** Never trust a hand-derived gradient. Compare it against a
+central-difference numerical gradient — that is *gradient checking*, and it is how every real
+backward pass gets validated.
+
+### D — Jacobian, Hessian, VJP, Taylor (20–25)
+
+For `G(x,y) = [x²y, 5x + sin y]`:
+
+20. Numerical Jacobian at `(1,2)`.
+21. Verify against the analytic `[[2xy, x²],[5, cos y]]`.
+22. Numerical Hessian of `g`.
+23. Its eigenvalues. Minimum, maximum or saddle? Compare with `x²+y²`.
+24. Taylor: 1st- and 2nd-order approximation of `x²` at 2 with step 0.1.
+25. VJP `vᵀJ` — note the output is a vector, not a matrix.
+
+```python
+G = lambda v: np.array([v[0]**2*v[1], 5*v[0] + np.sin(v[1])])
+
+def jac(fn, v, h=1e-6):
+    v = np.asarray(v,float); o = fn(v); J = np.zeros((len(o), len(v)))
+    for j in range(len(v)):
+        vp, vm = v.copy(), v.copy(); vp[j]+=h; vm[j]-=h
+        J[:,j] = (fn(vp) - fn(vm)) / (2*h)
+    return J
+
+def hess(fn, v, h=1e-4):
+    v = np.asarray(v,float); n = len(v); H = np.zeros((n,n))
+    for i in range(n):
+        for j in range(n):
+            A,B,C,D = v.copy(),v.copy(),v.copy(),v.copy()
+            A[i]+=h; A[j]+=h;  B[i]+=h; B[j]-=h
+            C[i]-=h; C[j]+=h;  D[i]-=h; D[j]-=h
+            H[i,j] = (fn(A)-fn(B)-fn(C)+fn(D)) / (4*h*h)
+    return H
+
+J = jac(G, [1.,2.])
+print("20", np.round(J,4).tolist())
+print("21", np.allclose(J, [[4,1],[5,np.cos(2.)]], atol=1e-5))
+print("22", np.round(hess(F,[1.,2.]),4).tolist())
+print("23", np.round(np.linalg.eigvalsh(hess(F,[1.,2.])),4).tolist(),
+            np.round(np.linalg.eigvalsh(hess(lambda v: v[0]**2+v[1]**2,[1.,1.])),4).tolist())
+x0, d = 2.0, 0.1
+print("24 true:", f(x0+d), " 1st:", f(x0)+2*x0*d, " 2nd:", f(x0)+2*x0*d+0.5*2*d**2)
+print("25", np.round(np.array([1.,1.]) @ J, 6).tolist())
+```
+```
+20 [[4.0, 1.0], [5.0, -0.4161]]
+21 True
+22 [[2.0, 3.0], [3.0, 2.0]]
+23 [-1.0, 5.0] [2.0, 2.0]
+24 true: 4.41  1st: 4.4  2nd: 4.41
+25 [9.0, 0.583853]
+```
+**Problem 23 is the most instructive result in this bank.** The Hessian of `x²+3xy+y²` has
+eigenvalues `[−1, +5]` — **mixed signs, so `(1,2)` is a saddle point, not a minimum.** By contrast
+`x²+y²` gives `[2, 2]`, both positive, a genuine bowl. That cross term `3xy` changed the geometry
+entirely, and only the eigenvalues reveal it.
+**Problem 24:** the 1st-order (linear) approximation gives 4.4 against a true 4.41 — off by 0.01.
+Adding the curvature term gives 4.41 exactly. **Gradient descent uses only the 1st-order term**,
+which is precisely why its steps must be small.
+
+### E — Backpropagation (26–30)
+
+Network: `x=2, w₁=3, w₂=4`, target `y=20`, squared-error loss.
+
+26. Forward pass: compute `a`, `ŷ`, `L`.
+27. Backward pass by hand for `∂L/∂w₂` and `∂L/∂w₁`. Verify numerically.
+28. Insert a sigmoid: `a = σ(w₁x)`. Redo both gradients and verify.
+29. Gradient of MSE with respect to a weight vector. Verify against `numgrad`.
+30. Gradient of softmax + cross-entropy. Discover the famous result.
+
+```python
+x, w1, w2, y = 2., 3., 4., 20.
+a = w1*x; yh = w2*a; L = (yh-y)**2
+print("26", a, yh, L)
+
+dL = 2*(yh-y)
+print("27 analytic:", dL*a, dL*w2*x)
+print("27 numeric :", cen(lambda w: (w*(w1*x)-y)**2, 4.0), cen(lambda w: (w2*(w*x)-y)**2, 3.0))
+
+a2 = sig(w1*x); yh2 = w2*a2; L2 = (yh2-y)**2
+dL2 = 2*(yh2-y)
+print("28 analytic:", round(dL2*a2,6), round(dL2*w2*a2*(1-a2)*x,6))
+print("28 numeric :", cen(lambda w: (w*sig(w1*x)-y)**2, 4.0), cen(lambda w: (w2*sig(w*x)-y)**2, 3.0))
+
+Xd = np.array([[1.,1.],[1.,2.],[1.,3.]]); yd = np.array([2.,3.,5.]); th = np.array([0.5,1.0])
+print("29 analytic:", np.round(2*Xd.T@(Xd@th-yd)/len(yd), 6).tolist())
+print("29 numeric :", np.round(numgrad(lambda t: np.mean((Xd@t-yd)**2), th), 6).tolist())
+
+yoh = np.array([0.,1.,0.]); logits = np.array([1.,2.,3.]); pr = softmax(logits)
+print("30 p - y   :", np.round(pr - yoh, 6).tolist())
+print("30 numeric :", np.round(numgrad(lambda l: -np.sum(yoh*np.log(softmax(l))), logits), 6).tolist())
+```
+```
+26 6.0 24.0 16.0
+27 analytic: 48.0 64.0
+27 numeric : 47.99999999249849 64.00000000805761
+28 analytic: -31.940608 -0.631817
+28 numeric : -31.9406081246143 -0.6318167322660884
+29 analytic: [-1.666667, -4.0]
+29 numeric : [-1.666667, -4.0]
+30 p - y   : [0.090031, -0.755272, 0.665241]
+30 numeric : [0.090031, -0.755272, 0.665241]
+```
+**Problem 28 shows the vanishing gradient in one number.** `∂L/∂w₁` is `−0.63` while `∂L/∂w₂` is
+`−31.94` — **fifty times smaller**, purely because the sigmoid's derivative `a(1−a)` is tiny when
+`a = 0.9975` is saturated. The earlier layer barely learns. Now imagine twenty layers.
+
+**Problem 30 is the most important identity in classification.** The gradient of softmax
+cross-entropy with respect to the logits is exactly **`p − y`** — predicted probability minus
+one-hot truth. Beautifully simple, and the numerical check confirms it to six decimals. It is why
+frameworks fuse softmax and cross-entropy into one operation: the combined gradient is a subtraction.
+
+**Scoring:** 26+/30 → go to Part 5. Under 20 → redo §4.1–4.16.
+
+---
 ---
 
 # PART 5 — OPTIMISATION
@@ -5483,6 +5902,224 @@ def test_recovers_slope():
     theta, _ = train(0.02, epochs=2000)
     assert abs(theta[1] - 3.0) < 0.1
 ```
+
+---
+
+## 5.15 PROBLEM BANK — Optimisation
+
+**25 problems, five sections.** Modelled on the reference plan's *Optimization*.
+
+| § | Problems | Level |
+|---|---|---|
+| A — Loss functions | 1–5 | Easy |
+| B — Loss gradients | 6–7 | Medium |
+| C — Gradient descent | 8–12 | Easy → Medium |
+| D — Optimisers | 13–17 | Medium → Hard |
+| E — Schedules and regularisation | 18–25 | Medium |
+
+### A — Loss functions (1–5)
+
+```python
+import numpy as np
+y  = np.array([3., -0.5, 2., 7.])
+yp = np.array([2.5, 0.,  2., 8.])
+
+print("1 MSE :", np.mean((y-yp)**2))
+print("2 MAE :", np.mean(np.abs(y-yp)))
+
+def bce(y, p, eps=1e-12):
+    p = np.clip(p, eps, 1-eps)
+    return -np.mean(y*np.log(p) + (1-y)*np.log(1-p))
+print("3 BCE :", round(bce(np.array([1,0,1,0]), np.array([.9,.1,.8,.2])), 6))
+
+def cce(Y, Q, eps=1e-12):
+    Q = np.clip(Q, eps, 1)
+    return -np.mean(np.sum(Y*np.log(Q), axis=1))
+print("4 CCE :", round(cce(np.array([[1,0,0],[0,1,0]]), np.array([[.7,.2,.1],[.1,.8,.1]])), 6))
+
+print("5 hinge:", round(float(np.mean(np.maximum(0, 1 - np.array([1,-1,1])*np.array([2.,-1.5,.3])))), 6))
+```
+```
+1 MSE : 0.375
+2 MAE : 0.5
+3 BCE : 0.164252
+4 CCE : 0.289909
+5 hinge: 0.233333
+```
+**Check 1 by hand:** errors `0.5, −0.5, 0, −1` → squares `0.25, 0.25, 0, 1` → sum 1.5 → ÷4 = 0.375 ✓
+**Check 5:** first two are right with margin ≥1 → cost 0; the third scores only 0.3 so pays 0.7;
+`0.7/3 = 0.2333` ✓
+
+### B — Loss gradients (6–7)
+
+6. `∂MSE/∂ŷ`
+7. `∂BCE/∂p` for the simple two-sample case
+
+```python
+print("6", np.round(2*(yp-y)/len(y), 6).tolist())
+print("7", np.round((np.array([.9,.1]) - np.array([1.,0.]))/2, 6).tolist())
+```
+```
+6 [-0.25, 0.25, 0.0, 0.5]
+7 [-0.05, 0.05]
+```
+**Problem 7 is the same identity as calculus problem 30**: for cross-entropy on a probability output,
+the gradient is `(p − y)` scaled by the batch size. Prediction minus truth.
+
+### C — Gradient descent (8–12)
+
+8. Minimise `x²` from `x=5`, `lr=0.1`, 15 steps.
+9. Do it at `lr = 0.01`, `0.1`, `1.1`. Name the three regimes.
+10. Same in 2-D from `[3,4]`.
+11. Fit linear regression by gradient descent. Recover slope 3, intercept 2.
+12. Compare a full-batch gradient with a 32-sample mini-batch gradient.
+
+```python
+def gd(lr, steps=15, x=5.0):
+    for _ in range(steps): x -= lr*2*x
+    return x
+print("8 ", round(gd(0.1), 6))
+print("9 ", [round(gd(l), 6) for l in (0.01, 0.1, 1.1)])
+
+def gd2(lr, steps=20, p=np.array([3.,4.])):
+    p = p.copy()
+    for _ in range(steps): p = p - lr*2*p
+    return p
+print("10", np.round(gd2(0.1), 6).tolist())
+
+rng = np.random.default_rng(0)
+X = rng.uniform(0,10,(100,1)); yl = 3*X[:,0] + 2 + rng.normal(0,1,100)
+Xb = np.column_stack([np.ones(100), X])
+def train(lr, ep=200):
+    t = np.zeros(2); hist = []
+    for _ in range(ep):
+        e = Xb@t - yl; hist.append(np.mean(e**2))
+        t = t - lr*2*Xb.T@e/len(yl)
+    return t, hist
+t, hist = train(0.02)
+print("11", np.round(t,4).tolist(), "final MSE", round(hist[-1],6))
+
+full = 2*Xb.T@(Xb@np.zeros(2) - yl)/100
+mini = 2*Xb[:32].T@(Xb[:32]@np.zeros(2) - yl[:32])/32
+print("12 full:", np.round(full,4).tolist(), " mini-batch:", np.round(mini,4).tolist())
+```
+```
+8  0.175922
+9  [3.692846, 0.175922, -77.035108]
+10 [0.034588, 0.046117]
+11 [1.7488, 3.0212] final MSE 0.954218
+12 full: [-36.7392, -256.3188]  mini-batch: [-35.7965, -246.621]
+```
+**Problem 9 — the three regimes you must recognise from a loss curve:** `0.01` too small (still at
+3.69, correct direction, hopeless pace) · `0.1` correct (0.176, converging) · `1.1` **divergent**
+(−77, overshooting further each step).
+**Problem 11:** slope recovered as 3.02 against a true 3.0; final MSE 0.95 is the noise floor, since
+we added noise of standard deviation 1. The intercept at 1.75 is still converging — intercepts always
+converge slowest.
+**Problem 12:** the mini-batch gradient is `[−35.8, −246.6]` against a true `[−36.7, −256.3]` —
+slightly wrong, same direction, **one third of the cost**. That trade is why nobody uses full batches.
+
+### D — Optimisers (13–17)
+
+13. Momentum. 14. Nesterov. 15. Adagrad. 16. RMSprop. 17. Adam with bias correction.
+
+```python
+def mom(lr, b, steps=15, x=5.0):
+    v = 0.
+    for _ in range(steps): v = b*v + 2*x; x -= lr*v
+    return x
+def nag(lr, b, steps=15, x=5.0):
+    v = 0.
+    for _ in range(steps):
+        look = x - lr*b*v
+        v = b*v + 2*look
+        x -= lr*v
+    return x
+def opt(name, steps=50, lr=0.1, x=5.0):
+    m = v = acc = 0.
+    for t in range(1, steps+1):
+        g = 2*x
+        if   name == 'adagrad': acc += g*g;            x -= lr*g/(np.sqrt(acc)+1e-8)
+        elif name == 'rmsprop': v = .9*v + .1*g*g;     x -= lr*g/(np.sqrt(v)+1e-8)
+        elif name == 'adam':
+            m = .9*m + .1*g
+            v = .999*v + .001*g*g
+            x -= lr*(m/(1-.9**t))/(np.sqrt(v/(1-.999**t))+1e-8)
+    return x
+
+print("13 momentum:", round(mom(0.1, 0.9), 6))
+print("14 nesterov:", round(nag(0.1, 0.9), 6))
+print("15 adagrad :", round(opt('adagrad'), 6))
+print("16 rmsprop :", round(opt('rmsprop'), 6))
+print("17 adam    :", round(opt('adam'), 6))
+print("   plain GD:", round(gd(0.1, 50), 6))
+```
+```
+13 momentum: 1.691113
+14 nesterov: 0.370491
+15 adagrad : 3.790824
+16 rmsprop : 0.496523
+17 adam    : 0.901119
+   plain GD: 0.0
+```
+**Read this table honestly, because it says the opposite of what most tutorials imply.** On a plain
+convex bowl, **plain gradient descent wins outright** (reaching 0.0), momentum *overshoots* to 1.69,
+and Adagrad barely moves at 3.79 because its accumulator throttles the step size to nothing.
+Nesterov (0.37) genuinely improves on momentum by looking ahead before committing.
+
+These optimisers earn their reputation on **million-parameter, non-convex, badly-scaled** problems —
+long narrow ravines where per-parameter adaptation matters. This toy has none of those properties, so
+it flatters the simplest method. **The transferable lesson: a benchmark that does not resemble your
+real workload will mislead you.**
+
+### E — Schedules and regularisation (18–25)
+
+18. Step decay. 19. Exponential decay. 20. Cosine annealing. 21. Linear warm-up.
+22. L2 penalty and its gradient. 23. L1 penalty and its subgradient.
+24. Convexity check via the second derivative. 25. Early-stopping logic.
+
+```python
+print("18 step  :", [round(0.1*0.5**(e//10), 5) for e in range(0,40,10)])
+print("19 expo  :", [round(float(0.1*np.exp(-0.05*e)), 5) for e in range(0,40,10)])
+print("20 cosine:", [round(float(0.5*0.1*(1+np.cos(np.pi*e/40))), 5) for e in range(0,40,10)])
+print("21 warmup:", [round(0.1*min(1,(e+1)/5), 5) for e in range(6)])
+
+w = np.array([3., -4., 0., 0.5])
+print("22 L2:", np.sum(w**2), " grad:", (2*0.01*w).tolist())
+print("23 L1:", np.sum(np.abs(w)), " subgrad:", (0.01*np.sign(w)).tolist())
+print("24 f''(x) of x^2:", round(float(hess(lambda v: v[0]**2, [1.])[0,0]), 4), "-> positive -> convex")
+
+losses = [1.0, 0.8, 0.7, 0.72, 0.71, 0.73]
+best, bad, stop = np.inf, 0, None
+for i, l in enumerate(losses):
+    if l < best - 1e-4:
+        best, bad = l, 0
+    else:
+        bad += 1
+        if bad >= 2:
+            stop = i; break
+print("25 stopped at epoch", stop, "with best", best)
+```
+```
+18 step  : [0.1, 0.05, 0.025, 0.0125]
+19 expo  : [0.1, 0.06065, 0.03679, 0.02231]
+20 cosine: [0.1, 0.08536, 0.05, 0.01464]
+21 warmup: [0.02, 0.04, 0.06, 0.08, 0.1, 0.1]
+22 L2: 25.25  grad: [0.06, -0.08, 0.0, 0.01]
+23 L1: 7.5  subgrad: [0.01, -0.01, 0.0, 0.01]
+24 f''(x) of x^2: 2.0 -> positive -> convex
+25 stopped at epoch 4 with best 0.7
+```
+**Problems 22 and 23 explain why L1 produces exact zeros.** Look at the gradients. L2's is `2λw` —
+it **shrinks as `w` shrinks**, so it approaches zero and never arrives. L1's is a constant `±λ`
+**regardless of how small `w` is**, so it keeps pushing until the weight hits exactly zero. That is
+the whole mechanism behind L1 feature selection, visible in two lists of numbers.
+
+**Problem 25:** the loss improved to 0.70 at epoch 2, then failed to beat it at epochs 3 and 4. With
+patience 2, training stops at epoch 4 and you keep the weights from epoch 2 — not the final ones.
+Forgetting to restore the best weights is a common bug.
+
+**Scoring:** 21+/25 → go to Part 6. Under 16 → redo §5.1–5.14.
 
 ---
 ---
@@ -5945,9 +6582,26 @@ the precise gap.
 
 ## Still missing — the queue
 
+### Reference-plan coverage
+
+Every study plan on the reference site that falls inside Week 1 is now matched:
+
+| Reference plan | Problems | Our bank | Status |
+|---|---|---|---|
+| NumPy Sheet — Array Computing from Scratch | 25 | §2.17 | **done** |
+| Linear Algebra — The Language of ML | 30 | §3.40 + §3.41 quizzes | **done** |
+| Calculus for ML — Derivatives, Gradients, Optimization | 30 | §4.17 | **done** |
+| Optimization — Finding Optimal Solutions | 25 | §5.15 | **done** |
+| *(no reference plan — information theory)* | — | §6.9 | **outstanding** |
+
+**Total: 110 problems + 50 quiz questions + 35 exercises, all with worked solutions and verified
+output.** Plans belonging to later weeks (Pandas, SQL, Probability & Statistics → Week 2; PyTorch,
+Micrograd → Week 5; Cracking ML/DL/NLP/RL/CV → Weeks 3–8; CUDA, Triton, Inference Engineering →
+Week 10) are mapped in the roadmap's resource index, not here.
+
 | Priority | What | Where it goes |
 |---|---|---|
-| 1 | **Exercise banks + answers** for Parts 3, 4, 5, 6 | §3.31, §4.17, §5.15, §6.9 |
+| 1 | **Information theory problem bank** (~20 problems) + quizzes for Parts 2, 4, 5, 6 | §6.9 |
 | 2 | **"Going deeper" advanced boxes** on every major concept — derivations, proofs, complexity, numerical stability | throughout |
 | 3 | **Interview question bank** per topic, with model answers | end of each Part |
 | 4 | Linear algebra depth: condition number, pseudo-inverse, positive-definiteness, trace, matrix norms, operation costs | Part 3 |
