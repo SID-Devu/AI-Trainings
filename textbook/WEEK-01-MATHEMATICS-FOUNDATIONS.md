@@ -216,6 +216,15 @@ take 8 or 15 days and lose nothing but calendar time. **The gates matter; the da
 | 3.14 | Systems of linear equations | 3.29 | **Deliverable 1** — PCA explainer |
 | 3.15 | Linear independence, rank, spaces | 3.30 | **Deliverable 2** — normal equation |
 
+## PART 3B — APPLIED LINEAR ALGEBRA (Day 3)
+| § | Concept | § | Concept |
+|---|---|---|---|
+| 3.31 | Trace | 3.36 | **Mahalanobis distance** |
+| 3.32 | Outer product, linear combination | 3.37 | Whitening transform |
+| 3.33 | Orthogonal projection matrix | 3.38 | RBF kernel matrix |
+| 3.34 | Cholesky decomposition | 3.39 | **Scaled dot-product attention** |
+| 3.35 | **Moore-Penrose pseudoinverse** | **3.40** | **PROBLEM BANK — 30 problems + solutions** |
+
 ## PART 4 — CALCULUS (Day 4)
 | § | Concept | § | Concept |
 |---|---|---|---|
@@ -3504,6 +3513,827 @@ distinction is a real interview answer.
 
 **Why the bias column.** Prepending ones lets the intercept be learned as just another weight, so
 one formula handles both slope and intercept.
+
+---
+
+# PART 3B — APPLIED LINEAR ALGEBRA
+
+*Nine concepts that appear in real ML code and in graded problem sets, and were missing from §3.1–3.30.
+Same format. All outputs verified.*
+
+## 3.31 Trace
+
+**Is.** The sum of the diagonal entries of a square matrix. `tr(A) = Σᵢ Aᵢᵢ`.
+
+**Why.** It turns matrix expressions into single numbers, which is how many loss functions and
+regularisers are written in papers.
+
+```python
+import numpy as np
+A = np.array([[1.,2.,3.],[4.,5.,6.],[7.,8.,9.]])
+print(np.trace(A))                      # 1 + 5 + 9
+B = np.array([[2.,0.],[1.,3.]]); C = np.array([[1.,4.],[2.,5.]])
+print(np.trace(B@C), np.trace(C@B))     # equal, even though B@C != C@B
+M = np.array([[4.,1.],[2.,3.]])
+print(np.trace(M), np.linalg.eigvals(M).sum())
+```
+```
+15.0
+21.0 21.0
+7.0 7.0
+```
+**Three properties worth memorising:**
+- `tr(A+B) = tr(A) + tr(B)`
+- **`tr(AB) = tr(BA)`** even when `AB ≠ BA` — this identity is used constantly to rearrange
+  expressions in derivations
+- **`tr(A)` = the sum of the eigenvalues** (7.0 both ways above)
+
+**Trap.** Only defined for square matrices.
+
+## 3.32 Outer product and linear combination
+
+**Outer product.** A column times a row. `(m,) ⊗ (n,) → (m,n)`. Every entry is `aᵢbⱼ`.
+
+```python
+a = np.array([1.,2.,3.]); b = np.array([4.,5.])
+print(np.outer(a, b))
+print("shape:", np.outer(a,b).shape, " rank:", np.linalg.matrix_rank(np.outer(a,b)))
+print("same as a[:,None]*b[None,:]:", np.allclose(np.outer(a,b), a[:,None]*b[None,:]))
+```
+```
+[[ 4.  5.]
+ [ 8. 10.]
+ [12. 15.]]
+shape: (3, 2)  rank: 1
+same as a[:,None]*b[None,:]: True
+```
+**The key fact: an outer product always has rank 1.** That is the bridge to §3.25 and to LoRA — a
+rank-`r` update is a sum of `r` outer products, which is why it needs so few parameters.
+
+**Contrast with the dot product:** dot takes two vectors → one *number* (§3.5); outer takes two
+vectors → a whole *matrix*. Same inputs, opposite output.
+
+**Linear combination.** Scale each vector and add: `c₁v₁ + c₂v₂ + …`
+
+```python
+v1 = np.array([1.,0.]); v2 = np.array([0.,1.])
+print(3*v1 + 4*v2)
+V = np.array([[1.,0.],[0.,1.]])
+print(V.T @ np.array([3.,4.]))          # the same thing as a matrix-vector product
+```
+```
+[3. 4.]
+[3. 4.]
+```
+**Why this matters.** *Every* matrix-vector product `A @ x` is a linear combination of A's columns,
+weighted by the entries of x. That single sentence is the reason span, basis and column space
+(§3.15–3.17) are defined the way they are.
+
+## 3.33 Orthogonal projection matrix
+
+**Is.** §3.19 projected onto one vector. This projects onto the whole column space of a matrix, and
+packages the operation as a matrix you can reuse.
+
+`P = A(AᵀA)⁻¹Aᵀ`
+
+```python
+A = np.array([[1.,0.],[0.,1.],[0.,0.]])       # column space = the xy-plane
+P = A @ np.linalg.inv(A.T@A) @ A.T
+print(P)
+x = np.array([2.,3.,5.])
+print("projected :", P @ x)
+print("idempotent:", np.allclose(P@P, P))
+print("symmetric :", np.allclose(P, P.T))
+print("residual orthogonal:", np.allclose(A.T @ (x - P@x), 0))
+print("trace = rank:", np.trace(P), np.linalg.matrix_rank(A))
+```
+```
+[[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 0.]]
+projected : [2. 3. 0.]
+idempotent: True
+symmetric : True
+residual orthogonal: True
+trace = rank: 2.0 2
+```
+The z-component was deleted — exactly what projecting onto the xy-plane should do.
+
+**Two defining properties.** `P² = P` (projecting twice changes nothing — you are already there) and
+`Pᵀ = P`. Any matrix with both is an orthogonal projection. Its **trace equals the rank** of the
+space projected onto.
+
+**Why.** Least-squares regression is projection: `ŷ = Px` projects the target onto the span of your
+features. §3.30's normal equation is this matrix in disguise.
+
+## 3.34 Cholesky decomposition
+
+**Is.** For a symmetric **positive-definite** matrix, `A = L Lᵀ` with `L` lower-triangular. Think of
+it as a matrix square root.
+
+**Positive-definite** means all eigenvalues are strictly positive — the "bowl" case from §4.13.
+
+```python
+S = np.array([[4.,2.],[2.,3.]])
+print("eigenvalues:", np.linalg.eigvalsh(S))       # both positive -> positive definite
+L = np.linalg.cholesky(S)
+print(L)
+print("L @ L.T == S:", np.allclose(L@L.T, S))
+try:
+    np.linalg.cholesky(np.array([[1.,2.],[2.,1.]]))
+except np.linalg.LinAlgError as e:
+    print("LinAlgError:", e)
+```
+```
+eigenvalues: [1.43844719 5.56155281]
+[[2.         0.        ]
+ [1.         1.41421356]]
+L @ L.T == S: True
+LinAlgError: Matrix is not positive definite
+```
+**Why.** It is about twice as fast as LU for the matrices it applies to, and covariance matrices
+(§3.26) are symmetric positive-semidefinite, so it appears throughout statistics — sampling from a
+multivariate normal, Gaussian processes, Kalman filters.
+
+**Trap.** It fails loudly on non-positive-definite input, as shown. That failure is actually a useful
+**test**: if Cholesky succeeds, your matrix is positive-definite.
+
+## 3.35 Moore-Penrose pseudoinverse
+
+**Is.** An inverse for matrices that have no inverse — non-square, or singular. Written `A⁺`.
+
+For full column rank: `A⁺ = (AᵀA)⁻¹Aᵀ`. In general it is computed from the SVD (§3.24):
+`A⁺ = V Σ⁺ Uᵀ`, where `Σ⁺` inverts the non-zero singular values and leaves the zeros alone.
+
+```python
+A = np.array([[1.,1.],[1.,2.],[1.,3.]])       # 3x2 -- tall, no true inverse
+pinv = np.linalg.pinv(A)
+print("shape:", pinv.shape)
+print(pinv)
+print("equals (A^T A)^-1 A^T:", np.allclose(pinv, np.linalg.inv(A.T@A)@A.T))
+
+y = np.array([2.,3.,5.])
+print("least squares via pinv:", pinv @ y)
+print("np.linalg.lstsq       :", np.linalg.lstsq(A, y, rcond=None)[0])
+
+Asing = np.array([[1.,2.],[2.,4.]])           # singular: row 2 = 2x row 1
+print("pinv of a singular matrix still works:")
+print(np.round(np.linalg.pinv(Asing), 6))
+```
+```
+shape: (2, 3)
+[[ 1.33333333e+00  3.33333333e-01 -6.66666667e-01]
+ [-5.00000000e-01  1.03871725e-16  5.00000000e-01]]
+equals (A^T A)^-1 A^T: True
+least squares via pinv: [0.33333333 1.5       ]
+np.linalg.lstsq       : [0.33333333 1.5       ]
+pinv of a singular matrix still works:
+[[0.04 0.08]
+ [0.08 0.16]]
+```
+**Read that `1.03871725e-16` in the middle.** Mathematically it should be exactly 0. It is not,
+because the SVD is computed in floating point (§1.5). NumPy switches the whole array to scientific
+notation because one entry is so tiny. **A number like `1e-16` where you expect `0` is not a bug —
+it is float noise**, and recognising that on sight is a real skill.
+**Why this is important.** §3.13 said a singular matrix has no inverse, and `np.linalg.inv` raises.
+The pseudoinverse gives the *best available* answer anyway — the least-squares solution. It is what
+`lstsq` uses internally, and it is why linear regression still works when your features are
+correlated.
+
+**Trap.** `pinv` is more expensive than `solve`. Use `solve` when the matrix is genuinely invertible;
+reach for `pinv` when it is not.
+
+## 3.36 Mahalanobis distance
+
+**Is.** Distance that accounts for how the data is spread and correlated.
+
+`d(x, μ) = √( (x−μ)ᵀ Σ⁻¹ (x−μ) )`, where `Σ` is the covariance matrix (§3.26).
+
+**The demonstration that makes it click.** Take data where feature 2 ≈ 2× feature 1, then measure two
+points that are the *same Euclidean distance* from the centre — one along the data's grain, one
+across it:
+
+```python
+rng = np.random.default_rng(0)
+x0 = rng.normal(0, 1, 300)
+X = np.column_stack([x0, 2*x0 + rng.normal(0, 0.5, 300)])
+mu, Cov = X.mean(axis=0), np.cov(X, rowvar=False)
+
+def mahalanobis(p, mu, Cov):
+    d = p - mu
+    return float(np.sqrt(d @ np.linalg.inv(Cov) @ d))
+
+along  = mu + np.array([1.0,  2.0])     # follows the trend
+across = mu + np.array([1.0, -2.0])     # cuts against it
+
+print("Euclidean, along :", float(np.linalg.norm([1.0,  2.0])))
+print("Euclidean, across:", float(np.linalg.norm([1.0, -2.0])))
+print("Mahalanobis, along :", round(mahalanobis(along,  mu, Cov), 4))
+print("Mahalanobis, across:", round(mahalanobis(across, mu, Cov), 4))
+```
+```
+Euclidean, along : 2.23606797749979
+Euclidean, across: 2.23606797749979
+Mahalanobis, along : 0.9817
+Mahalanobis, across: 8.2969
+```
+**Euclidean distance says these two points are equally far from the centre. Mahalanobis says one is
+8.5× further than the other — and Mahalanobis is right.** The "across" point is genuinely anomalous
+for this dataset; the "along" point is completely ordinary.
+
+**Why.** This is the correct distance for anomaly and outlier detection on correlated data. Euclidean
+distance ignores the shape of the cloud and will flag normal points while missing real anomalies.
+
+**Trap.** Needs `Σ⁻¹`, so it fails when the covariance is singular — which happens with perfectly
+correlated or duplicated features. Use the pseudoinverse (§3.35) or regularise by adding `εI`.
+
+## 3.37 Whitening transform
+
+**Is.** A linear transform that makes the data have zero mean, unit variance in every direction, and
+**zero correlation** — i.e. covariance equal to the identity.
+
+Via eigendecomposition of the covariance (§3.22): `W = V Λ^(−1/2) Vᵀ`, then `Z = (X − μ) W`.
+
+```python
+Xc = X - X.mean(axis=0)
+C = np.cov(Xc, rowvar=False)
+vals, vecs = np.linalg.eigh(C)
+W = vecs @ np.diag(1.0/np.sqrt(vals)) @ vecs.T      # ZCA whitening
+Z = Xc @ W
+
+print("covariance before:"); print(np.round(C, 4))
+print("covariance after :"); print(np.round(np.cov(Z, rowvar=False), 6))
+print("is identity:", np.allclose(np.cov(Z, rowvar=False), np.eye(2), atol=1e-8))
+```
+```
+covariance before:
+[[1.0394 2.0999]
+ [2.0999 4.4804]]
+covariance after :
+[[ 1. -0.]
+ [-0.  1.]]
+is identity: True
+```
+The strong off-diagonal correlation of 2.0999 became exactly 0.
+
+**Why.** Correlated, differently-scaled features make optimisation slow — the loss surface becomes a
+long narrow ravine, which is precisely the geometry momentum exists to fix (§5.7). Whitening removes
+that. It is also the conceptual ancestor of batch normalisation in Week 6.
+
+**PCA whitening vs ZCA whitening.** `Λ^(−1/2)Vᵀ` also whitens but rotates the data into the
+eigenvector basis. The `V Λ^(−1/2) Vᵀ` form above rotates back, staying as close to the original
+orientation as possible. Both give identity covariance.
+
+**Trap.** Dividing by `√λ` explodes when an eigenvalue is near zero. Real implementations add a small
+`ε`: `1/np.sqrt(vals + 1e-8)`.
+
+## 3.38 RBF kernel matrix
+
+**Is.** A similarity matrix where closeness decays with squared distance.
+
+`K(x, y) = exp(−γ‖x−y‖²)`
+
+```python
+Xk = np.array([[0.,0.],[1.,0.],[0.,1.]])
+
+def rbf(Xa, Xb, gamma=0.5):
+    d2 = ((Xa[:,None,:] - Xb[None,:,:])**2).sum(-1)      # pairwise squared distances
+    return np.exp(-gamma * d2)
+
+K = rbf(Xk, Xk)
+print(np.round(K, 6))
+print("diagonal all 1:", np.allclose(np.diag(K), 1))
+print("symmetric     :", np.allclose(K, K.T))
+print("eigenvalues   :", np.round(np.linalg.eigvalsh(K), 6))
+```
+```
+[[1.       0.606531 0.606531]
+ [0.606531 1.       0.367879]
+ [0.606531 0.367879 1.      ]]
+diagonal all 1: True
+symmetric     : True
+eigenvalues   : [0.306675 0.632121 2.061204]
+```
+Diagonal is 1 (every point is identical to itself). Points 2 and 3 are `√2` apart so they are the
+least similar (0.3679).
+
+**All eigenvalues positive** → the matrix is positive-definite, which is the formal requirement for
+a valid kernel.
+
+**Why.** This is the kernel trick: an SVM (Week 3) can work in an infinite-dimensional feature space
+while only ever computing this matrix. RBF kernels also underpin Gaussian processes.
+
+**Note the broadcasting.** `Xa[:,None,:] - Xb[None,:,:]` produces shape `(n, m, d)` from `(n,d)` and
+`(m,d)` — every pair, no loop. That is §2.10 doing real work, and it is worth tracing the shapes by
+hand.
+
+## 3.39 Scaled dot-product attention — as pure linear algebra
+
+**Is.** The core operation of every transformer. You meet it properly in Week 7; here it is just
+matrices, and you already know every piece.
+
+`Attention(Q, K, V) = softmax(QKᵀ / √dₖ) V`
+
+Three steps: **score** every query against every key with a dot product (§3.5), **normalise** those
+scores into weights that sum to 1, then take a **weighted average** of the values.
+
+```python
+def softmax(z, axis=-1):
+    z = z - z.max(axis=axis, keepdims=True)      # stability, §1.5
+    e = np.exp(z)
+    return e / e.sum(axis=axis, keepdims=True)
+
+Q = np.array([[1.,0.],[0.,1.]])
+K = np.array([[1.,0.],[0.,1.]])
+V = np.array([[10.,0.],[0.,10.]])
+dk = Q.shape[-1]
+
+scores  = Q @ K.T / np.sqrt(dk)
+weights = softmax(scores)
+out     = weights @ V
+
+print("scores :"); print(np.round(scores, 6))
+print("weights:"); print(np.round(weights, 6))
+print("rows sum to 1:", np.allclose(weights.sum(axis=1), 1))
+print("output :"); print(np.round(out, 6))
+```
+```
+scores :
+[[0.707107 0.      ]
+ [0.       0.707107]]
+weights:
+[[0.669762 0.330238]
+ [0.330238 0.669762]]
+output :
+[[6.697615 3.302385]
+ [3.302385 6.697615]]
+rows sum to 1: True
+```
+Query 1 matches key 1 more strongly (weight 0.67 vs 0.33), so the output leans towards value 1.
+
+**Why the `√dₖ`.** Dot products grow with dimension. Large scores push softmax into a region where
+one weight is ~1 and the rest ~0, and the gradient there is almost zero (§4.6, vanishing gradient).
+Dividing by `√dₖ` keeps the scores in a sane range. **This is the answer to a very common interview
+question**, and you can now give it from linear algebra alone.
+
+**Shapes.** `Q:(n,dₖ)`, `K:(m,dₖ)`, `V:(m,dᵥ)` → scores `(n,m)` → output `(n,dᵥ)`. Trace that.
+
+---
+
+## 3.40 PROBLEM BANK — Linear Algebra
+
+**30 problems, five sections, graded.** Every one has a full solution. Write each as a function and
+test it against NumPy's built-in before reading the answer.
+
+**Rules.** Implement from scratch — loops or basic array arithmetic. Do **not** call the NumPy
+function that solves the whole problem; call it only to *check* your answer.
+
+### Section 1 — Vectors (6 problems)
+
+| # | Problem | Level |
+|---|---|---|
+| 1 | Dot product | Easy |
+| 2 | Euclidean distance | Easy |
+| 3 | Cosine similarity | Easy |
+| 4 | Vector norms — L1, L2, L∞ | Easy |
+| 5 | Outer product | Easy |
+| 6 | Linear combination | Easy |
+
+```python
+import numpy as np
+
+# 1. dot product
+def dot(a, b):
+    assert len(a) == len(b), "lengths must match"
+    return sum(ai*bi for ai, bi in zip(a, b))
+
+# 2. euclidean distance
+def euclidean(a, b):
+    return sum((ai-bi)**2 for ai, bi in zip(a, b)) ** 0.5
+
+# 3. cosine similarity
+def cosine(a, b):
+    na = dot(a,a) ** 0.5
+    nb = dot(b,b) ** 0.5
+    return dot(a,b) / (na*nb + 1e-12)
+
+# 4. norms
+def norm(v, p=2):
+    if p == 1:            return sum(abs(x) for x in v)
+    if p == 2:            return sum(x*x for x in v) ** 0.5
+    if p == float("inf"): return max(abs(x) for x in v)
+    raise ValueError("p must be 1, 2 or inf")
+
+# 5. outer product
+def outer(a, b):
+    return np.array([[ai*bj for bj in b] for ai in a])
+
+# 6. linear combination
+def lincomb(vectors, coeffs):
+    out = np.zeros_like(np.asarray(vectors[0], dtype=float))
+    for v, c in zip(vectors, coeffs):
+        out = out + c*np.asarray(v, dtype=float)
+    return out
+
+a = np.array([1.,2.,3.]); b = np.array([4.,5.,6.])
+print("1 dot        :", dot(a,b),                  "| numpy:", a@b)
+print("2 distance   :", euclidean([1.,2.],[4.,6.]),"| numpy:", np.linalg.norm(np.array([1.,2.])-np.array([4.,6.])))
+print("3 cosine     :", round(cosine(a,b), 6))
+print("4 norms      :", norm(a,1), round(norm(a,2),6), norm(a,float('inf')))
+print("5 outer shape:", outer(a, np.array([4.,5.])).shape)
+print("6 lincomb    :", lincomb([[1.,0.],[0.,1.]], [3.,4.]))
+```
+```
+1 dot        : 32.0 | numpy: 32.0
+2 distance   : 5.0 | numpy: 5.0
+3 cosine     : 0.974632
+4 norms      : 6.0 3.741657 3.0
+5 outer shape: (3, 2)
+6 lincomb    : [3. 4.]
+```
+**Checks:** dot = `4+10+18 = 32` ✓ · distance = `√(9+16) = 5` ✓ · L1 of `[1,2,3]` = 6 ✓ ·
+L∞ = 3 ✓ · cosine ≈ 0.9746 means the vectors point almost the same way.
+
+### Section 2 — Matrix basics (7 problems)
+
+| # | Problem | Level |
+|---|---|---|
+| 7 | Transpose | Easy |
+| 8 | Trace | Easy |
+| 9 | Hadamard (elementwise) product | Easy |
+| 10 | Matrix–vector multiply | Easy |
+| 11 | Matrix multiply | Medium |
+| 12 | Determinant (2×2 and 3×3) | Medium |
+| 13 | Rank via row reduction | Hard |
+
+```python
+def transpose(A):
+    A = np.asarray(A, float)
+    return np.array([[A[i,j] for i in range(A.shape[0])] for j in range(A.shape[1])])
+
+def trace(A):
+    A = np.asarray(A, float)
+    assert A.shape[0] == A.shape[1], "must be square"
+    return sum(A[i,i] for i in range(A.shape[0]))
+
+def hadamard(A, B):
+    A, B = np.asarray(A,float), np.asarray(B,float)
+    assert A.shape == B.shape
+    return np.array([[A[i,j]*B[i,j] for j in range(A.shape[1])] for i in range(A.shape[0])])
+
+def matvec(A, x):
+    A = np.asarray(A,float)
+    return np.array([sum(A[i,j]*x[j] for j in range(A.shape[1])) for i in range(A.shape[0])])
+
+def matmul(A, B):
+    A, B = np.asarray(A,float), np.asarray(B,float)
+    assert A.shape[1] == B.shape[0], f"inner dims {A.shape[1]} vs {B.shape[0]}"
+    m, n, p = A.shape[0], A.shape[1], B.shape[1]
+    C = np.zeros((m,p))
+    for i in range(m):
+        for j in range(p):
+            C[i,j] = sum(A[i,k]*B[k,j] for k in range(n))
+    return C
+
+def det(A):
+    A = np.asarray(A, float); n = A.shape[0]
+    if n == 1: return A[0,0]
+    if n == 2: return A[0,0]*A[1,1] - A[0,1]*A[1,0]
+    total = 0.0
+    for j in range(n):                                  # cofactor expansion
+        minor = np.delete(np.delete(A, 0, axis=0), j, axis=1)
+        total += ((-1)**j) * A[0,j] * det(minor)
+    return total
+
+def rank(A, tol=1e-10):
+    A = np.asarray(A, float).copy()
+    rows, cols = A.shape; r = 0
+    for c in range(cols):
+        pivot = None
+        for i in range(r, rows):
+            if abs(A[i,c]) > tol:
+                pivot = i; break
+        if pivot is None: continue
+        A[[r,pivot]] = A[[pivot,r]]
+        A[r] = A[r] / A[r,c]
+        for i in range(rows):
+            if i != r and abs(A[i,c]) > tol:
+                A[i] = A[i] - A[i,c]*A[r]
+        r += 1
+        if r == rows: break
+    return r
+
+A = np.array([[1.,2.,3.],[4.,5.,6.]])
+B = np.array([[7.,8.],[9.,10.],[11.,12.]])
+D3 = np.array([[6.,1.,1.],[4.,-2.,5.],[2.,8.,7.]])
+print("7  transpose ok:", np.allclose(transpose(A), A.T))
+print("8  trace       :", trace([[1.,2.,3.],[4.,5.,6.],[7.,8.,9.]]))
+print("9  hadamard    :"); print(hadamard([[1.,2.],[3.,4.]], [[5.,6.],[7.,8.]]))
+print("10 matvec      :", matvec([[1.,2.],[3.,4.]], [5.,6.]))
+print("11 matmul      :"); print(matmul(A,B))
+print("   matches numpy:", np.allclose(matmul(A,B), A@B))
+print("12 det 2x2     :", det([[1.,2.],[3.,4.]]))
+print("   det 3x3     :", det(D3), "| numpy:", round(np.linalg.det(D3), 6))
+print("13 rank full   :", rank([[1.,0.],[0.,1.]]))
+print("   rank defic. :", rank([[1.,2.],[2.,4.]]))
+```
+```
+7  transpose ok: True
+8  trace       : 15.0
+9  hadamard    :
+[[ 5. 12.]
+ [21. 32.]]
+10 matvec      : [17. 39.]
+11 matmul      :
+[[ 58.  64.]
+ [139. 154.]]
+   matches numpy: True
+12 det 2x2     : -2.0
+   det 3x3     : -306.0 | numpy: -306.0
+13 rank full   : 2
+   rank defic. : 1
+```
+**Note problem 12:** by hand the determinant of `[[1,2],[3,4]]` is exactly `−2.0`, while
+`np.linalg.det` returns `−2.0000000000000004` (§3.12). Your from-scratch version is *more* exact here
+because it does two multiplications instead of an LU factorisation.
+
+### Section 3 — Linear systems (4 problems)
+
+| # | Problem | Level |
+|---|---|---|
+| 14 | Vector projection | Easy |
+| 15 | Gram-Schmidt orthogonalisation | Medium |
+| 16 | Solve a linear system (Gaussian elimination) | Hard |
+| 17 | LU decomposition | Hard |
+
+```python
+def project(a, b):
+    a, b = np.asarray(a,float), np.asarray(b,float)
+    return (a @ b) / (b @ b) * b
+
+def gram_schmidt(V):
+    out = []
+    for v in np.asarray(V, float):
+        w = v.copy()
+        for u in out:
+            w = w - (w @ u) * u
+        n = np.linalg.norm(w)
+        if n > 1e-12:
+            out.append(w / n)
+    return np.array(out)
+
+def solve(A, b):
+    A = np.asarray(A,float).copy(); b = np.asarray(b,float).copy()
+    n = len(b)
+    for c in range(n):                                   # forward elimination
+        p = max(range(c,n), key=lambda i: abs(A[i,c]))   # partial pivoting
+        if abs(A[p,c]) < 1e-12: raise ValueError("singular matrix")
+        A[[c,p]] = A[[p,c]]; b[[c,p]] = b[[p,c]]
+        for i in range(c+1, n):
+            f = A[i,c]/A[c,c]
+            A[i] -= f*A[c]; b[i] -= f*b[c]
+    x = np.zeros(n)                                      # back substitution
+    for i in range(n-1, -1, -1):
+        x[i] = (b[i] - A[i,i+1:] @ x[i+1:]) / A[i,i]
+    return x
+
+def lu(A):
+    A = np.asarray(A, float); n = A.shape[0]
+    L = np.eye(n); U = A.copy()
+    for c in range(n):
+        for i in range(c+1, n):
+            f = U[i,c]/U[c,c]
+            L[i,c] = f
+            U[i] -= f*U[c]
+    return L, U
+
+print("14 projection  :", project([3.,4.], [1.,0.]))
+Q = gram_schmidt([[1.,1.],[1.,0.]])
+print("15 orthonormal :", np.allclose(Q@Q.T, np.eye(2)))
+x = solve([[2.,1.],[1.,3.]], [5.,10.])
+print("16 solve       :", x, "| numpy:", np.linalg.solve([[2.,1.],[1.,3.]],[5.,10.]))
+L,U = lu([[4.,3.],[6.,3.]])
+print("17 LU reconstructs:", np.allclose(L@U, [[4.,3.],[6.,3.]]))
+print("   L lower, U upper:", np.allclose(L, np.tril(L)), np.allclose(U, np.triu(U)))
+```
+```
+14 projection  : [3. 0.]
+15 orthonormal : True
+16 solve       : [1. 3.] | numpy: [1. 3.]
+17 LU reconstructs: True
+   L lower, U upper: True True
+```
+**Check 16 by hand:** `2(1)+1(3) = 5` ✓ and `1(1)+3(3) = 10` ✓.
+**Why partial pivoting** in `solve`: without swapping in the largest pivot, a small pivot divides and
+amplifies floating-point error. Real solvers all do this.
+
+### Section 4 — Decompositions (7 problems)
+
+| # | Problem | Level |
+|---|---|---|
+| 18 | SVD components and reconstruction | Medium |
+| 19 | Low-rank approximation | Medium |
+| 20 | Eigendecomposition and verification | Medium |
+| 21 | Orthogonal projection matrix | Medium |
+| 22 | QR decomposition | Hard |
+| 23 | Cholesky decomposition | Hard |
+| 24 | Moore-Penrose pseudoinverse | Hard |
+
+```python
+# 18-19 SVD and low-rank
+M = np.array([[3.,0.],[0.,-2.]])
+U,S,Vt = np.linalg.svd(M)
+print("18 singular values:", S)
+print("   reconstructs   :", np.allclose(U @ np.diag(S) @ Vt, M))
+
+rng = np.random.default_rng(0)
+base = rng.random((20,3)); Alr = base @ rng.random((3,20))
+U2,S2,Vt2 = np.linalg.svd(Alr)
+def low_rank(U,S,Vt,k):
+    return U[:,:k] @ np.diag(S[:k]) @ Vt[:k,:]
+for k in (1,2,3):
+    err = np.linalg.norm(Alr - low_rank(U2,S2,Vt2,k))/np.linalg.norm(Alr)
+    print(f"19 k={k} relative error {err:.6f}")
+
+# 20 eigendecomposition
+E = np.array([[4.,1.],[2.,3.]])
+vals, vecs = np.linalg.eig(E)
+print("20 eigenvalues:", vals)
+print("   A v = lam v :", np.allclose(E@vecs[:,0], vals[0]*vecs[:,0]))
+print("   A = V L V^-1:", np.allclose(vecs @ np.diag(vals) @ np.linalg.inv(vecs), E))
+
+# 21 projection matrix
+def proj_matrix(A):
+    A = np.asarray(A, float)
+    return A @ np.linalg.inv(A.T@A) @ A.T
+Pp = proj_matrix([[1.,0.],[0.,1.],[0.,0.]])
+print("21 idempotent:", np.allclose(Pp@Pp, Pp), "| trace=rank:", np.trace(Pp))
+
+# 22 QR via Gram-Schmidt
+def qr(A):
+    A = np.asarray(A, float)
+    Qc = gram_schmidt(A.T).T          # orthonormalise the columns
+    R = Qc.T @ A
+    return Qc, R
+Aq = np.array([[1.,1.],[1.,0.],[0.,1.]])
+Qq, Rq = qr(Aq)
+print("22 QR reconstructs:", np.allclose(Qq@Rq, Aq), "| Q orthonormal:", np.allclose(Qq.T@Qq, np.eye(2)))
+
+# 23 Cholesky
+def cholesky(A):
+    A = np.asarray(A, float); n = A.shape[0]
+    L = np.zeros((n,n))
+    for i in range(n):
+        for j in range(i+1):
+            s = sum(L[i,k]*L[j,k] for k in range(j))
+            if i == j:
+                L[i,j] = (A[i,i]-s) ** 0.5
+            else:
+                L[i,j] = (A[i,j]-s)/L[j,j]
+    return L
+Sc = np.array([[4.,2.],[2.,3.]])
+Lc = cholesky(Sc)
+print("23 cholesky matches numpy:", np.allclose(Lc, np.linalg.cholesky(Sc)))
+print("   L @ L.T == S          :", np.allclose(Lc@Lc.T, Sc))
+
+# 24 pseudoinverse via SVD
+def pinv(A, tol=1e-12):
+    U,S,Vt = np.linalg.svd(np.asarray(A,float), full_matrices=False)
+    Sinv = np.array([1/s if s > tol else 0.0 for s in S])
+    return Vt.T @ np.diag(Sinv) @ U.T
+Apn = np.array([[1.,1.],[1.,2.],[1.,3.]])
+print("24 pinv matches numpy:", np.allclose(pinv(Apn), np.linalg.pinv(Apn)))
+print("   works on singular  :", np.allclose(pinv([[1.,2.],[2.,4.]]), np.linalg.pinv([[1.,2.],[2.,4.]])))
+```
+```
+18 singular values: [3. 2.]
+   reconstructs   : True
+19 k=1 relative error 0.131493
+19 k=2 relative error 0.071347
+19 k=3 relative error 0.000000
+20 eigenvalues: [5. 2.]
+   A v = lam v : True
+   A = V L V^-1: True
+21 idempotent: True | trace=rank: 2.0
+22 QR reconstructs: True | Q orthonormal: True
+23 cholesky matches numpy: True
+   L @ L.T == S          : True
+24 pinv matches numpy: True
+   works on singular  : True
+```
+**Note problem 18:** the singular values of `[[3,0],[0,-2]]` are `[3, 2]` — both **positive**, even
+though one eigenvalue is `−2`. Singular values are always non-negative; the sign is absorbed into
+`U`. That distinction is a favourite exam question.
+
+### Section 5 — ML applications (6 problems)
+
+| # | Problem | Level |
+|---|---|---|
+| 25 | Mahalanobis distance | Medium |
+| 26 | PCA from scratch | Hard |
+| 27 | Least squares solution | Medium |
+| 28 | Whitening transform | Hard |
+| 29 | RBF kernel matrix | Medium |
+| 30 | Scaled dot-product attention | Hard |
+
+```python
+# 25 Mahalanobis
+def mahalanobis(x, mu, Cov):
+    d = np.asarray(x,float) - np.asarray(mu,float)
+    return float(np.sqrt(d @ np.linalg.inv(Cov) @ d))
+
+# 26 PCA
+def pca(X, k):
+    X = np.asarray(X, float)
+    mu = X.mean(axis=0); Xc = X - mu
+    C = (Xc.T @ Xc) / (len(X)-1)
+    vals, vecs = np.linalg.eigh(C)
+    order = np.argsort(vals)[::-1]
+    vals, vecs = vals[order], vecs[:, order]
+    return Xc @ vecs[:, :k], vals/vals.sum()
+
+# 27 least squares
+def least_squares(A, y):
+    A = np.asarray(A,float)
+    return np.linalg.solve(A.T@A, A.T@np.asarray(y,float))
+
+# 28 whitening
+def whiten(X, eps=1e-8):
+    X = np.asarray(X,float); Xc = X - X.mean(axis=0)
+    C = np.cov(Xc, rowvar=False)
+    vals, vecs = np.linalg.eigh(C)
+    W = vecs @ np.diag(1/np.sqrt(vals+eps)) @ vecs.T
+    return Xc @ W
+
+# 29 RBF
+def rbf_kernel(Xa, Xb, gamma=0.5):
+    Xa, Xb = np.asarray(Xa,float), np.asarray(Xb,float)
+    d2 = ((Xa[:,None,:]-Xb[None,:,:])**2).sum(-1)
+    return np.exp(-gamma*d2)
+
+# 30 attention
+def attention(Q, K, V):
+    Q,K,V = map(lambda z: np.asarray(z,float), (Q,K,V))
+    dk = Q.shape[-1]
+    s = Q @ K.T / np.sqrt(dk)
+    s = s - s.max(axis=-1, keepdims=True)
+    w = np.exp(s); w = w / w.sum(axis=-1, keepdims=True)
+    return w @ V, w
+
+rng = np.random.default_rng(0)
+x0 = rng.normal(0,1,300)
+Xm = np.column_stack([x0, 2*x0 + rng.normal(0,0.5,300)])
+mu, Cov = Xm.mean(axis=0), np.cov(Xm, rowvar=False)
+print("25 mahal along :", round(mahalanobis(mu+np.array([1.,2.]),  mu, Cov), 4))
+print("   mahal across:", round(mahalanobis(mu+np.array([1.,-2.]), mu, Cov), 4))
+
+Z, ratio = pca(Xm, 1)
+print("26 pca shape:", Z.shape, "| explained:", np.round(ratio, 4))
+
+Als = np.array([[1.,1.],[1.,2.],[1.,3.]])
+print("27 least squares:", least_squares(Als, [2.,3.,5.]))
+
+Zw = whiten(Xm)
+print("28 whitened cov:"); print(np.round(np.cov(Zw, rowvar=False), 6))
+
+print("29 rbf:"); print(np.round(rbf_kernel([[0.,0.],[1.,0.],[0.,1.]], [[0.,0.],[1.,0.],[0.,1.]]), 6))
+
+out, w = attention([[1.,0.],[0.,1.]], [[1.,0.],[0.,1.]], [[10.,0.],[0.,10.]])
+print("30 attention weights:"); print(np.round(w, 6))
+print("   output           :"); print(np.round(out, 6))
+```
+```
+25 mahal along : 0.9817
+   mahal across: 8.2969
+26 pca shape: (300, 1) | explained: [0.9918 0.0082]
+27 least squares: [0.33333333 1.5       ]
+28 whitened cov:
+[[1. 0.]
+ [0. 1.]]
+29 rbf:
+[[1.       0.606531 0.606531]
+ [0.606531 1.       0.367879]
+ [0.606531 0.367879 1.      ]]
+30 attention weights:
+[[0.669762 0.330238]
+ [0.330238 0.669762]]
+   output           :
+[[6.697615 3.302385]
+ [3.302385 6.697615]]
+```
+
+### Scoring
+
+| Score | Meaning |
+|---|---|
+| 27–30 | Part 3 is solid. Go to Part 4 |
+| 20–26 | Redo the ones you missed **from a blank page**, then re-attempt |
+| 13–19 | Re-read the relevant sections; your understanding is partial |
+| under 13 | Work back through §3.1–3.39 properly. Do not proceed |
+
+**How to use these a second time.** In a week, delete your solutions and redo all 30 cold. Anything
+you cannot rebuild was never learned — it was copied. That test is uncomfortable and it is the only
+honest one available to you.
 
 ---
 ---
