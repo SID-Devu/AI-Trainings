@@ -86,5 +86,17 @@ There is an hour-blocked **5-day plan** at the top of the file (~12–13 hrs/day
 
 ## Status
 
-Week 1 textbook: ~4,900 lines, 117 concepts, 35 exercises with worked answers, 4 deliverables.
-Still being expanded — see "What is still being added" at the end of the textbook for the queue.
+**Week 1 textbook: ~7,000 lines.** 126 concepts · **132 problems** · **90 quiz questions** ·
+35 exercises · 4 deliverables. Every problem has a worked solution, and every code output in the
+file was executed before being written.
+
+| Bank | Problems |
+|---|---|
+| §2.17 NumPy | 25 |
+| §3.40 Linear algebra | 30 |
+| §4.17 Calculus | 30 |
+| §5.15 Optimisation | 25 |
+| §6.9 Information theory | 22 |
+| §3.41 + §6.10 quizzes | 90 questions |
+
+Remaining work is listed in "What is still being added" at the end of the textbook.
