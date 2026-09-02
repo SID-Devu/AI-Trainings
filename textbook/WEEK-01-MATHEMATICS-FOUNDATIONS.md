@@ -224,6 +224,7 @@ take 8 or 15 days and lose nothing but calendar time. **The gates matter; the da
 | 3.33 | Orthogonal projection matrix | 3.38 | RBF kernel matrix |
 | 3.34 | Cholesky decomposition | 3.39 | **Scaled dot-product attention** |
 | 3.35 | **Moore-Penrose pseudoinverse** | **3.40** | **PROBLEM BANK — 30 problems + solutions** |
+| | | **3.41** | **QUIZZES — 50 questions + answers** |
 
 ## PART 4 — CALCULUS (Day 4)
 | § | Concept | § | Concept |
@@ -4322,6 +4323,23 @@ print("   output           :"); print(np.round(out, 6))
  [3.302385 6.697615]]
 ```
 
+### Difficulty split
+
+**17 Easy · 7 Medium · 6 Hard**, matching the published distribution of the reference plan this bank
+is modelled on.
+
+| Section | Easy | Medium | Hard |
+|---|---|---|---|
+| 1 — Vectors | 6 | 0 | 0 |
+| 2 — Matrix basics | 5 | 2 | 0 |
+| 3 — Linear systems | 2 | 2 | 0 |
+| 4 — Decompositions | 2 | 2 | 3 |
+| 5 — ML applications | 2 | 1 | 3 |
+| **Total** | **17** | **7** | **6** |
+
+*The totals match the reference; the label on each individual problem is my own judgement, since the
+per-problem grading is not published.*
+
 ### Scoring
 
 | Score | Meaning |
@@ -4334,6 +4352,172 @@ print("   output           :"); print(np.round(out, 6))
 **How to use these a second time.** In a week, delete your solutions and redo all 30 cold. Anything
 you cannot rebuild was never learned — it was copied. That test is uncomfortable and it is the only
 honest one available to you.
+
+---
+
+## 3.41 QUIZZES — 50 questions
+
+**Five quizzes, ten questions each, one per problem-bank section.** Cover the answers. These test
+*understanding*, not arithmetic — most take ten seconds if you know the concept and are impossible
+if you do not.
+
+### Quiz 1 — Vectors
+
+1. `[1,2] · [3,4]` = ?
+2. `a · b = 0` tells you what about `a` and `b`?
+3. `‖[3,4]‖₂` = ?
+4. `‖[3,−4]‖₁` = ?
+5. `‖[3,−4]‖∞` = ?
+6. What is the possible range of cosine similarity?
+7. Cosine similarity of `[1,0]` and `[5,0]` = ? Why is the magnitude irrelevant?
+8. Outer product of a `(3,)` and a `(4,)` vector has what shape?
+9. What is the rank of any outer product, and why does that matter for LoRA?
+10. In NumPy, what does `a * b` compute for two 1-D arrays — and what does it *not*?
+
+**Answers**
+1. **11.** `1×3 + 2×4 = 3 + 8`.
+2. They are **orthogonal** (perpendicular, 90°). Verified: `cos 90° = 0`.
+3. **5.** `√(9+16)`.
+4. **7.** L1 sums absolute values: `3 + 4`.
+5. **4.** L∞ is the largest absolute entry.
+6. **`[−1, 1]`.** 1 = same direction, 0 = perpendicular, −1 = opposite.
+7. **1.0.** Cosine divides out both magnitudes, so it measures direction only. That is exactly why
+   embeddings are compared with cosine — you want meaning, not word frequency.
+8. **`(3, 4)`.** Column times row.
+9. **Rank 1, always.** A rank-`r` update is therefore a sum of `r` outer products, needing only
+   `r(m+n)` numbers instead of `m×n`. That is the entire economics of LoRA (§3.25).
+10. It computes the **elementwise (Hadamard) product**. It is **not** the dot product — use `a @ b`
+    or `np.dot`. Confusing these is the most common NumPy error (§3.2).
+
+### Quiz 2 — Matrix basics
+
+1. `(2,3) @ (3,4)` gives what shape?
+2. `(2,3) @ (2,3)` gives what?
+3. What shape must a matrix be to have a trace?
+4. Is `tr(AB) = tr(BA)` always true, even when `AB ≠ BA`?
+5. The trace equals the sum of what?
+6. `(AB)ᵀ` = ?
+7. `det([[1,2],[3,4]])` = ?
+8. `det(A) = 0` tells you what?
+9. Rank of `[[1,2],[2,4]]` = ?
+10. Which NumPy operator is matrix multiplication and which is elementwise?
+
+**Answers**
+1. **`(2,4)`.** The inner 3s match and vanish.
+2. **A `ValueError`.** Inner dimensions 3 and 2 do not match.
+3. **Square.** Trace is undefined otherwise.
+4. **Yes.** This identity holds even though the products themselves differ — verified numerically at
+   21.0 both ways in §3.31. It is used constantly to rearrange expressions in derivations.
+5. **The eigenvalues.** For `[[4,1],[2,3]]`, trace = 7 and eigenvalues 5 + 2 = 7.
+6. **`BᵀAᵀ`** — the order **reverses**. A standard exam trap.
+7. **−2** by hand (`1×4 − 2×3`). Note `np.linalg.det` returns `−2.0000000000000004` — float
+   inexactness (§1.5), not an error.
+8. The matrix is **singular**: no inverse, it squashes space flat, and information is destroyed.
+9. **1.** Row 2 is exactly 2× row 1, so there is only one independent row.
+10. **`@` is matrix multiplication; `*` is elementwise.**
+
+### Quiz 3 — Linear systems
+
+1. Projection of `[3,4]` onto `[1,0]` = ?
+2. After projecting `a` onto `b`, what is always true of the residual `a − proj_b(a)`?
+3. Gram-Schmidt turns an independent set into what?
+4. For an orthonormal matrix `Q`, what is `Q⁻¹`?
+5. Why prefer `np.linalg.solve(A,b)` over `np.linalg.inv(A) @ b`?
+6. If `det(A) = 0`, how many solutions can `Ax = b` have?
+7. What problem does partial pivoting solve?
+8. In `A = LU`, what is the shape of `L`?
+9. What is a system with more equations than unknowns called?
+10. What shape must `A` be for `np.linalg.solve`?
+
+**Answers**
+1. **`[3, 0]`** — the x-component of `a`. Verified in §3.19.
+2. It is **orthogonal to `b`** — the dot product of the residual with `b` is 0. That is the defining
+   property of a projection.
+3. An **orthonormal** set: mutually perpendicular, each of length 1.
+4. **`Qᵀ`.** Inverting is free and numerically exact, which is why orthonormal matrices are so
+   valued — they never amplify error.
+5. `solve` is **faster and numerically more stable**. It never forms the inverse. This exact point
+   is a good interview answer (§3.30).
+6. **Either none, or infinitely many** — never exactly one.
+7. It swaps in the largest available pivot so you never **divide by a tiny number**, which would
+   amplify floating-point error. Every real solver does this.
+8. **Lower triangular** (zeros above the diagonal). `U` is upper triangular.
+9. **Overdetermined.** Usually no exact solution, so you use least squares (§3.35).
+10. **Square**, and non-singular. For non-square use `lstsq` or `pinv`.
+
+### Quiz 4 — Decompositions
+
+1. True or false: every matrix has an SVD.
+2. Can a singular value be negative?
+3. What are the singular values of `[[3,0],[0,−2]]`?
+4. Which matrices have eigenvalues?
+5. `A = VΛV⁻¹` requires `A` to be what?
+6. What is special about the eigenvectors of a **symmetric** matrix?
+7. What two properties define an orthogonal projection matrix?
+8. The trace of a projection matrix equals what?
+9. Cholesky requires the matrix to be what?
+10. When does the pseudoinverse succeed where `inv` fails?
+
+**Answers**
+1. **True.** Square or not, singular or not — the SVD always exists. That generality is why it is
+   the most useful factorisation.
+2. **No.** Singular values are always non-negative, by definition.
+3. **`[3, 2]`** — both positive, even though one *eigenvalue* is −2. The sign is absorbed into `U`.
+   Verified. This is a favourite exam question.
+4. **Square matrices only.**
+5. **Diagonalisable.** Not every matrix is. Symmetric matrices always are, with real eigenvalues and
+   orthogonal eigenvectors — which is why covariance matrices behave so well in PCA.
+6. They are **orthogonal** to each other, and the eigenvalues are **real**. Verified in §3.34 —
+   `eigh` exists precisely to exploit this.
+7. **`P² = P`** (idempotent — projecting twice changes nothing) and **`Pᵀ = P`** (symmetric).
+8. **The rank** of the space being projected onto. In §3.33, trace = 2.0 and rank = 2.
+9. **Symmetric and positive-definite** (all eigenvalues strictly positive). It raises
+   `LinAlgError: Matrix is not positive definite` otherwise — which makes it a useful *test* for
+   positive-definiteness.
+10. When the matrix is **singular or non-square**. `pinv` returns the least-squares best answer
+    instead of raising, which is why linear regression still works with correlated features.
+
+### Quiz 5 — ML applications
+
+1. What is the mandatory first step of PCA?
+2. How is the explained variance ratio of component `k` computed?
+3. Why use `np.linalg.eigh` rather than `eig` on a covariance matrix?
+4. What does Mahalanobis distance require that Euclidean does not?
+5. After whitening, what is the covariance matrix?
+6. What are the diagonal entries of an RBF kernel matrix, and why?
+7. What must be true of a valid kernel matrix's eigenvalues?
+8. In attention, what does dividing by `√dₖ` prevent?
+9. What do the rows of an attention weight matrix sum to?
+10. Why does the normal equation get implemented with `solve` rather than `inv`?
+
+**Answers**
+1. **Centre the data** — subtract each column's mean. Skipping this is the classic PCA bug: you end
+   up finding the direction of the mean rather than of the variance.
+2. **eigenvalue `k` ÷ the sum of all eigenvalues.**
+3. `eigh` exploits symmetry: it is faster, and it returns **real** eigenvalues rather than possibly
+   complex ones. Covariance matrices are always symmetric.
+4. **The inverse covariance matrix `Σ⁻¹`.** That is what lets it account for correlation and scale —
+   and it is also why it fails on singular covariance.
+5. **The identity matrix** — unit variance in every direction, zero correlation. Verified in §3.37,
+   where an off-diagonal of 2.0999 became exactly 0.
+6. **All 1.** `K(x,x) = exp(−γ·0) = exp(0) = 1`. Every point is maximally similar to itself.
+7. **All non-negative** (positive-semidefinite). That is the formal definition of a valid kernel.
+8. It stops the dot products growing with dimension and **saturating the softmax**, which would drive
+   the gradient to nearly zero (§4.6, vanishing gradients). This is a very common interview question.
+9. **1.** They are softmax outputs — a probability distribution over the keys.
+10. **Numerical stability and speed.** The formula is written `(XᵀX)⁻¹Xᵀy`; you *implement* it as
+    `solve(XᵀX, Xᵀy)`. Knowing that the formula and the implementation differ is itself the answer
+    they are looking for.
+
+### Quiz scoring
+
+| Per quiz | Meaning |
+|---|---|
+| 9–10 | Solid |
+| 7–8 | Re-read the section for the ones you missed |
+| below 7 | Redo the section's problems before moving on |
+
+**Total across all five: 45+/50 before starting Part 4.**
 
 ---
 ---
