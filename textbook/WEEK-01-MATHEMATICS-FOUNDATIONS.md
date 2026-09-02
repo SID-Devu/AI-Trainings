@@ -266,6 +266,18 @@ take 8 or 15 days and lose nothing but calendar time. **The gates matter; the da
 `7.1` numerical optimisation · `7.2` functional analysis · `7.3` manifolds · `7.4` Riemannian
 geometry · `7.5` measure theory
 
+## PART 8 — GOING DEEPER (advanced tier)
+| § | Concept | § | Concept |
+|---|---|---|---|
+| 8.1 | Matrix norms — Frobenius, spectral, nuclear | 8.6 | **Forward vs reverse-mode autodiff** |
+| 8.2 | **Condition number** — when a matrix is dangerous | 8.7 | Formal gradient checking, optimal `h` |
+| 8.3 | Ridge regression as a conditioning fix | 8.8 | **What governs convergence speed** |
+| 8.4 | Operation cost — measured | 8.9 | Line search, learning-rate finder |
+| 8.5 | **Matrix calculus rules** | 8.10 | Gate |
+
+Also: **§1.31** Python internals (memory model, `__slots__`, the GIL, `collections`, `itertools`) ·
+**§2.18** NumPy internals (strides, C vs F order, `.base`, dtype memory, avoiding temporaries)
+
 ## APPENDICES
 `A` Parts 0–3 checkpoints · `B` Parts 4–7 checkpoints · `C` full Week 1 completion gate ·
 `D` command reference
@@ -2062,6 +2074,192 @@ giving `0.9999999999999999`. Correct assertion: `assert abs(total - 1.0) < 1e-9`
 `np.isclose(total, 1.0)`.
 
 ---
+
+## 1.31 GOING DEEPER — Python internals
+
+*Advanced tier. Everything above gets you writing code; this gets you reasoning about what Python is
+actually doing. Assessed in interviews at the senior end, and needed the first time a program is
+mysteriously slow or mysteriously shares state.*
+
+### 1.31.1 The memory model — names, objects, identity
+
+**A variable is not a box. It is a label tied to an object.** `b = a` ties a second label to the
+*same* object; it does not copy anything.
+
+```python
+a = [1, 2]
+b = a           # same object, two names
+c = a.copy()    # new object
+print(b is a, c is a, c == a)
+print(id(a) == id(b), id(a) == id(c))
+```
+```
+True False True
+True False
+```
+`is` asks "same object?" · `==` asks "same value?" **Never confuse them.**
+
+**The integer trap.** Try this and read the warning Python gives you:
+```python
+x = 257; y = 257
+print(x is y)
+print((256+1) is 257)
+```
+```
+True
+True
+```
+Both `True` — and Python emits `SyntaxWarning: "is" with 'int' literal. Did you mean "=="?`
+
+**Why, precisely:** within a single compiled code object, the compiler collapses equal integer
+literals into one shared constant. Across separate code objects, or for integers computed at
+runtime, that guarantee vanishes. So this result is an artefact of *how the code was compiled*, not
+a language rule you can rely on.
+
+**The rule: use `is` only for `None`, `True` and `False`.** For values, always `==`. Python warning
+you about it is a gift — heed it.
+
+### 1.31.2 Shallow versus deep copy
+
+```python
+import copy
+nested = [[1,2],[3,4]]
+shallow = copy.copy(nested)        # or nested[:] or list(nested)
+deep    = copy.deepcopy(nested)
+nested[0][0] = 99
+print(shallow[0][0], deep[0][0])
+```
+```
+99 1
+```
+**A shallow copy copies the outer container and shares the inner objects.** The mutation leaked into
+`shallow` and not into `deep`. This is the same hazard as NumPy views (§2.9), and it bites hardest
+with nested configuration dictionaries.
+
+### 1.31.3 `__slots__` — measured memory saving
+
+By default every instance carries a `__dict__` to hold its attributes. `__slots__` removes it.
+
+```python
+import sys
+class NoSlots:
+    def __init__(s): s.a = 1; s.b = 2
+class WithSlots:
+    __slots__ = ('a', 'b')
+    def __init__(s): s.a = 1; s.b = 2
+
+n1, n2 = NoSlots(), WithSlots()
+print("no-slots  :", sys.getsizeof(n1), "+ dict", sys.getsizeof(n1.__dict__),
+      "=", sys.getsizeof(n1) + sys.getsizeof(n1.__dict__), "bytes")
+print("with-slots:", sys.getsizeof(n2), "bytes")
+print("has __dict__?", hasattr(n1,'__dict__'), hasattr(n2,'__dict__'))
+```
+```
+no-slots  : 48 + dict 296 = 344 bytes
+with-slots: 48 bytes
+has __dict__? True False
+```
+**344 bytes down to 48 — about a 7× saving per instance.** Irrelevant for ten objects, decisive for
+ten million. The cost: you can no longer add attributes that were not declared.
+
+### 1.31.4 The GIL — and why ML uses processes, not threads
+
+The **Global Interpreter Lock** allows only one thread to execute Python bytecode at a time. So:
+
+| Workload | Threads help? | Why |
+|---|---|---|
+| **CPU-bound pure Python** | **No** | The GIL serialises them |
+| **I/O-bound** (files, network) | **Yes** | The GIL is released while waiting |
+| **NumPy / PyTorch numerics** | **Yes** | Heavy loops run in C with the GIL released |
+
+**Two consequences you will meet directly.** PyTorch's `DataLoader` uses `num_workers` — separate
+**processes**, not threads, precisely because decoding images is CPU-bound Python. And NumPy is fast
+partly because it drops into C and releases the GIL, so the lock is not the bottleneck it appears to
+be for array work.
+
+### 1.31.5 Generators and memory, measured
+
+```python
+import sys
+lst = [i*i for i in range(10000)]
+gen = (i*i for i in range(10000))
+print("list:", sys.getsizeof(lst), "bytes | generator:", sys.getsizeof(gen), "bytes")
+```
+```
+list: 85176 bytes | generator: 200 bytes
+```
+**85 KB against 200 bytes.** The generator stores a *recipe*, not results. Scale that to a dataset
+of a million images and the difference is the reason streaming data loaders exist.
+
+### 1.31.6 `collections` — the containers worth knowing
+
+```python
+from collections import Counter, defaultdict, deque
+print(dict(Counter("mississippi")))
+
+dd = defaultdict(int)
+for ch in "aab": dd[ch] += 1        # no need to check whether the key exists
+print(dict(dd))
+
+dq = deque([1,2,3]); dq.appendleft(0); dq.append(4)
+print(list(dq))
+```
+```
+{'m': 1, 'i': 4, 's': 4, 'p': 2}
+{'a': 2, 'b': 1}
+[0, 1, 2, 3, 4]
+```
+`Counter` replaces the counting loop from §1.9 in one call. `defaultdict` removes the `.get(k, 0)`
+dance. `deque` appends at **both ends in O(1)**, whereas `list.insert(0, x)` is O(n) — which matters
+for replay buffers and sliding windows.
+
+### 1.31.7 `itertools` — lazy combinatorics
+
+```python
+import itertools as it
+print(list(it.product([0,1], repeat=2)))
+print(list(it.combinations([1,2,3], 2)))
+print(list(it.chain([1,2], [3])))
+print(list(it.islice(it.count(), 5)))      # take 5 from an infinite counter
+```
+```
+[(0, 0), (0, 1), (1, 0), (1, 1)]
+[(1, 2), (1, 3), (2, 3)]
+[1, 2, 3]
+[0, 1, 2, 3, 4]
+```
+`product` generates hyperparameter grids. `islice` takes a finite slice of an infinite stream — that
+is how you bound an endless data generator.
+
+### 1.31.8 `lru_cache` — memoisation for free
+
+```python
+import time
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fib(n): return n if n < 2 else fib(n-1) + fib(n-2)
+def fib_slow(n): return n if n < 2 else fib_slow(n-1) + fib_slow(n-2)
+
+t = time.perf_counter(); fib(30);      cached = time.perf_counter()-t
+t = time.perf_counter(); fib_slow(25); plain  = time.perf_counter()-t
+print(f"cached fib(30): {cached:.6f}s   uncached fib(25): {plain:.6f}s")
+```
+```
+cached fib(30): 0.000016s   uncached fib(25): 0.009248s
+```
+(Your timings will differ.) The cached version computed a **larger** problem roughly 500× faster.
+One decorator (§1.20) turned exponential into linear.
+
+### 1.31.9 Gate
+
+- [ ] I can explain why `b = a` does not copy a list
+- [ ] I know `is` is for `None`/`True`/`False` only, and why the int result above is not a rule
+- [ ] I can explain shallow versus deep copy and give the failure it causes
+- [ ] I can say what the GIL is and why `DataLoader` uses processes
+- [ ] I can justify a generator over a list with the 85 KB / 200 byte figure
+
+---
 ---
 
 # PART 2 — NUMPY
@@ -2757,6 +2955,173 @@ distance matrix must be.
 as it should.
 
 **Scoring:** 22+/25 → go to Part 3. Under 18 → redo §2.1–2.15.
+
+---
+
+## 2.18 GOING DEEPER — NumPy internals
+
+*Why arrays are fast, why views are free, and how to stop wasting memory. This is the tier that
+separates using NumPy from understanding it — and it is the foundation for the roofline reasoning in
+Week 10.*
+
+### 2.18.1 Strides — the mechanism behind everything
+
+An array is **one flat block of memory plus a shape plus strides.** A stride says how many *bytes*
+to step to advance one position along an axis.
+
+```python
+import numpy as np
+m = np.arange(12, dtype=np.int64).reshape(3, 4)
+print("shape  :", m.shape)
+print("strides:", m.strides, " itemsize:", m.itemsize)
+```
+```
+shape  : (3, 4)
+strides: (32, 8)  itemsize: 8
+```
+Read it: step **8 bytes** to move one column (one `int64`), step **32 bytes** to move one row
+(4 columns × 8). Nothing is nested — it is flat memory with arithmetic on top.
+
+**This is why transpose is free.** It does not move data; it swaps the strides.
+
+```python
+print("m.T strides:", m.T.strides, " shape:", m.T.shape)
+print("shares memory:", np.shares_memory(m, m.T))
+```
+```
+m.T strides: (8, 32)  shape: (4, 3)
+shares memory: True
+```
+A `(2,3)` transpose of a million-element array costs **nothing** — no copy, just two numbers
+swapped. Now you know why §3.11 said transposes are cheap.
+
+### 2.18.2 C order versus Fortran order
+
+```python
+print("C  contiguous:", m.flags['C_CONTIGUOUS'], " F contiguous:", m.flags['F_CONTIGUOUS'])
+print("m.T C:", m.T.flags['C_CONTIGUOUS'], " m.T F:", m.T.flags['F_CONTIGUOUS'])
+F = np.asfortranarray(m)
+print("F-order strides:", F.strides)
+r = np.arange(6).reshape(2,3)
+print("ravel C:", r.ravel(order='C').tolist())
+print("ravel F:", r.ravel(order='F').tolist())
+```
+```
+C  contiguous: True  F contiguous: False
+m.T C: False  m.T F: True
+F-order strides: (8, 24)
+ravel C: [0, 1, 2, 3, 4, 5]
+ravel F: [0, 3, 1, 4, 2, 5]
+```
+**C order** (NumPy's default) stores rows contiguously — the last axis moves fastest.
+**Fortran order** stores columns contiguously. Notice the transpose is automatically F-contiguous:
+same memory, opposite interpretation.
+
+**Why it matters for speed.** Iterating along the contiguous axis reads consecutive memory and the
+CPU cache prefetches it. Iterating across it jumps in memory and every step can be a cache miss —
+that is the strided-versus-contiguous traversal from Section 1.7's completion test, and it is the
+same effect that governs GPU memory coalescing in Week 10.
+
+### 2.18.3 `.base` — who actually owns the memory
+
+```python
+m = np.arange(12).reshape(3,4)
+print("m.base shape       :", m.base.shape)
+print("m.T.base is m      :", m.T.base is m)
+print("m.T.base is m.base :", m.T.base is m.base)
+a = np.zeros((3,4))
+print("fresh a.base       :", a.base, " | a.T.base is a:", a.T.base is a)
+```
+```
+m.base shape       : (12,)
+m.T.base is m      : False
+m.T.base is m.base : True
+fresh a.base       : None  | a.T.base is a: True
+```
+**Read that second line carefully — it is a trap.** `m.T.base` is **not** `m`, because `m` is itself
+a view (of the flat `arange(12)`). `.base` points at the **ultimate memory owner**, not the immediate
+parent. For a freshly allocated `a`, `a.base` is `None` and `a.T.base is a` is `True`.
+
+**So do not test view-ness with `.base is x`.** Use `np.shares_memory(x, y)`, which answers the
+question you actually mean.
+
+### 2.18.4 `np.newaxis`, `reshape`, `expand_dims`
+
+```python
+v = np.arange(3)
+print(v[:, None].shape, v.reshape(-1,1).shape, np.expand_dims(v,1).shape)
+print("shares memory:", np.shares_memory(v, v[:, None]))
+```
+```
+(3, 1) (3, 1) (3, 1)
+shares memory: True
+```
+All three are identical in effect and all are **views**. Use `[:, None]` for brevity, `expand_dims`
+when the axis is a variable. Adding an axis is the standard way to force broadcasting (§2.10) and the
+trick behind the loop-free distance matrix in problem 22.
+
+### 2.18.5 dtype and memory — why deep learning uses `float32`
+
+```python
+big = np.arange(1_000_000, dtype=np.float64)
+print("float64:", big.nbytes, "bytes | float32:", big.astype(np.float32).nbytes, "bytes")
+```
+```
+float64: 8000000 bytes | float32: 4000000 bytes
+```
+**Exactly half.** NumPy defaults to `float64`; deep learning uses `float32` almost everywhere, and
+`float16`/`bfloat16` for training at scale. The reasoning is the same as §5.8's mixed precision:
+half the bytes means half the memory traffic, and on bandwidth-bound work (Week 10) memory traffic
+*is* the runtime.
+
+**Trap.** Mixing dtypes silently promotes to the wider one. Setting `float32` weights and then
+multiplying by a Python float can quietly hand you `float64` and double your memory.
+
+### 2.18.6 Avoiding temporaries — `out=` and in-place operators
+
+```python
+z = np.ones(5); out = np.empty(5)
+np.multiply(z, 3, out=out)          # writes into existing memory
+print(out.tolist())
+q = np.ones(3); q *= 2              # in place, no new array
+print(q.tolist())
+```
+```
+[3.0, 3.0, 3.0, 3.0, 3.0]
+[2.0, 2.0, 2.0]
+```
+`a = a * 2` allocates a new array and throws the old one away. `a *= 2` writes in place. On large
+arrays inside a training loop that is the difference between steady memory and thrashing.
+
+**Trap.** In-place operations on a **view** modify the parent (§2.9). Be certain which you hold.
+
+### 2.18.7 Views versus copies, and what each costs
+
+```python
+s = np.arange(6)
+print("slice shares :", np.may_share_memory(s, s[1:4]))
+print("fancy shares :", np.may_share_memory(s, s[[1,2,3]]))
+```
+```
+slice shares : True
+fancy shares : False
+```
+| Operation | Result | Cost |
+|---|---|---|
+| slicing, `reshape`, `.T`, `[:,None]` | **view** | free — metadata only |
+| boolean or fancy indexing | **copy** | O(n) time and memory |
+| `.copy()`, `astype` | **copy** | O(n) |
+
+Fancy indexing in a hot loop is a hidden allocation. That is worth knowing before you profile
+anything.
+
+### 2.18.8 Gate
+
+- [ ] I can explain what a stride is and why transpose is free
+- [ ] I can say why C order versus F order affects speed, and connect it to cache behaviour
+- [ ] I know why `.base is x` is the wrong view test, and what to use instead
+- [ ] I can justify `float32` over `float64` with the byte count
+- [ ] I know which operations give views and which give copies, and the cost of each
 
 ---
 ---
@@ -6830,6 +7195,405 @@ track, which *is* assessed.
 this works: a 224×224 colour image has 150,528 numbers, but real photographs occupy a tiny, curved,
 much lower-dimensional region of that space. Models learn that region. PCA is the flat, linear
 version of the same idea.
+
+---
+---
+
+# PART 8 — GOING DEEPER
+
+*Advanced tier for linear algebra, calculus and optimisation. Everything here answers a question the
+earlier Parts raise but do not settle: how do I know a matrix is numerically dangerous, what do the
+matrix-calculus rules actually look like, why is reverse-mode autodiff the only viable choice, and
+what really governs how fast gradient descent converges.*
+
+## 8.1 Matrix norms
+
+**Is.** A single number measuring the "size" of a matrix. Three that matter:
+
+| Norm | Definition | NumPy |
+|---|---|---|
+| **Frobenius** | `√(Σ Aᵢⱼ²)` — treat it as one long vector | `norm(A, 'fro')` |
+| **Spectral (2-norm)** | the **largest singular value** — worst-case stretch | `norm(A, 2)` |
+| **Nuclear** | the **sum** of the singular values | `norm(A, 'nuc')` |
+
+```python
+import numpy as np
+M = np.array([[1.,2.],[3.,4.]])
+print("frobenius:", round(float(np.linalg.norm(M,'fro')), 6))
+print("spectral :", round(float(np.linalg.norm(M,2)), 6))
+print("nuclear  :", round(float(np.linalg.norm(M,'nuc')), 6))
+print("singular values:", np.round(np.linalg.svd(M, compute_uv=False), 6).tolist())
+```
+```
+frobenius: 5.477226
+spectral : 5.464986
+nuclear  : 5.830952
+```
+```
+singular values: [5.464986, 0.365966]
+```
+**Read the relationships.** The spectral norm is exactly the first singular value (5.464986). The
+nuclear norm is their sum (`5.464986 + 0.365966 = 5.830952`). Frobenius sits between them.
+
+**Why each is used.** The **spectral** norm bounds how much a matrix can amplify any vector — that
+is why it appears in stability analysis and in gradient clipping. The **nuclear** norm is the convex
+surrogate for rank, so minimising it encourages low-rank solutions (§3.25, and the mathematics
+behind LoRA). **Frobenius** is what weight decay penalises.
+
+## 8.2 Condition number — when a matrix is numerically dangerous
+
+**Is.** `κ(A) = σ_max / σ_min` — the ratio of largest to smallest singular value. It measures how
+much a small change in the input can change the answer.
+
+| κ | Meaning |
+|---|---|
+| 1 | perfect. Orthonormal matrices (§3.18) |
+| up to ~10³ | well-conditioned |
+| 10⁶–10¹² | **ill-conditioned** — losing significant digits |
+| ∞ | singular |
+
+```python
+print("identity   :", round(float(np.linalg.cond(np.eye(2))), 6))
+ill = np.array([[1., 1.],
+                [1., 1.0001]])
+print("nearly-singular:", round(float(np.linalg.cond(ill)), 2))
+```
+```
+identity   : 1.0
+nearly-singular: 40002.0
+```
+
+**Now watch what that costs you.** Perturb `b` by three parts in a hundred thousand:
+
+```python
+b1 = np.array([2., 2.0001])
+b2 = np.array([2., 2.0002])
+x1 = np.linalg.solve(ill, b1)
+x2 = np.linalg.solve(ill, b2)
+print("x1:", np.round(x1,4).tolist(), " x2:", np.round(x2,4).tolist())
+print("relative change in b:", round(float(np.linalg.norm(b2-b1)/np.linalg.norm(b1)), 8))
+print("relative change in x:", round(float(np.linalg.norm(x2-x1)/np.linalg.norm(x1)), 6))
+```
+```
+x1: [1.0, 1.0]  x2: [0.0, 2.0]
+relative change in b: 3.535e-05
+relative change in x: 1.0
+```
+**A 0.0035% change in the input produced a 100% change in the answer.** The solution went from
+`[1,1]` to `[0,2]`. Nothing was computed wrongly — the *problem itself* is ill-conditioned, and the
+condition number of 40,002 predicted exactly this amplification.
+
+**This is the single most important numerical idea in Week 1.** When someone says a result is
+"numerically unstable," this is usually what they mean.
+
+## 8.3 Ridge regression as a conditioning fix
+
+§3.30 built the normal equation `θ = (XᵀX)⁻¹Xᵀy`. When features are nearly collinear, `XᵀX` becomes
+ill-conditioned and the fit becomes garbage. Adding `λI` repairs it — and that is **exactly** L2
+regularisation from §5.13, seen from the numerical side.
+
+```python
+X = np.array([[1., 1.],
+              [1., 1.0001],
+              [1., 1.0002]])          # second column almost constant
+XtX = X.T @ X
+for lam in (0.0, 1e-6, 1e-3, 1.0):
+    print(f"lambda={lam:<8g} cond(XtX + lambda I) = {np.linalg.cond(XtX + lam*np.eye(2)):.2f}")
+```
+```
+lambda=0        cond(XtX + lambda I) = 600120003.90
+lambda=1e-06    cond(XtX + lambda I) = 5941195.03
+lambda=0.001    cond(XtX + lambda I) = 6001.54
+lambda=1        cond(XtX + lambda I) = 7.00
+```
+**Six hundred million down to seven.** Ridge regression is usually taught as "a penalty that prevents
+overfitting." It is also, and equivalently, **a fix for an ill-conditioned matrix**. Those are the
+statistical and numerical descriptions of one operation, and knowing both is a genuinely strong
+interview answer.
+
+## 8.4 Operation cost — what things actually take
+
+Measured on this machine, warmed up, averaged over repeats:
+
+```python
+import time
+rng = np.random.default_rng(0)
+for n in (200, 400):
+    A = rng.random((n,n))
+    A@A; np.linalg.inv(A); np.linalg.solve(A, np.ones(n))          # warm-up
+    def timeit(fn, reps=5):
+        t = time.perf_counter()
+        for _ in range(reps): fn()
+        return (time.perf_counter()-t)/reps
+    mm = timeit(lambda: A@A)
+    sv = timeit(lambda: np.linalg.solve(A, np.ones(n)))
+    iv = timeit(lambda: np.linalg.inv(A))
+    sd = timeit(lambda: np.linalg.svd(A), 3)
+    print(f"n={n}  matmul {mm:.5f}s  solve {sv:.5f}s  inv {iv:.5f}s  svd {sd:.5f}s")
+```
+```
+n=200  matmul 0.00027s  solve 0.00046s  inv 0.39523s  svd 0.01356s
+n=400  matmul 0.00082s  solve 0.00207s  inv 0.82293s  svd 0.04101s
+```
+
+| Operation | Asymptotic cost |
+|---|---|
+| matrix–vector | O(n²) |
+| matrix–matrix | O(n³) |
+| `solve` | O(n³) |
+| `inv` | O(n³) |
+| SVD, QR, eigendecomposition | O(n³) for square |
+| Cholesky | O(n³) but ~2× cheaper than LU |
+
+**Two honest observations about those numbers.**
+
+First, `matmul` at n=400 took 0.0008s while `svd` took 0.041s — both O(n³), but with wildly different
+constants. **Asymptotic complexity tells you scaling, not speed.** Matrix multiplication is the most
+heavily optimised routine in computing; a factorisation is not.
+
+Second, `inv` measured **400–870× slower than `solve`** here. That ratio is far larger than the
+usual expectation of roughly 2–3×, and it very likely reflects this machine's LAPACK build rather
+than a universal truth. **The direction is universal and the magnitude is not** — so quote the
+principle, not this number. The principle: `solve` is faster and numerically better because it never
+forms the inverse, and §3.13 and §3.30 both told you to prefer it.
+
+## 8.5 Matrix calculus — the rules you will actually use
+
+Five identities cover most of what appears in papers. Each is verified numerically below.
+
+| Expression | Derivative with respect to `x` |
+|---|---|
+| `aᵀx` | `a` |
+| `xᵀx` | `2x` |
+| `xᵀAx` (A symmetric) | `2Ax` |
+| `Ax` | `A` (this is the Jacobian) |
+| `‖Ax − b‖²` | `2Aᵀ(Ax − b)` |
+
+```python
+def numgrad(f, v, h=1e-6):
+    v = np.asarray(v, float); out = np.zeros_like(v)
+    for i in range(len(v)):
+        p, m = v.copy(), v.copy(); p[i]+=h; m[i]-=h
+        out[i] = (f(p) - f(m)) / (2*h)
+    return out
+
+A = np.array([[1.,2.],[3.,4.]]); x = np.array([1.,1.])
+S = np.array([[2.,1.],[1.,3.]]); b = np.array([1.,1.])
+
+print("d(a.x)/dx      :", np.round(numgrad(lambda v: np.array([1.,2.]) @ v, x), 6).tolist(), "vs", [1.,2.])
+print("d(x.x)/dx      :", np.round(numgrad(lambda v: v @ v, x), 6).tolist(),                 "vs", (2*x).tolist())
+print("d(xtAx)/dx     :", np.round(numgrad(lambda v: v @ S @ v, x), 6).tolist(),             "vs", (2*S@x).tolist())
+print("d|Ax-b|^2/dx   :", np.round(numgrad(lambda v: np.sum((A@v-b)**2), x), 6).tolist(),
+                          "vs", np.round(2*A.T@(A@x-b), 6).tolist())
+```
+```
+d(a.x)/dx      : [1.0, 2.0] vs [1.0, 2.0]
+d(x.x)/dx      : [2.0, 2.0] vs [2.0, 2.0]
+d(xtAx)/dx     : [6.0, 8.0] vs [6.0, 8.0]
+d|Ax-b|^2/dx   : [40.0, 56.0] vs [40.0, 56.0]
+```
+All four match. **The last one is the MSE gradient** — it is why §3.30's normal equation looks the way
+it does: set `2Aᵀ(Ax − b) = 0` and rearrange to `AᵀAx = Aᵀb`.
+
+**Trap.** `d(xᵀAx)/dx = 2Ax` requires `A` **symmetric**. In general it is `(A + Aᵀ)x`.
+
+## 8.6 Forward mode versus reverse mode autodiff
+
+Two ways to apply the chain rule. The choice is not stylistic — it is a cost calculation.
+
+| | Forward mode | Reverse mode |
+|---|---|---|
+| Direction | inputs → outputs | outputs → inputs |
+| One pass gives you | one **input's** effect on all outputs | one **output's** sensitivity to all inputs |
+| Passes needed | one per **input** | one per **output** |
+| Total cost | O(**n inputs**) | O(**m outputs**) |
+| Memory | low | must **store the forward values** |
+
+**Now the arithmetic that settles it.** A neural network has `n` ≈ millions of parameters and `m` = 1
+output (the scalar loss).
+
+| Mode | Passes required |
+|---|---|
+| Forward | ~1,000,000 |
+| **Reverse** | **1** |
+
+**That is the entire reason deep learning is possible.** Reverse mode — backpropagation — gets every
+one of a million gradients from a single backward pass. Forward mode would need a pass per parameter.
+
+The price is memory: reverse mode must keep the forward-pass intermediates to use on the way back.
+That is precisely what **activation memory** is, and why gradient checkpointing (§4.14, §5.13) trades
+recomputation for memory. And the vector-Jacobian product of §4.14 is the primitive that makes each
+backward step a vector operation instead of a matrix one.
+
+**Forward mode is not useless** — it wins when inputs are few and outputs many, and it is how
+Jacobian-vector products are computed.
+
+## 8.7 Formal gradient checking
+
+§4.17 problem 19 compared gradients loosely. The professional version uses **relative** error, so the
+test does not depend on the scale of the numbers.
+
+`rel = |analytic − numerical| / (|analytic| + |numerical|)`
+
+| Relative error | Verdict |
+|---|---|
+| < 1e-7 | correct |
+| 1e-7 to 1e-4 | suspicious — check carefully |
+| > 1e-4 | **bug** |
+
+```python
+def relative_error(analytic, numerical):
+    a, n = np.asarray(analytic, float), np.asarray(numerical, float)
+    return float(np.max(np.abs(a-n) / np.maximum(1e-12, np.abs(a) + np.abs(n))))
+
+analytic  = 2 * S @ x
+numerical = numgrad(lambda v: v @ S @ v, x)
+print(f"relative error: {relative_error(analytic, numerical):.3e}")
+```
+```
+relative error: 1.338e-11
+```
+Comfortably below 1e-7 → the analytic gradient is correct.
+
+**Choosing `h` — the trade-off nobody explains.** Too large and the finite difference is a poor
+approximation (**truncation error**). Too small and floating-point cancellation destroys it
+(**round-off error**, §1.5). There is an optimum in between:
+
+```python
+for h in (1e-1, 1e-2, 1e-4, 1e-6, 1e-8, 1e-10, 1e-12):
+    est = (np.sin(1.0+h) - np.sin(1.0-h)) / (2*h)
+    print(f"h={h:<8g} error={abs(est - np.cos(1.0)):.3e}")
+```
+```
+h=0.1      error=9.001e-04
+h=0.01     error=9.005e-06
+h=0.0001   error=9.004e-10
+h=1e-06    error=2.772e-11
+h=1e-08    error=2.581e-09
+h=1e-10    error=5.848e-08
+h=1e-12    error=1.227e-05
+```
+**Look at the shape: the error falls to a minimum at `h ≈ 1e-6`, then rises again.** Going from
+`1e-6` to `1e-12` makes the answer *ten thousand times worse*. Smaller is not better — there is an
+optimum, and for central differences on well-scaled inputs it sits near `1e-6`. That is why every
+gradient checker uses roughly that value.
+
+## 8.8 What actually governs convergence speed
+
+The condition number of §8.2 returns, now as the thing that decides how fast training converges.
+
+For a quadratic bowl with curvature spread `κ`, the optimal fixed step is `2/(1+κ)`:
+
+```python
+def gd_quadratic(kappa, lr, steps=100):
+    H = np.diag([1.0, kappa]); x = np.ones(2)
+    for _ in range(steps):
+        x = x - lr * (H @ x)
+    return float(np.linalg.norm(x))
+
+for k in (1, 10, 100):
+    lr = 2/(1+k)
+    print(f"kappa={k:<5} optimal lr={lr:.4f}  ||x|| after 100 steps = {gd_quadratic(k, lr):.3e}")
+```
+```
+kappa=1     optimal lr=1.0000  ||x|| after 100 steps = 0.000e+00
+kappa=10    optimal lr=0.1818  ||x|| after 100 steps = 2.726e-09
+kappa=100   optimal lr=0.0198  ||x|| after 100 steps = 1.914e-01
+```
+**Same algorithm, same 100 steps, same optimal learning rate for each — and wildly different
+outcomes.** At `κ=1` it converges exactly. At `κ=100` it is still at 0.19, nowhere near converged.
+**Ill-conditioning, not the optimiser, is what makes training slow.**
+
+### And now momentum earns its reputation
+
+§5.7 and §5.15 both showed momentum *losing* on a symmetric bowl, and I flagged that the benefit
+appears in harder geometry. Here is that claim tested:
+
+```python
+def gd_momentum(kappa, lr, beta, steps=100):
+    H = np.diag([1.0, kappa]); x = np.ones(2); v = np.zeros(2)
+    for _ in range(steps):
+        v = beta*v + H @ x
+        x = x - lr*v
+    return float(np.linalg.norm(x))
+
+print(f"kappa=100 plain    : {gd_quadratic(100, 2/101):.3e}")
+print(f"kappa=100 momentum : {gd_momentum(100, 2/101*0.5, 0.9):.3e}")
+```
+```
+kappa=100 plain    : 1.914e-01
+kappa=100 momentum : 4.889e-03
+```
+**Momentum is roughly 40× closer to the minimum.** On the symmetric bowl it overshot and lost; on an
+ill-conditioned one it wins decisively — because it cancels the oscillation across the narrow
+direction and accumulates along the flat one. **The earlier result was not wrong, and this is not a
+contradiction. It is the same technique measured on the geometry it was designed for.**
+
+That is also why batch normalisation and whitening (§3.37) help: they reduce `κ`, which makes every
+optimiser look better.
+
+## 8.9 Line search and the learning-rate finder
+
+**Backtracking line search.** Rather than guessing a step size, shrink it until the step actually
+reduces the loss enough (the Armijo condition).
+
+```python
+def backtracking(f, grad, x, alpha=1.0, rho=0.5, c=1e-4):
+    g, fx = grad(x), f(x); steps = 0
+    while f(x - alpha*g) > fx - c*alpha*(g @ g) and steps < 50:
+        alpha *= rho; steps += 1
+    return alpha, steps
+
+f_q    = lambda v: float(v @ np.diag([1.,100.]) @ v)
+grad_q = lambda v: np.diag([1.,100.]) @ v
+alpha, tries = backtracking(f_q, grad_q, np.ones(2))
+print(f"accepted alpha={alpha:.6f} after {tries} halvings")
+```
+```
+accepted alpha=0.015625 after 6 halvings
+```
+It halved from 1.0 six times to 0.0156 — close to the theoretical `2/101 ≈ 0.0198`. **It found a good
+step size with no tuning at all.** Classical optimisers use this; deep learning mostly does not,
+because evaluating the loss repeatedly per step is too expensive at scale.
+
+**The learning-rate finder** is what deep learning uses instead: sweep the rate geometrically, watch
+where the loss stops improving and starts exploding, and pick just below that.
+
+```python
+def lr_finder(lo=1e-5, hi=10., n=20):
+    results = []
+    for lr in np.geomspace(lo, hi, n):
+        x, H, ok = np.ones(2), np.diag([1.,100.]), True
+        for _ in range(20):
+            x = x - lr*(H @ x)
+            if not np.isfinite(x).all() or np.linalg.norm(x) > 1e6:
+                ok = False; break
+        results.append((float(lr), float(np.linalg.norm(x)) if ok else float('inf')))
+    return results
+
+res  = lr_finder()
+best = min(res, key=lambda t: t[1])
+print(f"best lr = {best[0]:.5f}  giving ||x|| = {best[1]:.3e}")
+print("first divergent rates:", [f"{lr:.4f}" for lr, val in res if not np.isfinite(val)][:3])
+```
+```
+best lr = 0.01438  giving ||x|| = 7.484e-01
+first divergent rates: ['0.0616', '0.1274', '0.2637']
+```
+The sweep found `0.0144` as best and divergence beginning at `0.0616`. **The usual rule of thumb —
+pick roughly an order of magnitude below where it diverges — lands you almost exactly on the optimum
+here.** That is the whole method, and it takes one cheap sweep instead of a week of guessing.
+
+## 8.10 Gate — Part 8
+
+- [ ] I can name the three matrix norms and say what each is used for
+- [ ] I can define the condition number and explain the 0.0035% → 100% result in §8.2
+- [ ] I can explain ridge regression as **both** a statistical penalty and a conditioning fix
+- [ ] I know asymptotic cost tells you scaling, not speed, and can give the matmul-versus-SVD example
+- [ ] I can state all five matrix-calculus rules and the symmetry caveat
+- [ ] I can explain in one paragraph why reverse mode is the only viable choice for deep learning
+- [ ] I can do a relative-error gradient check and explain why `h` must not be too small
+- [ ] I can explain why momentum lost on the bowl and won at κ=100 — and that both results are correct
 
 ---
 ---
