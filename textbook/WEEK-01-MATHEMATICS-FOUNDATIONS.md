@@ -259,6 +259,8 @@ take 8 or 15 days and lose nothing but calendar time. **The gates matter; the da
 | 6.2 | **Entropy** | 6.6 | Huffman coding |
 | 6.3 | **Cross-entropy** | 6.7 | Perplexity |
 | 6.4 | **KL divergence** | 6.8 | **Deliverable 4** — entropy/CE/KL in NumPy |
+| | | **6.9** | **PROBLEM BANK — 22 problems + Jensen's inequality** |
+| | | **6.10** | **QUIZZES — 40 questions (Parts 2, 4, 5, 6)** |
 
 ## PART 7 — ADVANCED MATHS, recognition only (§1.18)
 `7.1` numerical optimisation · `7.2` functional analysis · `7.3` manifolds · `7.4` Riemannian
@@ -6421,6 +6423,393 @@ def test_bad_input_raises():
 Run with `pytest -q`. Requires `pip install scipy`.
 
 ---
+
+## 6.9 PROBLEM BANK — Information Theory
+
+**22 problems, five sections.** No reference plan exists for this topic, so this bank is built from
+scratch. Three helpers used throughout:
+
+```python
+import numpy as np
+from scipy.stats import entropy as sp_entropy
+
+def H(p, base=2):
+    p = np.asarray(p, float); p = p[p > 0]          # 0·log0 := 0
+    return float(-np.sum(p*np.log(p)/np.log(base)))
+
+def CE(p, q, base=2, eps=1e-12):
+    p = np.asarray(p, float); q = np.clip(np.asarray(q, float), eps, 1)
+    return float(-np.sum(p*np.log(q)/np.log(base)))
+
+def KL(p, q, base=2, eps=1e-12):
+    p = np.asarray(p, float); q = np.clip(np.asarray(q, float), eps, 1)
+    m = p > 0
+    return float(np.sum(p[m]*np.log(p[m]/q[m])/np.log(base)))
+```
+
+| § | Problems | Level |
+|---|---|---|
+| A — Information and entropy | 1–6 | Easy |
+| B — Cross-entropy and KL | 7–13 | Medium |
+| C — ML losses from information theory | 14–17 | Medium → Hard |
+| D — Mutual and conditional entropy | 18–20 | Hard |
+| E — Perplexity | 21–22 | Medium |
+
+### A — Information and entropy (1–6)
+
+1. Information content `−log₂(p)` for `p = 1, 0.5, 0.25, 0.125, 0.01`.
+2. Entropy of a fair coin.
+3. Entropy of a coin with `p = 0.9`.
+4. Entropy of a certain event.
+5. Show `H = log₂(n)` for `n` equally likely outcomes, for `n = 2, 4, 6, 8`.
+6. Rank three 4-outcome distributions by entropy. Which is maximal?
+
+```python
+print("1", [round(float(-np.log2(p)), 4) for p in (1.0, 0.5, 0.25, 0.125, 0.01)])
+print("2", H([0.5, 0.5]))
+print("3", round(H([0.9, 0.1]), 6))
+print("4", H([1.0, 0.0]))
+print("5", [round(H([1/n]*n), 6) for n in (2,4,6,8)],
+           [round(float(np.log2(n)), 6) for n in (2,4,6,8)])
+print("6", round(H([0.25]*4), 6), round(H([0.7,0.1,0.1,0.1]), 6), round(H([0.97,0.01,0.01,0.01]), 6))
+```
+```
+1 [-0.0, 1.0, 2.0, 3.0, 6.6439]
+2 1.0
+3 0.468996
+4 -0.0
+5 [1.0, 2.0, 2.584963, 3.0] [1.0, 2.0, 2.584963, 3.0]
+6 2.0 1.35678 0.241941
+```
+**Problem 1:** a certain event carries **0 bits** — it tells you nothing. A 1-in-100 event carries
+6.64 bits. Rarity *is* information.
+**Problem 5:** the two lists match exactly. Uniform entropy is `log₂(n)`, always.
+**Problem 6 is the key result:** uniform gives 2.0 bits — **the maximum possible** for 4 outcomes.
+The more skewed the distribution, the lower the entropy (1.36, then 0.24). Entropy measures
+uncertainty, and uniform is maximally uncertain.
+**Note `-0.0`** in problems 1 and 4 — a harmless float sign artefact, and the reason the helper
+filters `p > 0` before taking a log.
+
+### B — Cross-entropy and KL (7–13)
+
+With `p = [0.5,0.5]` and `q = [0.9,0.1]`:
+
+7. Cross-entropy `H(p,q)`.
+8. Verify Gibbs' inequality: `H(p,q) ≥ H(p)`.
+9. `KL(p‖q)`.
+10. Verify the identity `KL = H(p,q) − H(p)`.
+11. Show KL is **asymmetric**.
+12. Show `KL(p‖p) = 0`.
+13. Test `KL ≥ 0` over 200 random pairs, and check against SciPy.
+
+```python
+p, q = [0.5, 0.5], [0.9, 0.1]
+print("7 ", round(CE(p,q), 6))
+print("8 ", round(H(p),6), round(CE(p,q),6), CE(p,q) >= H(p))
+print("9 ", round(KL(p,q), 6))
+print("10", round(CE(p,q)-H(p), 6), round(KL(p,q), 6), np.isclose(KL(p,q), CE(p,q)-H(p)))
+print("11", round(KL(p,q), 6), round(KL(q,p), 6))
+print("12", KL(p,p))
+
+rng = np.random.default_rng(0); worst = 1.0
+for _ in range(200):
+    a = rng.random(5); a /= a.sum()
+    b = rng.random(5); b /= b.sum()
+    worst = min(worst, KL(a,b))
+print("13", round(worst, 8), worst >= -1e-12)
+print("13 scipy:", np.isclose(KL(p,q), sp_entropy(p,q,base=2)), np.isclose(H(p), sp_entropy(p,base=2)))
+```
+```
+7  1.736966
+8  1.0 1.736966 True
+9  0.736966
+10 0.736966 0.736966 True
+11 0.736966 0.531004
+12 0.0
+13 0.00962492 True
+13 scipy: True True
+```
+**Problem 8 — Gibbs' inequality — is why cross-entropy works as a loss.** The truth needs 1.0 bits;
+using the wrong model costs 1.74. You can never do *better* than the truth, and you match it only
+when `q = p`. So **minimising cross-entropy is exactly minimising the gap to reality.**
+**Problem 11:** `0.737` vs `0.531`. **KL is not a distance** — order matters. This is asked in
+interviews.
+**Problem 13:** the smallest KL over 200 random pairs was `0.0096` — positive, as the theory
+requires. Both values match SciPy exactly.
+
+### C — ML losses from information theory (14–17)
+
+14. Binary cross-entropy.
+15. Categorical cross-entropy in **nats** (natural log).
+16. Show cross-entropy equals **negative log-likelihood**.
+17. Apply label smoothing and measure what it does to the target's entropy.
+
+```python
+def bce(y, pr, eps=1e-12):
+    pr = np.clip(pr, eps, 1-eps)
+    return float(-np.mean(y*np.log(pr) + (1-y)*np.log(1-pr)))
+
+def cce(Y, Q, eps=1e-12):
+    Q = np.clip(Q, eps, 1)
+    return float(-np.mean(np.sum(Y*np.log(Q), axis=1)))
+
+Y = np.array([[1,0,0],[0,1,0]])
+Q = np.array([[.7,.2,.1],[.1,.8,.1]])
+print("14", round(bce(np.array([1,0,1,0]), np.array([.9,.1,.8,.2])), 6))
+print("15", round(cce(Y,Q), 6))
+print("16 NLL of the correct-class probs:", round(float(-np.mean(np.log([0.7, 0.8]))), 6))
+
+def label_smooth(y, eps=0.1):
+    y = np.asarray(y, float)
+    return (1-eps)*y + eps/len(y)
+ls = label_smooth([1.,0.,0.], 0.1)
+print("17", np.round(ls,6).tolist(), "| H before:", H([1.,0.,0.]), "| H after:", round(H(ls), 6))
+```
+```
+14 0.164252
+15 0.289909
+16 NLL of the correct-class probs: 0.289909
+17 [0.933333, 0.033333, 0.033333] | H before: -0.0 | H after: 0.420026
+```
+**Problem 16 is the bridge between two whole fields.** `0.289909` from cross-entropy and `0.289909`
+from negative log-likelihood — **identical**. Cross-entropy minimisation *is* maximum likelihood
+estimation. Statistics and information theory arrive at the same loss from different starting points.
+**Problem 17:** the one-hot target had 0 bits of entropy — absolute certainty. After smoothing it has
+0.42 bits. That deliberate uncertainty stops the model becoming over-confident, which is exactly what
+label smoothing is for.
+
+### D — Mutual and conditional entropy (18–20)
+
+18. Mutual information for a dependent joint distribution.
+19. Mutual information for independent variables.
+20. Compute `H(X)`, `H(Y)`, `H(X,Y)`, `H(Y|X)`; verify the chain rule and `I = H(Y) − H(Y|X)`.
+
+```python
+joint = np.array([[0.4, 0.1],
+                  [0.1, 0.4]])
+
+def MI(J):
+    px, py = J.sum(1), J.sum(0); m = 0.0
+    for i in range(J.shape[0]):
+        for j in range(J.shape[1]):
+            if J[i,j] > 0:
+                m += J[i,j]*np.log2(J[i,j]/(px[i]*py[j]))
+    return float(m)
+
+def H_joint(J):
+    f = J.flatten(); f = f[f > 0]
+    return float(-np.sum(f*np.log2(f)))
+
+print("18", round(MI(joint), 6))
+print("19", round(MI(np.outer([0.5,0.5],[0.5,0.5])), 6))
+
+px, py = joint.sum(1), joint.sum(0)
+H_cond = H_joint(joint) - H(px)
+print("20 H(X)   :", round(H(px), 6))
+print("   H(Y)   :", round(H(py), 6))
+print("   H(X,Y) :", round(H_joint(joint), 6))
+print("   H(Y|X) :", round(H_cond, 6))
+print("   chain H(X)+H(Y|X) :", round(H(px)+H_cond, 6))
+print("   I = H(Y)-H(Y|X)   :", round(H(py)-H_cond, 6))
+```
+```
+18 0.278072
+19 0.0
+20 H(X)   : 1.0
+   H(Y)   : 1.0
+   H(X,Y) : 1.721928
+   H(Y|X) : 0.721928
+   chain H(X)+H(Y|X) : 1.721928
+   I = H(Y)-H(Y|X)   : 0.278072
+```
+**Problem 19:** independent variables have **exactly 0** mutual information. Knowing one tells you
+nothing about the other.
+**Problem 20 ties the whole section together.** The chain rule `H(X,Y) = H(X) + H(Y|X)` holds
+exactly (1.721928 both ways). And `I = H(Y) − H(Y|X)` gives 0.278072 — **the same number as problem
+18**, computed a completely different way. Mutual information is literally "how much knowing X
+reduces your uncertainty about Y."
+
+### E — Perplexity (21–22)
+
+21. Perplexity of a good model and a bad one.
+22. Show perplexity of a uniform model equals the vocabulary size, and `PP = e^(cross-entropy)`.
+
+```python
+def perplexity(probs):
+    return float(np.exp(-np.mean(np.log(probs))))
+
+print("21", round(perplexity([0.9, 0.8, 0.95]), 6), round(perplexity([0.1, 0.2, 0.05]), 6))
+print("22", round(perplexity([1/50000]*3), 4), round(float(np.exp(cce(Y,Q))), 6))
+```
+```
+21 1.134962 10.0
+22 50000.0 1.336306
+```
+**Problem 22 gives perplexity its meaning.** A model assigning uniform probability over a
+50,000-word vocabulary has perplexity **exactly 50,000** — it is as confused as picking at random
+from the whole dictionary. A model with perplexity 1.13 is almost certain of the next word every
+time. Lower is better, and the number is interpretable as "effectively choosing among this many
+options."
+
+### Bonus — Jensen's inequality
+
+The result that makes `KL ≥ 0` true. For a **concave** function like `log`,
+`log(E[x]) ≥ E[log(x)]`.
+
+```python
+xs = np.array([1., 4.]); w = np.array([0.5, 0.5])
+print("log(E[x]):", round(float(np.log(w @ xs)), 6),
+      " E[log x]:", round(float(w @ np.log(xs)), 6))
+```
+```
+log(E[x]): 0.916291  E[log x]: 0.693147
+```
+`0.916 ≥ 0.693` ✓. Apply Jensen to `−log` inside the KL definition and non-negativity drops out.
+That is the proof of Gibbs' inequality from problem 8, and therefore the formal reason cross-entropy
+is a valid loss function.
+
+**Scoring:** 19+/22 → Week 1 mathematics is complete. Under 14 → redo §6.1–6.8.
+
+---
+
+## 6.10 QUIZZES — Parts 2, 4, 5 and 6
+
+Forty more questions, matching the treatment Part 3 received in §3.41.
+
+### Quiz — NumPy (Part 2)
+
+1. `m = np.arange(12).reshape(3,4)`. What is `m[:,1].shape`, and why is it not `(3,1)`?
+2. Which is a view and which a copy: `m[1:3]` versus `m[[1,2]]`?
+3. `np.arange(6).reshape(2,-1)` gives what shape?
+4. Broadcasting: `(3,4) + (4,)` works but `(3,4) + (3,)` fails. Why?
+5. What does `axis=0` collapse?
+6. Why is `keepdims=True` needed to normalise rows?
+7. `np.array([1.7, 2.7]).astype(int)` gives what, and is that rounding?
+8. `argmax()` versus `argmax(axis=1)`?
+9. Why subtract the row max before `exp` in softmax?
+10. Why must randomness be seeded?
+
+**Answers**
+1. **`(3,)`.** Integer indexing **drops** the axis. Use `m[:,1:2]` to keep it as `(3,1)`.
+2. `m[1:3]` is a **view** (shares memory); `m[[1,2]]` is a **copy**. Writing to a view changes the
+   original — a silent source of corruption.
+3. **`(2,3)`.** `-1` means "infer this from the total size."
+4. Shapes align **from the right**. `(3,4)` vs `(4,)` → 4 and 4 match. `(3,4)` vs `(3,)` → 4 and 3,
+   neither equal nor 1. Reshape to `(3,1)` to fix it.
+5. **The rows.** You get one value per column.
+6. Without it, `sum(axis=1)` returns `(3,)`, which right-aligns as `(1,3)` against `(3,4)` and
+   raises. With it you get `(3,1)`, which broadcasts correctly.
+7. **`[1, 2]`.** It **truncates** toward zero — it does not round. `2.7 → 2`. Silent data loss.
+8. Without an axis NumPy **flattens first** and gives a position in the flattened array. With
+   `axis=1` you get the winning column per row.
+9. `exp` of a large logit **overflows** to `inf`. Subtracting the max leaves the result mathematically
+   unchanged but bounds the inputs at 0.
+10. An unseeded bug is **irreproducible**, and an irreproducible bug cannot be fixed.
+
+### Quiz — Calculus (Part 4)
+
+1. What does the derivative measure?
+2. `f'(x) = 0` at a point. What can that point be?
+3. Forward vs central difference — which is more accurate, and roughly by how much?
+4. State the chain rule and why it is central to deep learning.
+5. What is the maximum value of the sigmoid's derivative?
+6. What is ReLU's derivative for `x > 0`, and why does that matter?
+7. Gradient versus Jacobian versus Hessian — shapes?
+8. What do the Hessian's eigenvalues tell you?
+9. What is a VJP and why does it avoid building `J`?
+10. What is gradient checking?
+
+**Answers**
+1. The **slope at a single point** — how much the output changes per unit change in input.
+2. A **minimum, a maximum, or a saddle point**. Zero gradient alone does not tell you which; you need
+   the Hessian (§4.13).
+3. **Central**, by roughly four orders of magnitude — verified in bank problem 2 (`1e-5` error vs
+   `8e-10`) for one extra function evaluation. This is why gradient checking uses central differences.
+4. `d/dx f(g(x)) = f'(g(x))·g'(x)` — rates **multiply** along a chain. A network is functions inside
+   functions, so backpropagation *is* the chain rule applied in reverse.
+5. **0.25**, at `x = 0`. Multiply many values ≤ 0.25 along a deep chain and the gradient vanishes.
+6. **Exactly 1.** It does not shrink the gradient as it passes back, which is why ReLU replaced
+   sigmoid in hidden layers.
+7. Gradient: a **vector** `(inputs,)`. Jacobian: a **matrix** `(outputs, inputs)`. Hessian: a
+   **square matrix** `(inputs, inputs)` of second derivatives.
+8. All positive → **minimum** (bowl). All negative → maximum. **Mixed → saddle.** Bank problem 23
+   showed `[−1, +5]` for a point that looked like a minimum but was not.
+9. `vᵀJ` computed directly, never materialising `J`. Since `J` is `(outputs × inputs)`, storing it per
+   layer is unaffordable; the product is only a vector. **This is how `torch.autograd` works.**
+10. Comparing your analytic gradient against a central-difference numerical one. It is how every real
+    backward pass is validated, and you should never trust hand-derived gradients without it.
+
+### Quiz — Optimisation (Part 5)
+
+1. Why does gradient descent **subtract** the gradient?
+2. Name the three learning-rate regimes and what each looks like on a loss curve.
+3. MSE versus MAE — which is robust to outliers, and which is the usual default?
+4. Why must you clip probabilities before `log` in cross-entropy?
+5. Batch, mini-batch, SGD — which is standard and why?
+6. What does momentum fix, and when does it hurt?
+7. Why does Adagrad eventually stop learning?
+8. What does Adam add to RMSprop?
+9. Why does L1 produce exactly-zero weights while L2 does not?
+10. What must you remember to do when early stopping fires?
+
+**Answers**
+1. The gradient points **uphill** (steepest ascent). Training wants to go downhill, so you negate it.
+2. **Too small** — loss falls but crawls. **Correct** — smooth steady decrease. **Too large** — loss
+   oscillates or explodes to `inf`/`nan`. Verified: `3.69`, `0.176`, `−77`.
+3. **MAE** is robust to outliers; **MSE** is the usual default because squaring gives a clean
+   gradient that scales with the error, while MAE's is `±1` everywhere and undefined at zero.
+4. `log(0)` is `−inf`, which poisons the loss and every gradient downstream.
+5. **Mini-batch.** Full batch is exact but too slow per step; single-sample is fast but very noisy.
+   Bank problem 12 showed a 32-sample gradient was close to the true one at a third of the cost.
+6. It cancels zig-zagging in **long narrow ravines** and accelerates along the floor. On a simple
+   symmetric bowl it **overshoots** — verified at 1.69 versus plain descent's 0.176.
+7. Its denominator accumulates **all** past squared gradients and only ever grows, so the effective
+   step size decays toward zero. Verified: it barely moved, ending at 3.79.
+8. **Momentum** (a first-moment estimate) plus **bias correction** for the fact that both moment
+   estimates start at zero and are therefore biased low in early steps.
+9. L2's gradient is `2λw`, which **shrinks as `w` shrinks** — asymptotic, never arriving. L1's is a
+   constant `±λ` **regardless of magnitude**, so it pushes all the way to zero. Visible in bank
+   problems 22–23.
+10. **Restore the best weights**, not the final ones. In bank problem 25 the best was at epoch 2 but
+    training ran to epoch 4. Forgetting this is a common and silent bug.
+
+### Quiz — Information theory (Part 6)
+
+1. Why is information content `−log(p)` rather than just `p`?
+2. What is the entropy of a fair coin, and of a certain event?
+3. Which distribution over `n` outcomes has maximum entropy?
+4. State Gibbs' inequality and why it makes cross-entropy a valid loss.
+5. Entropy of a uniform distribution over 8 outcomes?
+6. Is `KL(p‖q) = KL(q‖p)`? Give the numbers.
+7. What is the relationship between cross-entropy and maximum likelihood?
+8. What does label smoothing do to the target distribution's entropy?
+9. Perplexity of a uniform model over a 1,000-word vocabulary?
+10. What does mutual information equal in terms of conditional entropy?
+
+**Answers**
+1. Because independent probabilities **multiply** while we want information to **add**. Logs convert
+   multiplication into addition. The minus sign makes the result positive, since `log` of a
+   probability is negative.
+2. Fair coin: **1 bit** — maximum uncertainty for two outcomes. Certain event: **0 bits** — it tells
+   you nothing.
+3. **Uniform.** Verified: uniform over 4 outcomes gives 2.0 bits, the maximum; skewed versions gave
+   1.36 and 0.24.
+4. `H(p,q) ≥ H(p)`, with equality only when `q = p`. So the loss is minimised exactly when your
+   predicted distribution matches reality — which is what you want a loss to do.
+5. **3 bits**, since `log₂(8) = 3`.
+6. **No.** `KL(p‖q) = 0.737` but `KL(q‖p) = 0.531`. It is not a distance metric.
+7. They are **the same objective**. Bank problem 16 showed cross-entropy `0.289909` and negative
+   log-likelihood `0.289909` — identical. Minimising cross-entropy is maximum likelihood estimation.
+8. It **raises** it. A one-hot target has 0 bits (absolute certainty); after 10% smoothing it has
+   0.42 bits. That injected uncertainty is what discourages over-confidence.
+9. **1,000.** A uniform model's perplexity equals the vocabulary size — it is as confused as guessing
+   at random.
+10. `I(X;Y) = H(Y) − H(Y|X)` — how much knowing `X` **reduces** your uncertainty about `Y`. Verified
+    two independent ways, both giving 0.278072.
+
+**Quiz scoring:** 36+/40 across these four before you close Week 1.
+
+---
 ---
 
 # PART 7 — ADVANCED MATHEMATICS (recognition only)
@@ -6592,16 +6981,18 @@ Every study plan on the reference site that falls inside Week 1 is now matched:
 | Linear Algebra — The Language of ML | 30 | §3.40 + §3.41 quizzes | **done** |
 | Calculus for ML — Derivatives, Gradients, Optimization | 30 | §4.17 | **done** |
 | Optimization — Finding Optimal Solutions | 25 | §5.15 | **done** |
-| *(no reference plan — information theory)* | — | §6.9 | **outstanding** |
+| *(no reference plan — built from scratch)* | 22 | §6.9 + §6.10 quizzes | **done** |
 
-**Total: 110 problems + 50 quiz questions + 35 exercises, all with worked solutions and verified
-output.** Plans belonging to later weeks (Pandas, SQL, Probability & Statistics → Week 2; PyTorch,
-Micrograd → Week 5; Cracking ML/DL/NLP/RL/CV → Weeks 3–8; CUDA, Triton, Inference Engineering →
-Week 10) are mapped in the roadmap's resource index, not here.
+**Total: 132 problems + 90 quiz questions + 35 exercises — 257 graded items, every one with a worked
+solution and verified output.** Plans belonging to later weeks (Pandas, SQL, Probability & Statistics
+→ Week 2; PyTorch, Micrograd → Week 5; Cracking ML/DL/NLP/RL/CV → Weeks 3–8; CUDA, Triton, Inference
+Engineering → Week 10) are mapped in the roadmap's resource index, not here.
+
+**Every reference plan inside Week 1 is now matched, and information theory — which has no reference
+plan — is covered from scratch. Week 1 problem coverage is complete.**
 
 | Priority | What | Where it goes |
 |---|---|---|
-| 1 | **Information theory problem bank** (~20 problems) + quizzes for Parts 2, 4, 5, 6 | §6.9 |
 | 2 | **"Going deeper" advanced boxes** on every major concept — derivations, proofs, complexity, numerical stability | throughout |
 | 3 | **Interview question bank** per topic, with model answers | end of each Part |
 | 4 | Linear algebra depth: condition number, pseudo-inverse, positive-definiteness, trace, matrix norms, operation costs | Part 3 |
