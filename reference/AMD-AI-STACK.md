@@ -10,6 +10,14 @@ forward-looking reporting is marked, and Section 20 lists exactly what is verifi
 **Where this fits:** supporting reference for the roadmap's Section 10.17 (model-to-hardware
 specialisation track). Companion document to [`QUALCOMM-AI-STACK.md`](QUALCOMM-AI-STACK.md).
 
+> **Focused on the GPU?** This document is the **map** — it names and places every component across
+> all three hardware families. For the GPU line specifically, read
+> **[`AMD-GPU-PATH.md`](AMD-GPU-PATH.md)**, which is the **deep dive**: what happens between your
+> Python and the silicon, layer by layer, with the commands to inspect each one yourself. It covers
+> the HIP-to-`hsaco` compilation path, AQL dispatch, the execution model, the memory hierarchy, the
+> verified MFMA instruction set, Triton internals, the roofline workflow, and a staged learning
+> curriculum.
+
 ---
 
 ## Contents
