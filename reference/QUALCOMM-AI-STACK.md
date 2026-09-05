@@ -22,6 +22,7 @@ specialisation track), Stage 6 — edge, NPU and client AI inference.
 | 4 | The offline pipeline — preparing the model |
 | 5 | **Graph partitioning — what decides your performance** |
 | 6 | Inside the Hexagon NPU |
+| 6B | **Heterogeneous execution — which engine runs what** |
 | 7 | The complete journey — one worked example |
 | 8 | Which door do I use? |
 | 9 | Genie — the LLM layer |
@@ -378,6 +379,87 @@ any description of specific systolic-array dimensions is community inference, no
 
 ---
 
+## 6B. Heterogeneous execution — which engine runs what
+
+A Snapdragon SoC is not "a CPU plus an NPU." It is several engines on a shared memory system, and
+Qualcomm's own framing is explicit: Genie "orchestrates execution across heterogeneous compute
+units (CPU, GPU, NPU)."
+
+| Engine | Name | Strength | Typical AI role |
+|---|---|---|---|
+| **CPU** | Kryo / **Oryon** | flexibility, mature libraries, large caches | control flow, unsupported ops, small GEMMs |
+| **GPU** | **Adreno** | wide FP throughput, dynamic shapes | image/vision preprocessing, FP16 fallback |
+| **NPU** | **Hexagon** | matrix throughput per watt | quantised, static-shape, sustained workloads |
+
+You select the engine per graph. In Genie it is a configuration field, not a code change:
+
+```
+backend::type =  QnnHtp                 # the NPU (HTP)
+                 QnnGenAiTransformer    # transformer-specialised path
+                 QnnGpu                 # Adreno
+```
+
+The `genie-t2t-run` CLI runs LLM inference on **CPU, GPU or HTP** backends, so switching engines to
+compare is genuinely a one-line experiment. Do that experiment — because the results are not what
+marketing slides imply.
+
+### The uncomfortable evidence: the NPU is not always faster
+
+Two 2026 arXiv preprints benchmarked this properly, and **they disagree with each other**. That
+disagreement is the most useful thing in this section, so here it is undisguised.
+
+*(Both are academic preprints, not Qualcomm documentation. Different chips, different models.)*
+
+| | **Study A** — Snapdragon 8 Gen 3, LLM | **Study B** — Snapdragon 8 Elite (SM8750), VLM |
+|---|---|---|
+| **Prefill** on NPU | **slower** — CPU won by 1.27–1.62× | **1.64× faster** than CPU |
+| **Decode** on NPU | 1.05–1.20× faster | 1.18× faster |
+| **Vision encoder** on NPU | not measured | **20–45× faster** than CPU |
+| **Energy** | up to **51% higher** with more NPU offload | **2.52× lower** |
+
+**What they agree on:** NPU gains in the **decode** phase are small — 1.05–1.20× and 1.18×
+respectively. Both studies, independently, on different silicon.
+
+**Why they disagree on prefill** is almost certainly the workload. Study A ran LLM prefill, where
+Study A's authors credit the CPU's "mature GEMM libraries and larger caches." Study B ran a
+vision-language model, whose prefill is dominated by a vision encoder — the exact dense,
+static-shape, quantisation-friendly workload an NPU is built for. The 20–45× encoder speedup and
+the 51% LLM energy regression are **both true**, of different things.
+
+> **The lesson to carry into an interview:** "Does the NPU help?" is not a hardware question, it is
+> a **per-stage, per-operator** question. Answer it with a measurement, per phase, on the target
+> device.
+
+### Three reasons NPU offload underdelivers — and what to do
+
+**1. Dispatch latency dominates small operators.** Study A found lightweight operators with
+**call-time to op-time ratios of 8–22×** — the cost of *invoking* the operator was up to 22 times
+the operator's own work. Their guideline: get dispatch below **10 µs**, via batched dispatch,
+persistent command queues, or **operator fusion**.
+→ *Your lever:* fuse aggressively; do not send tiny ops to the NPU one at a time.
+
+**2. Operator coverage gaps force fallback.** Study A calls out FlashAttention specifically as an
+operator that should be on the NPU and often is not. Every unsupported op is a partition boundary
+and a round trip — which is §5's graph-partitioning problem showing up as a measured regression.
+→ *Your lever:* check the partition report **before** optimising anything else.
+
+**3. Unsupported architectures never reach the NPU at all.** Study B reports that a **four-step
+graph rewrite** brought previously unsupported encoders (such as Phi-3.5-V) onto the QNN path for
+up to **22× speedup**.
+→ *Your lever:* rewriting the graph to fit the backend often beats tuning the backend.
+
+### The NPU's real, reliable win: thermals and energy
+
+Latency is the wrong headline metric for on-device AI. Study B measured, on the same work, a
+**10.47 °C lower steady-state temperature** across 100 runs and **2.52× lower energy** — and
+crucially, that **avoided thermal throttling in always-on settings**.
+
+That is the argument that matters on a phone. A GPU path that is 10% faster for thirty seconds and
+then throttles loses to an NPU path that holds its rate indefinitely. Sustained throughput under
+thermal limits is the number to report, not peak.
+
+---
+
 ## 7. The complete journey — one worked example
 
 A photo classifier, from your laptop to a phone screen:
@@ -520,6 +602,65 @@ Produced by `qnn-genai-transformer-composer`:
 > **Smaller blocks mean more scale factors: better accuracy, worse throughput.** That is the
 > opposite of what most people assume, and it is a good interview answer.
 
+### Gen AI Builder — the API that removes the manual steps
+
+Recall the three-step LLM workflow: **quantise → compile & package → deploy**. Gen AI Builder is a
+Python API that automates the whole middle step. You hand it a quantised ONNX model plus its
+encodings file (the output of the AIMET step), and one `build()` call returns a `GenAIContainer`
+ready to run on device.
+
+```python
+builder = GenAIBuilderFactory.create(
+    Path(MODEL_EXPORTS),
+    BackendType.HTP,
+    cache_root=cache_root,
+)
+container = builder.build()
+```
+
+The factory **auto-detects the model architecture from `config.json`**, with preconfigured builders
+for Llama, Qwen, Phi, Mistral, Baichuan and others. An unrecognised architecture falls back to a
+default `GenAIBuilderHTP` **with a warning** — worth noticing, because a silent fallback means you
+are no longer on a tuned path.
+
+**What that single call is actually doing** — this list is the best summary of what LLM deployment
+on a Hexagon NPU really involves:
+
+1. **AR/CL conversion** — generate ONNX models for each autoregressive × context-length combination
+2. **ONNX splitting** — partition the model into N splits (it does not fit as one graph)
+3. **MHA2SHA transformation** — convert **multi-head attention into single-head** attention per split
+4. **ONNX → DLC** conversion, applying quantisation overrides from the encodings file
+5. **DLC quantisation** — activations at 16-bit, biases at 32-bit
+6. **LoRA graph building** and import, when a LoRA config is supplied
+7. **Context binary generation** — with **weight sharing** across splits and native KV-cache format
+
+> **Read step 3 twice.** Multi-head attention is rewritten to single-head form to fit the NPU's
+> execution model. This is the kind of graph surgery that separates "exported a model" from
+> "deployed a model," and it is exactly the sort of thing an interviewer probes for.
+
+### Speculative decoding — three supported methods
+
+Decode is bandwidth-bound (see §6B), so the standard escape is to produce several tokens per
+expensive pass. Qualcomm's builder supports three methods, selected at build time:
+
+| Method | Full name | How it drafts |
+|---|---|---|
+| **LADE** | Look-ahead decoding | Predicts multiple future tokens, selects the most promising continuation |
+| **SSD** | Self-speculative decoding | Uses **the model itself** as the draft — no second model to ship |
+| **Eaglet** | Adaptation of EAGLE | Modified EAGLE algorithm for generating speculative tokens |
+
+```python
+SPECULATIVE_TYPE = "lade"   # or "ssd", or "eaglet"
+```
+
+**SSD is the pragmatic one for mobile** — no separate draft model means no extra weights in your
+already-tight memory budget.
+
+**Host requirement worth planning for:** Qualcomm recommends **at least 64 GB of RAM** on the build
+machine, and notes the workflow may take around 40 minutes with less (increase swap to avoid
+out-of-memory failures). The build is a heavyweight offline job, not something you iterate on
+casually.
+
 ---
 
 ## 10. The datacenter branch
@@ -623,7 +764,10 @@ object model and its parsing/partitioning boundary · the four-tool chain and it
 model formats and their portability · AIMET's techniques and Qualcomm's own guidance on when QAT is
 and is not needed · Genie's architecture and tools · the GenAI quantisation types and their
 trade-offs · Cloud AI 100 Ultra specifications · Network Specialization · MX6 · ONNX Runtime QNN EP
-options.
+options · Genie's heterogeneous framing and the `QnnHtp` / `QnnGpu` / `QnnGenAiTransformer` backend
+values · the Gen AI Builder API, its seven automated stages (including the MHA2SHA rewrite),
+architecture auto-detection with warned fallback, the 16-bit activation / 32-bit bias settings, the
+three speculative-decoding methods (LADE / SSD / Eaglet) and the 64 GB host-RAM recommendation.
 
 ### From PyTorch documentation
 
@@ -635,6 +779,17 @@ Hexagon internals beyond the scalar / HVX / HMX / VTCM decomposition · the ~300
 figure · the bottleneck priority ordering · any specific systolic-array dimensions, since Qualcomm
 does **not** publish HMX instruction details · **the Hexagon version-to-chip mapping, where sources
 actively conflict** — verify v73 / v75 / v79 / v81 against Qualcomm documentation for your part.
+
+### Academic preprints — cited as measurements, not as vendor fact
+
+Every number in §6B's comparison table comes from two 2026 arXiv preprints, **not** from Qualcomm:
+the prefill/decode speedups and reversals, the 1.27–1.62× CPU-over-NPU prefill result, the
+8–22× dispatch-overhead ratios, the sub-10 µs dispatch guideline, the up-to-51% energy increase,
+the 20–45× vision-encoder speedup, the 1.64× / 1.18× phase split, the 10.47 °C and 2.52× energy
+figures, and the four-step graph rewrite yielding up to 22×. These are single-paper results on
+specific chips and models; **the two papers contradict each other on prefill**, which is exactly
+why §6B presents them side by side rather than picking one. Reproduce on your own target before
+quoting any of it as fact.
 
 ### Announced, not shipped
 
@@ -652,6 +807,14 @@ Dragonfly AI200 / AI250 / AI300 specifications and availability dates.
 - AIMET on-target inference (the four-tool chain) —
   <https://qualcomm.github.io/aimet-pages/releases/latest/tutorials/on_target_inference.html>
 - Genie — <https://docs.qualcomm.com/doc/80-80020-15B/topic/use-genai-model-with-genie.html>
+- Gen AI Builder overview —
+  <https://docs.qualcomm.com/doc/80-87189-2/topic/genai_overview.html>
+- Speculative decoding tutorial (LADE / SSD / Eaglet) —
+  <https://docs.qualcomm.com/doc/80-87189-2/topic/speculative_decoding_tutorial.html>
+- *When NPUs Are Not Always Faster: A Stage-Level Analysis of Mobile LLM Inference* (preprint) —
+  <https://arxiv.org/html/2605.27435>
+- *Phase Matters: Characterizing Heterogeneous Vision-Language Inference on a Mobile SoC* (preprint) —
+  <https://arxiv.org/html/2606.27906>
 - `qnn-genai-transformer-composer` —
   <https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-10/qnn-genai-transformer-composer.html>
 - ONNX Runtime QNN EP on Snapdragon — <https://docs.qualcomm.com/doc/80-62010-1/topic/ort-qnn-ep.html>
