@@ -10,7 +10,8 @@ Self-directed AI / Machine Learning / Deep Learning engineering programme.
 | [`AI-ML-DL-COMPLETE-ROADMAP.md`](AI-ML-DL-COMPLETE-ROADMAP.md)                               | The full programme specification — 10 weekly modules, plus the conversion phase and the model-to-hardware specialisation track. 19 portfolio artefacts. |
 | [`textbook/WEEK-01-MATHEMATICS-FOUNDATIONS.md`](textbook/WEEK-01-MATHEMATICS-FOUNDATIONS.md) | Week 1 textbook, written from zero. 126 concepts: Python, NumPy, linear algebra, calculus, optimisation, information theory.                            |
 | [`reference/QUALCOMM-AI-STACK.md`](reference/QUALCOMM-AI-STACK.md)                           | The Qualcomm AI stack from model to hardware, explained for a beginner. Every layer diagrammed, the offline toolchain, graph partitioning, Hexagon NPU internals, heterogeneous CPU/GPU/NPU execution with measured evidence, Genie and Gen AI Builder, speculative decoding, and the datacenter branch. |
-| [`reference/AMD-AI-STACK.md`](reference/AMD-AI-STACK.md)                                     | The AMD AI stack from model to hardware. ROCm and HIP, CDNA datacenter GPUs, **RDNA client GPUs and WMMA**, the XDNA client NPU, AITER, vLLM on ROCm, Ryzen AI, Quark, **NPU + iGPU hybrid execution**, the CUDA porting hazards, and **a head-to-head of AMD's strategy versus Qualcomm's**. |
+| [`reference/AMD-AI-STACK.md`](reference/AMD-AI-STACK.md)                                     | The AMD AI stack from model to hardware — **the map**. ROCm and HIP, CDNA datacenter GPUs, RDNA client GPUs and WMMA, the XDNA client NPU, AITER, vLLM on ROCm, Ryzen AI, Quark, NPU + iGPU hybrid execution, the CUDA porting hazards, and a head-to-head of AMD's strategy versus Qualcomm's. |
+| [`reference/AMD-GPU-PATH.md`](reference/AMD-GPU-PATH.md)                                     | The AMD **GPU** path from `model.py` to electrons — **the deep dive**. Ten layers with a "see it yourself" command block each: PyTorch dispatch, HIP-to-`hsaco` compilation, AQL kernel dispatch, the execution model, the memory hierarchy, the verified CDNA 3 MFMA instruction set, Triton internals, the roofline workflow, an optimisation ladder, and a staged learning curriculum. |
 
 
 ## Structure
@@ -21,8 +22,9 @@ AI-Trainings/
 ├── textbook/
 │   └── WEEK-01-MATHEMATICS-FOUNDATIONS.md
 ├── reference/
-│   ├── QUALCOMM-AI-STACK.md        # vendor stack deep-dive (model -> hardware)
-│   └── AMD-AI-STACK.md             # vendor stack deep-dive (model -> hardware)
+│   ├── QUALCOMM-AI-STACK.md        # vendor stack: model -> hardware
+│   ├── AMD-AI-STACK.md             # vendor stack: the map (GPU + NPU, all layers named)
+│   └── AMD-GPU-PATH.md             # GPU deep dive: compiler, dispatch, MFMA, roofline
 └── week01/                          # my code and deliverables (to come)
 ```
 
