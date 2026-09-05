@@ -19,8 +19,9 @@ specialisation track). Companion document to [`QUALCOMM-AI-STACK.md`](QUALCOMM-A
 | 1 | The 30-second version |
 | 2 | The whole stack, one picture |
 | 3 | **Name decoder — read this first** |
-| 4 | Three hardware families, one software stack |
+| 4 | Three hardware families, **two** software stacks |
 | 5 | Inside a CDNA datacenter GPU |
+| 5B | **Inside an RDNA client GPU** |
 | 6 | Inside the XDNA client NPU |
 | 7 | ROCm, layer by layer |
 | 8 | **HIP — and porting from CUDA** |
@@ -29,11 +30,13 @@ specialisation track). Companion document to [`QUALCOMM-AI-STACK.md`](QUALCOMM-A
 | 11 | Frameworks: PyTorch, JAX, Triton |
 | 12 | Serving: vLLM and SGLang |
 | 13 | The client stack: Ryzen AI |
+| 13B | **Heterogeneous execution — NPU + GPU + CPU together** |
 | 14 | Quantisation: AMD Quark |
 | 15 | Profiling and tools |
 | 16 | End-to-end journey — datacenter |
 | 17 | End-to-end journey — client |
 | 18 | If you already know CUDA or the Qualcomm stack |
+| 18B | **AMD's strategy versus Qualcomm's** |
 | 19 | The mistakes everyone makes |
 | 20 | Verification status |
 
@@ -159,26 +162,35 @@ The client path is much shorter:
 
 ---
 
-## 4. Three hardware families, one software stack
+## 4. Three hardware families, two software stacks
 
 ```
                     ┌──────────── AMD AI SILICON ────────────┐
                     │                                        │
-      ┌─────────────┴──────────┐  ┌──────────┐  ┌────────────┴──────────┐
-      │  CDNA — Instinct       │  │  RDNA    │  │  XDNA — Ryzen AI NPU  │
-      │  datacenter GPU        │  │  Radeon  │  │  laptop NPU           │
-      │                        │  │  client  │  │                       │
-      │  MI210/250  (gfx90a)   │  │  GPU     │  │  XDNA 1  ~10-16 TOPS  │
-      │  MI300X/325 (gfx942)   │  │          │  │  XDNA 2  ~50-55 TOPS  │
-      │  MI350X/355 (gfx950)   │  │          │  │                       │
-      │                        │  │          │  │                       │
-      │  train + infer         │  │  infer + │  │  infer only,          │
-      │  HBM, 100s of GB       │  │  some    │  │  low power            │
-      │                        │  │  train   │  │                       │
-      └────────────┬───────────┘  └────┬─────┘  └───────────┬───────────┘
-                   │                   │                    │
-                 ROCm                ROCm            Ryzen AI Software
+      ┌─────────────┴──────────┐  ┌──────────────────┐  ┌────────┴──────────┐
+      │  CDNA — Instinct       │  │  RDNA — Radeon   │  │  XDNA — Ryzen AI  │
+      │  datacenter GPU        │  │  client GPU      │  │  laptop NPU       │
+      │                        │  │                  │  │                   │
+      │  MI210/250  (gfx90a)   │  │  RDNA 3 (gfx11)  │  │  XDNA 1  ~10-16   │
+      │  MI300X/325 (gfx942)   │  │  RDNA 4 (gfx12)  │  │          TOPS     │
+      │  MI350X/355 (gfx950)   │  │  iGPUs: gfx1151  │  │  XDNA 2  ~50-55   │
+      │                        │  │                  │  │          TOPS     │
+      │  MFMA matrix cores     │  │  WMMA matrix     │  │  AIE tile array   │
+      │  wavefront 64          │  │  wave32 or 64    │  │                   │
+      │  HBM, 100s of GB       │  │  GDDR6, 12-32 GB │  │  shared LPDDR5X   │
+      │  train + infer         │  │  infer + some    │  │  infer only,      │
+      │                        │  │  train           │  │  low power        │
+      └────────────┬───────────┘  └────────┬─────────┘  └─────────┬─────────┘
+                   │                       │                      │
+                 ROCm                    ROCm            Ryzen AI Software
+                   └───────────┬───────────┘                      │
+                     same stack, different              ← entirely separate →
+                     matrix instructions                  tools and runtime
 ```
+
+**Read the bottom row carefully — it is the thing people get wrong.** The two GPU families share
+ROCm but **not** their matrix instructions (MFMA versus WMMA, §5B). The NPU shares neither: it has
+its own tools and runtime (§13), and only **Quark** crosses the divide.
 
 ---
 
@@ -273,6 +285,110 @@ freed area widened the fabric — which is how HBM read bandwidth went 5.3 → 8
 > **A single logical GPU with non-uniform internal behaviour.** Because MI300+ are multi-die, memory
 > access cost is not flat across the package. Partitioning modes (per-IOD, per-XCD) exist precisely
 > to let you exploit that. This surprises people coming from monolithic GPUs.
+
+---
+
+## 5B. Inside an RDNA client GPU
+
+RDNA is the **gaming and client** GPU line — Radeon RX, and the integrated GPUs inside Ryzen chips.
+It is easy to dismiss as "the gaming one," and that is a mistake: RDNA 3 and RDNA 4 have real matrix
+hardware, and on a Ryzen AI laptop the **iGPU is an RDNA GPU sitting next to the XDNA NPU**.
+
+### CDNA versus RDNA — two different design goals
+
+| | **CDNA** (Instinct) | **RDNA** (Radeon) |
+|---|---|---|
+| Built for | HPC + AI training and inference | Graphics, with AI added |
+| **Matrix instruction** | **`MFMA`** | **`WMMA`** |
+| AMD's name for the unit | Matrix Cores | "AI Accelerators" — but see the naming note below |
+| Wave size | **64** (wavefront) | **32 or 64** (wave32 is typical) |
+| Memory | HBM, 100s of GB | GDDR6, 12–32 GB |
+| Graphics pipeline | stripped out | full raster + ray tracing |
+| FP64 | strong | weak |
+
+> **The instruction families differ.** CDNA uses **MFMA**; RDNA uses **WMMA**. Kernels hand-tuned for
+> one do not automatically run well — or at all — on the other. This is the single biggest surprise
+> for people who assume "an AMD GPU is an AMD GPU."
+
+### WMMA — Wave Matrix Multiply Accumulate
+
+WMMA performs a matrix multiply **cooperatively across a whole wave** (32 threads in wave32, 64 in
+wave64), sharing operand data across lanes instead of per-thread work. That reduces register
+pressure and memory traffic.
+
+Three ways to reach it:
+
+```
+  1. Compiler intrinsics      __builtin_amdgcn_wmma_f32_16x16x16_f16_w32_gfx12
+  2. Inline assembly          (rarely worth it)
+  3. rocWMMA                  ← the portable option
+```
+
+**`rocWMMA` is the one to know.** AMD documents it as portable with `nvcuda::wmma`, and it supports
+**both MFMA and WMMA** — so one source can target CDNA and RDNA.
+
+### Generational throughput — from AMD's GPUOpen documentation
+
+FLOPS per clock per CU:
+
+| Type | RDNA 2 (RX 6950 XT) | RDNA 3 (RX 7900 XTX) | RDNA 4 (RX 9070 XT) |
+|---|---|---|---|
+| FP16 | 256 | 512 | **1024** |
+| BF16 | N/A | 512 | **1024** |
+| INT8 | 512 | 512 | **2048** |
+| **FP8 / BF8** | N/A | N/A | **2048** |
+
+### What RDNA 4 changed, and why it matters for AI
+
+> **A naming conflict inside AMD's own documentation.** The AMD RDNA product page calls RDNA 4's
+> matrix hardware **"2nd Generation AI Accelerators"** (counting RDNA 3 as the 1st). The GPUOpen
+> article on the same hardware calls them **"3rd-generation Matrix Cores"** (apparently counting
+> RDNA 2 as the 1st, which is consistent with RDNA 2 already doing 256 FP16 and 512 INT8 per clock
+> per CU). Both are AMD sources. **Cite the throughput numbers, not the generation label** — the
+> label is ambiguous.
+
+The changes themselves:
+
+- **Doubled FP16/BF16** and **quadrupled INT8** matrix throughput per CU versus RDNA 3
+- **New FP8 and BF8 formats** — 4× the RDNA 3 16-bit float WMMA rate
+- **Hardware 4:2 structured sparsity** — doubles dense WMMA throughput when a model actually exploits
+  it. AMD's headline "up to 8× versus previous generation" combines the INT gain with sparsity
+- **Simplified register layout.** This one is subtle but important: on RDNA 3, chaining WMMA
+  operations (as an MLP does) required **shuffling data between lanes** to convert a D matrix into
+  the next B matrix. **RDNA 4 removes that requirement**, needs half the registers, and enables 2×
+  larger tiling
+- **New intrinsics with a `_gfx12` postfix** — and they are **not backward compatible** with RDNA 3
+
+> **The porting trap within the porting trap.** RDNA 3 → RDNA 4 WMMA is a **source change**, not a
+> recompile. The VGPR layout changed, so you must use the new `_gfx12` intrinsics.
+
+### Client GPU reference points
+
+*(Specifications below are from a community reference table, not AMD documentation — treat as
+indicative.)*
+
+| | RX 9070 XT | RX 9070 | Radeon AI PRO R9700 |
+|---|---|---|---|
+| Compute Units | 64 | 56 | 64 |
+| Stream processors | 4,096 | 3,584 | 4,096 |
+| AI Accelerators (WMMA) | 128 | 112 | 128 |
+| Wave size | 32 or 64 | 32 or 64 | 32 or 64 |
+| **VRAM** | 16 GB GDDR6 | 16 GB GDDR6 | **32 GB GDDR6** |
+| Bandwidth | 640 GB/s | 640 GB/s | 640 GB/s |
+| Infinity Cache | 64 MB | 64 MB | 64 MB |
+| Board power | 304 W | 220 W | 300 W |
+
+**Why the Radeon AI PRO R9700 matters to you:** 32 GB on a client card is the cheapest legitimate
+route to running mid-size models locally with ROCm. Note the memory-bandwidth reality though —
+640 GB/s against an MI355X's 8.0 TB/s is more than a 12× gap. For memory-bound decode, that gap
+*is* the performance difference.
+
+### ROCm on Radeon
+
+ROCm supports Radeon, but **support is narrower than for Instinct** and varies by exact part. Check
+the current compatibility list against your specific GPU before buying anything. In the vLLM
+attention-backend table (§12), note which backends are marked "Radeon support" — not all of them
+are, and the AITER paths generally target Instinct.
 
 ---
 
@@ -627,6 +743,116 @@ Copilot+ PCs.
 
 ---
 
+## 13B. Heterogeneous execution — using the NPU, GPU and CPU together
+
+This is the part almost every tutorial skips, and it is where the real engineering lives. A Ryzen AI
+laptop has **three compute engines sharing one memory pool**: Zen CPU cores, an RDNA integrated GPU,
+and an XDNA NPU. The interesting question is not "how do I use the NPU?" It is **"which engine
+should run which part of my model, and when?"**
+
+### Why the question exists: prefill and decode are different workloads
+
+An LLM has two phases with opposite characteristics:
+
+| | **Prefill** (process the prompt) | **Decode** (generate each token) |
+|---|---|---|
+| Shape of the maths | large **GEMM** — matrix × matrix | thin **GEMV** — matrix × vector |
+| Parallelism | all prompt tokens at once, huge | one token at a time, tiny |
+| Bottleneck | **compute-bound** | **memory-bandwidth-bound** |
+| What you feel | time-to-first-token (**TTFT**) | tokens per second (**TPS**) |
+
+A decode step reads the *entire* weight matrix to produce *one* token. Arithmetic per byte loaded is
+terrible, so it is bandwidth-limited — adding matrix throughput barely helps. Prefill is the
+opposite. **One engine is rarely best at both.** That is the whole reason hybrid execution exists.
+
+### AMD's four documented execution modes
+
+From AMD's Ryzen AI documentation:
+
+| Mode | Framework | Compute allocation | Primary use case |
+|---|---|---|---|
+| **NPU-only** | OGA | NPU exclusive | Maximum NPU use **while keeping the iGPU free** for other work |
+| **Hybrid** | OGA | **Dynamic NPU + iGPU partitioning** | Interactive inference — best prefill *and* decode |
+| **GPU** | llama.cpp | dedicated GPU | High-throughput inference on integrated or discrete GPU |
+| **CPU** | OGA or llama.cpp | CPU | Baseline compatibility everywhere |
+
+**Hybrid mode is the headline feature:** AMD describes it as using both NPU and iGPU "to achieve the
+best TTFT and TPS during the prefill and decode phases" — that is, it maps each phase to the engine
+that suits it, dynamically.
+
+### The hardware support cliff — check this first
+
+| Processor series | NPU-only | Hybrid | GPU / CPU |
+|---|---|---|---|
+| **Ryzen AI 300** (Strix, Krackan Point) | yes | yes | yes |
+| **Ryzen AI 7000 / 8000** | **no** | **no** | yes |
+
+AMD states plainly that the OGA flow supports **Strix and Krackan Point**, and that **Phoenix (PHX)
+and Hawk Point (HPT) are not supported**. So a "Ryzen AI 7000" laptop has an NPU you cannot reach
+through this path at all. Verify your exact silicon before designing around hybrid mode.
+
+### NPU-only has two flavours
+
+If you choose NPU-only, AMD offers two model builds with a real trade-off:
+
+| Build | Optimised for | Context |
+|---|---|---|
+| **Token Fusion** | long-context workloads | up to **16K tokens** (input + output), no extra configuration |
+| **Full Fusion** | best throughput on shorter sequences | shorter |
+
+For **hybrid** models the limit is per-model: input + output must not exceed the `context_length`
+field in `genai_config.json`. Read that file — do not assume.
+
+AMD ships pre-optimised builds for common architectures (Llama-2/3, Mistral, DeepSeek-R1 distills,
+Qwen-2/2.5/3, Gemma-2, Phi-3/3.5/4) against **OGA version 0.14.0**.
+
+### The other reason to use the NPU: it barely disturbs the GPU
+
+Here is the insight that reframes the NPU. It is not only "the low-power engine" — it is a
+**separate execution lane that does not compete for the same resources**.
+
+Independent community measurement on a Strix Halo system (Ryzen AI MAX+ 395, Radeon 8060S iGPU,
+128 GB LPDDR5X) ran an auxiliary model alongside a main iGPU workload at 64K context:
+
+| Auxiliary model placed on… | Added latency to the main iGPU workload |
+|---|---|
+| **the NPU** | **+3.3%** |
+| another iGPU process | **+69.0%** |
+
+Same auxiliary work, 20× difference in interference. The explanation is bandwidth accounting: a
+1.7–8B model reads roughly 2 GB per token, while a 30B Q4 model reads about 17 GB. The small model
+on the NPU consumes a few percent of the memory bus; the same model on the iGPU fights the big one
+for both compute *and* bandwidth. Reported combined throughput was ~1.7–1.9× versus serving the
+two workloads sequentially.
+
+> **The design pattern:** put always-on background work — classification, routing, RAG embedding,
+> draft generation for speculative decoding — on the NPU, and keep the iGPU for the one workload
+> whose latency the user actually notices.
+
+**Caveat worth stating plainly:** these are community figures on one machine, not AMD numbers, and
+the same project honestly reports a failure — a 1.7B NPU-hosted request classifier scored only
+39.1% exact-class accuracy on a 100-sample gate, so they kept it advisory rather than
+authoritative. Small models on the NPU are cheap; that does not make them correct.
+
+### Unified memory is what makes this possible
+
+On these APUs the CPU, iGPU and NPU share **one physical memory pool** (LPDDR5X on Strix Halo,
+roughly 256 GB/s theoretical, with community measurements landing nearer 158–170 GB/s effective).
+No PCIe copy between engines. That is what makes handing a KV cache or an intermediate tensor
+between engines cheap enough to be worth doing.
+
+It also sets the ceiling. Shared bandwidth means every engine draws from the same well — which is
+precisely why the interference numbers above matter more than peak TOPS.
+
+### Platform reality check
+
+**AMD's hybrid OGA flow is Windows-first.** On Linux the NPU appears as `/dev/accel/accel0` and the
+community has built its own routing (FastFlowLM for the NPU, llama.cpp on the iGPU), but you are
+assembling the orchestration yourself rather than calling a supported hybrid API. If your target is
+Linux, plan for that.
+
+---
+
 ## 14. Quantisation: AMD Quark
 
 **Quark is the one tool that spans both halves of the stack** — datacenter and client.
@@ -790,6 +1016,110 @@ Running a vision model on a Ryzen AI laptop:
 
 ---
 
+## 18B. Two different bets — AMD's strategy versus Qualcomm's
+
+Both companies sell CPUs, GPUs and NPUs. Both want your AI workload. But they arrived from opposite
+directions, and once you see the direction, every other difference stops being a random fact and
+becomes a consequence.
+
+> **The one-sentence thesis:**
+> **AMD scales a GPU architecture *down* toward the client. Qualcomm scales an NPU architecture *up*
+> toward the datacenter.**
+
+### The direction of travel
+
+```
+   AMD                                    QUALCOMM
+   ───                                    ────────
+   CDNA datacenter GPU   (the core bet)   Hexagon NPU in a phone   (the core bet)
+        │                                      │
+        ▼ scale down                           ▼ scale up
+   RDNA client GPU                        Hexagon NPU in a laptop
+        │                                      │
+        ▼ add a low-power engine               ▼ same IP, more of it
+   XDNA NPU  (client only)                Cloud AI 100 / datacenter
+                                          ("reuses Hexagon NPU and Oryon CPU")
+
+   Primary engine: THE GPU                Primary engine: THE NPU
+   The NPU is the addition.               The GPU (Adreno) is the assist.
+```
+
+Qualcomm's datacenter parts reuse Hexagon and Oryon IP — the phone architecture grown up. AMD's
+client NPU is a genuinely different architecture (an AIE tile array) bolted alongside a GPU lineage.
+
+### What follows from that
+
+| | **AMD** | **Qualcomm** |
+|---|---|---|
+| **Primary AI engine** | GPU — CDNA in datacenter, RDNA on client | **NPU** — Hexagon, everywhere |
+| **Secondary engine** | XDNA NPU, **client only** | Adreno GPU, assist and fallback |
+| **Number of AI architectures** | **three** (CDNA, RDNA, XDNA) | essentially **one** (Hexagon), scaled |
+| **Software stacks** | **two, and they are separate** — ROCm (datacenter) vs Ryzen AI (client) | **one** — QAIRT/QNN from phone to datacenter |
+| **What crosses the divide** | almost nothing except **Quark** | the whole toolchain |
+| **Programming model** | **write kernels** — HIP, Triton, CK, assembly | **compile graphs** — converter → context binary |
+| **Matrix instructions you can target** | MFMA (CDNA), WMMA (RDNA) — documented, callable | HVX/HMX driven by the compiler, not hand-written in the normal flow |
+| **Training** | **first-class** on CDNA | inference only; QAT runs on a host |
+| **Quantiser** | AMD Quark | **AIMET** |
+| **Precision floor in practice** | FP16/BF16/FP8, INT8 optional | **quantisation is mandatory**, INT8/INT4 typical |
+| **Ecosystem posture** | upstream PyTorch, vLLM, Triton run natively | ONNX-centric, vendor SDK is the path |
+
+### The difference that should shape your career choice
+
+**On AMD you can write the kernel. On Qualcomm's NPU, in the mainstream flow, you cannot.**
+
+AMD hands you HIP, Triton, Composable Kernel, `rocWMMA`, and documented MFMA/WMMA intrinsics. If a
+GEMM is slow, you can go and write a faster one, and AITER exists precisely because AMD does that
+itself. The ceiling is your skill.
+
+Qualcomm hands you a converter, a quantiser and a graph compiler. Adreno is reachable through
+OpenCL kernels, but Hexagon's HVX and HMX are driven by the compiler; your levers are quantisation
+choice, graph shape, operator coverage and partitioning. Study B in the Qualcomm doc's §6B makes
+the point neatly — the winning move there was a **four-step graph rewrite**, not a hand-tuned
+kernel.
+
+| If you want to… | Go here |
+|---|---|
+| Write matrix kernels, chase roofline numbers, do performance archaeology | **AMD** (or NVIDIA) |
+| Do model surgery, quantisation, operator coverage, power/thermal engineering | **Qualcomm** |
+
+Neither is easier. They are different jobs that happen to share a job title.
+
+### How each vendor combines GPU and NPU
+
+This is where the two philosophies produce visibly different products.
+
+**AMD — the NPU and the GPU are peers on the client.** Hybrid mode dynamically partitions prefill
+and decode across the XDNA NPU and the RDNA iGPU (§13B), because AMD has a *capable* iGPU sitting
+right there. Unified memory makes the handoff cheap. On the datacenter side the NPU does not exist
+at all — it is GPUs, end to end.
+
+**Qualcomm — the NPU is the destination and the others are support staff.** The CPU takes control
+flow and unsupported operators; Adreno takes pre/post-processing and FP fallback; Hexagon takes the
+model. Genie exposes this as a backend field (`QnnHtp` / `QnnGpu` / `QnnGenAiTransformer`), and the
+same shape of stack runs on a phone and in Cloud AI 100.
+
+**Where they converge, interestingly:** both ended up needing **software-managed on-chip memory**
+for their NPUs — Qualcomm's **VTCM** and AMD's **XDNA tile memory**. Both abandoned the GPU's
+hardware-managed cache hierarchy for the NPU, because deterministic, compiler-scheduled data
+movement is what makes performance-per-watt work. Different companies, different decades, same
+conclusion.
+
+### Both stacks' shared honest lesson
+
+Read the Qualcomm doc's §6B measurement table and AMD's hybrid-mode design together and the same
+conclusion falls out of both:
+
+1. **Decode is bandwidth-bound.** No amount of matrix hardware fixes it. Both vendors' answer is
+   speculative decoding — Qualcomm ships LADE/SSD/Eaglet; AMD's community uses the NPU as a draft
+   engine for the iGPU.
+2. **The NPU's dependable win is energy and thermals**, not peak latency.
+3. **Graph shape and operator coverage beat micro-optimisation** — a fallback to CPU costs more
+   than any kernel tuning recovers.
+4. **Measure per phase, on the target device.** Every published speedup in this document is
+   conditional on a workload you probably do not have.
+
+---
+
 ## 19. The mistakes everyone makes
 
 | # | Mistake | Symptom | Fix |
@@ -817,6 +1147,16 @@ environment variables and AITER flags · Ryzen AI Software architecture, the Vit
 replacing the Vitis AI Quantizer, the OGA/llama.cpp/Lemonade layering, GAIA, TurnkeyML, AI Analyzer
 and `xrt-smi`.
 
+**Added for RDNA and heterogeneous execution (§5B, §13B):** the RDNA 2/3/4 FLOPS-per-clock-per-CU
+table · RDNA 4's 2nd-generation AI accelerators, FP8/BF8 support, 4:2 structured sparsity, the
+simplified VGPR layout that removes RDNA 3's inter-lane shuffle, the halved register requirement and
+2× tiling · the `_gfx12` intrinsic postfix and its **lack of backward compatibility** with RDNA 3 ·
+`rocWMMA` portability with `nvcuda::wmma` and its support for both MFMA and WMMA · the four OGA
+execution modes and their compute allocations · the Ryzen AI 300 versus 7000/8000 support matrix and
+the explicit exclusion of Phoenix and Hawk Point · Token Fusion versus Full Fusion, the 16K-token
+long-context figure, the `context_length` constraint in `genai_config.json`, OGA 0.14.0 and the
+pre-optimised model list.
+
 ### From project documentation (AITER repo, vLLM project)
 
 AITER's operator list, backend mix, architecture support and framework integrations · the vLLM ROCm
@@ -833,6 +1173,15 @@ XDNA tile-level internals (the 4×8 array, 64 KB L1, 512 KB memory tiles, shim t
 academic and community sources, not an AMD architecture manual · the `aie2p` versus AIE-MLv2
 distinction, and the observation that low-level XDNA documentation is thin · exact TOPS figures per
 Ryzen AI SKU.
+
+**Added in §5B and §13B, and clearly marked in place:** the RX 9070 / 9070 XT / Radeon AI PRO R9700
+specification table is from a community reference page, not AMD product documentation · the
+statement that RDNA 4 WMMA requires wave32 · the `gfx1151` target identifier for the Strix Halo
+Radeon 8060S iGPU shown in §4 · **every Strix Halo heterogeneous figure** — the +3.3%
+versus +69.0% interference result, the ~1.7–1.9× combined throughput, the ~2 GB versus ~17 GB
+per-token bandwidth arithmetic, the 158–170 GB/s measured effective bandwidth, the `/dev/accel/accel0`
+device path, and the 39.1% classifier-accuracy failure — comes from independent community projects
+on single machines. Treat all of it as directional, not specified behaviour.
 
 ### Forward-looking — announced or reported, not shipped
 
@@ -860,7 +1209,14 @@ in AMD product documentation, and **should not be relied on**.
 - vLLM ROCm attention backends — <https://vllm.ai/blog/2026-02-27-rocm-attention-backend>
 - AMD Ryzen AI Software — <https://www.amd.com/en/developer/resources/ryzen-ai-software.html>
 - Ryzen AI documentation — <https://ryzenai.docs.amd.com/>
+- Ryzen AI LLM execution modes — <https://ryzenai.docs.amd.com/en/latest/llm/overview.html>
+- Ryzen AI hybrid OGA execution — <https://ryzenai.docs.amd.com/en/latest/hybrid_oga.html>
 - AMD Quark — <https://quark.docs.amd.com/>
+- AMD RDNA architecture — <https://www.amd.com/en/technologies/rdna.html>
+- WMMA on RDNA 3 (GPUOpen) — <https://gpuopen.com/learn/wmma_on_rdna3/>
+- Matrix cores on RDNA 4 (GPUOpen) — <https://gpuopen.com/learn/using_matrix_core_amd_rdna4/>
+- Accelerating generative AI on Radeon (GPUOpen) —
+  <https://gpuopen.com/learn/accelerating_generative_ai_on_amd_radeon_gpus/>
 
 ---
 
