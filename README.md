@@ -10,6 +10,7 @@ Self-directed AI / Machine Learning / Deep Learning engineering programme.
 | [`AI-ML-DL-COMPLETE-ROADMAP.md`](AI-ML-DL-COMPLETE-ROADMAP.md)                               | The full programme specification — 10 weekly modules, plus the conversion phase and the model-to-hardware specialisation track. 19 portfolio artefacts. |
 | [`textbook/WEEK-01-MATHEMATICS-FOUNDATIONS.md`](textbook/WEEK-01-MATHEMATICS-FOUNDATIONS.md) | Week 1 textbook, written from zero. 126 concepts: Python, NumPy, linear algebra, calculus, optimisation, information theory.                            |
 | [`reference/QUALCOMM-AI-STACK.md`](reference/QUALCOMM-AI-STACK.md)                           | The Qualcomm AI stack from model to hardware, explained for a beginner. Diagrams of every layer, the offline toolchain, graph partitioning, the Hexagon NPU internals, Genie, and the datacenter branch. |
+| [`reference/AMD-AI-STACK.md`](reference/AMD-AI-STACK.md)                                     | The AMD AI stack from model to hardware. ROCm and HIP, the CDNA datacenter GPUs, the XDNA client NPU, AITER, vLLM on ROCm, Ryzen AI, Quark, and the CUDA porting hazards. |
 
 
 ## Structure
@@ -20,7 +21,8 @@ AI-Trainings/
 ├── textbook/
 │   └── WEEK-01-MATHEMATICS-FOUNDATIONS.md
 ├── reference/
-│   └── QUALCOMM-AI-STACK.md        # vendor stack deep-dive (model -> hardware)
+│   ├── QUALCOMM-AI-STACK.md        # vendor stack deep-dive (model -> hardware)
+│   └── AMD-AI-STACK.md             # vendor stack deep-dive (model -> hardware)
 └── week01/                          # my code and deliverables (to come)
 ```
 
