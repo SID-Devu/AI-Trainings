@@ -4,19 +4,19 @@ Self-directed AI / Machine Learning / Deep Learning engineering programme.
 
 ## Contents
 
-
-| File                                                                                         | What it is                                                                                                                                              |
-| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`AI-ML-DL-COMPLETE-ROADMAP.md`](AI-ML-DL-COMPLETE-ROADMAP.md)                               | The full programme specification — 10 weekly modules, plus the conversion phase and the model-to-hardware specialisation track. 19 portfolio artefacts. |
-| [`textbook/WEEK-01-MATHEMATICS-FOUNDATIONS.md`](textbook/WEEK-01-MATHEMATICS-FOUNDATIONS.md) | Week 1 textbook, written from zero. 126 concepts: Python, NumPy, linear algebra, calculus, optimisation, information theory.                            |
-| [`reference/QUALCOMM-AI-STACK.md`](reference/QUALCOMM-AI-STACK.md)                           | The Qualcomm AI stack from model to hardware, explained for a beginner. Every layer diagrammed, the offline toolchain, graph partitioning, Hexagon NPU internals, heterogeneous CPU/GPU/NPU execution with measured evidence, Genie and Gen AI Builder, speculative decoding, and the datacenter branch. |
-| [`reference/AMD-AI-STACK.md`](reference/AMD-AI-STACK.md)                                     | The AMD AI stack from model to hardware — **the map**. ROCm and HIP, CDNA datacenter GPUs, RDNA client GPUs and WMMA, the XDNA client NPU, AITER, vLLM on ROCm, Ryzen AI, Quark, NPU + iGPU hybrid execution, the CUDA porting hazards, and a head-to-head of AMD's strategy versus Qualcomm's. |
-| [`reference/AMD-GPU-PATH.md`](reference/AMD-GPU-PATH.md)                                     | The AMD **GPU** path from `model.py` to electrons — **the deep dive**. Ten layers with a "see it yourself" command block each: PyTorch dispatch, HIP-to-`hsaco` compilation, AQL kernel dispatch, the execution model, the memory hierarchy, the verified CDNA 3 MFMA instruction set, Triton internals, the roofline workflow, an optimisation ladder, and a staged learning curriculum. |
-
+| File | What it is |
+| --- | --- |
+| [`AI-ML-DL-COMPLETE-ROADMAP.md`](AI-ML-DL-COMPLETE-ROADMAP.md) | The full programme specification — 10 weekly modules, plus the conversion phase and the model-to-hardware specialisation track. 19 portfolio artefacts. |
+| [`textbook/WEEK-01-MATHEMATICS-FOUNDATIONS.md`](textbook/WEEK-01-MATHEMATICS-FOUNDATIONS.md) | Week 1 textbook, written from zero. 126 concepts: Python, NumPy, linear algebra, calculus, optimisation, information theory. |
+| [`reference/QUALCOMM-AI-STACK.md`](reference/QUALCOMM-AI-STACK.md) | The Qualcomm AI stack from model to hardware, explained for a beginner. Every layer diagrammed, the offline toolchain, graph partitioning, Hexagon NPU internals, heterogeneous CPU/GPU/NPU execution with measured evidence, Genie and Gen AI Builder, speculative decoding, and the datacenter branch. |
+| [`reference/AMD-AI-STACK.md`](reference/AMD-AI-STACK.md) | The AMD AI stack from model to hardware — **the map**. ROCm and HIP, CDNA datacenter GPUs, RDNA client GPUs and WMMA, the XDNA client NPU, AITER, vLLM on ROCm, Ryzen AI, Quark, NPU + iGPU hybrid execution, the CUDA porting hazards, and a head-to-head of AMD's strategy versus Qualcomm's. |
+| [`reference/AMD-GPU-PATH.md`](reference/AMD-GPU-PATH.md) | The AMD **GPU** path from `model.py` to electrons — **the deep dive**. Ten layers with a "see it yourself" command block each: PyTorch dispatch, HIP-to-`hsaco` compilation, AQL kernel dispatch, the execution model, the memory hierarchy, the verified CDNA 3 MFMA instruction set, Triton internals, the roofline workflow, an optimisation ladder, and a staged learning curriculum. |
+| [`reference/ROADMAP-AI-SYSTEMS-ARCHITECT.md`](reference/ROADMAP-AI-SYSTEMS-ARCHITECT.md) | Role roadmap #1 — **AI Systems Architect** (hardware/software co-design), the role that changes the hardware to fit the model. Eight gated stages, A1–A8: digital logic and RTL, computer architecture, GPU microarchitecture, accelerators and dataflow, number formats in silicon, performance modelling, interconnect and the datacenter, and a co-design proposal as the capstone. Its prerequisites are roadmap #2's F0–F6 and P1–P5 exit tests. |
+| [`reference/ROADMAP-AI-PERFORMANCE-ENGINEER.md`](reference/ROADMAP-AI-PERFORMANCE-ENGINEER.md) | Role roadmap #2 — **Full-Stack AI Performance Engineer**, the role that changes the software to fit the hardware. Learn it first. Foundation stages F0–F6 (computing from zero to measurement discipline), then P1–P8: GPU kernels, frameworks and compilers, distributed training, inference and serving, quantisation, production, an optional edge/NPU branch, and a cross-stack bring-up on AMD GPUs as the capstone. Every stage ends in a pass/fail exit test. |
 
 ## Structure
 
-```
+```text
 AI-Trainings/
 ├── AI-ML-DL-COMPLETE-ROADMAP.md    # the plan
 ├── textbook/
@@ -24,14 +24,13 @@ AI-Trainings/
 ├── reference/
 │   ├── QUALCOMM-AI-STACK.md        # vendor stack: model -> hardware
 │   ├── AMD-AI-STACK.md             # vendor stack: the map (GPU + NPU, all layers named)
-│   └── AMD-GPU-PATH.md             # GPU deep dive: compiler, dispatch, MFMA, roofline
+│   ├── AMD-GPU-PATH.md             # GPU deep dive: compiler, dispatch, MFMA, roofline
+│   ├── ROADMAP-AI-SYSTEMS-ARCHITECT.md     # role roadmap #1: hardware/software co-design (A1–A8)
+│   └── ROADMAP-AI-PERFORMANCE-ENGINEER.md  # role roadmap #2: performance engineering (F0–F6, P1–P8); learn first
 └── week01/                          # my code and deliverables (to come)
 ```
 
-
-
 ## The roadmap in one table
-
 
 | Week | Module                                                                                    |
 | ---- | ----------------------------------------------------------------------------------------- |
@@ -46,7 +45,6 @@ AI-Trainings/
 | 9.   | MLOps, deployment, data engineering, system design, ethics                                |
 | 10.  | Systems, GPU performance, inference optimisation, career conversion                       |
 
-
 Continuous throughout: data structures and algorithms, computer science fundamentals,
 research literacy.
 
@@ -57,8 +55,6 @@ research literacy.
 - [ ] 3 — gradient descent from first principles, three learning rates
 - [ ] 4 — entropy, cross-entropy and KL divergence, verified against SciPy
 
-
-
 ## Setup
 
 ```powershell
@@ -67,14 +63,12 @@ python -m venv .venv
 pip install numpy scipy matplotlib pytest
 ```
 
-
-
 ## How to read the Week 1 textbook
 
 It is one file, read in this order:
 
 | Part | What it does |
-|---|---|
+| --- | --- |
 | **T** | **The baseline** — what ML actually is, the training loop, the vocabulary, why these four maths branches, the ten-week arc, the standard, your starting scorecard |
 | **S** | How to read the maths — Greek letters, `Σ`, indices, set notation, logarithms from scratch |
 | **R** | Class 10 refresher + a 12-question prerequisite check |
@@ -84,7 +78,7 @@ There is an hour-blocked **5-day plan** at the top of the file (~12–13 hrs/day
 15-day alternatives at lower intensity. Nothing is cut at any pace — only the calendar changes.
 
 | Day | Covers |
-|---|---|
+| --- | --- |
 | 1 | Theory baseline, notation, refresher, setup, Python core |
 | 2 | Python advanced, all of NumPy, 35 exercises |
 | 3 | Linear algebra complete + deliverables 1 and 2 |
@@ -98,7 +92,7 @@ There is an hour-blocked **5-day plan** at the top of the file (~12–13 hrs/day
 file was executed before being written.
 
 | Bank | Problems |
-|---|---|
+| --- | --- |
 | §2.17 NumPy | 25 |
 | §3.40 Linear algebra | 30 |
 | §4.17 Calculus | 30 |

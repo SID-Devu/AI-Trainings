@@ -33,7 +33,7 @@ document as its prerequisites, so learn this one first.
 ## Contents
 
 | § | Section | What you learn |
-|---|---|---|
+| --- | --- | --- |
 | 1 | The role: what "done" looks like | The job this trains for, from real postings |
 | 2 | The whole path in one picture | Stage map, gates and where each stage deepens in this repo |
 | 3 | How every stage is structured | Why / Learn / Build / Done when / Traps / References |
@@ -73,7 +73,7 @@ Fetched on 2026-09-23. The base ranges are shown as posted and will drift. They 
 where the role sits, not as a promise.
 
 | Posting | Base range (as posted) | What it asks for |
-|---|---|---|
+| --- | --- | --- |
 | OpenAI: Workload Porting & Performance Engineer | $347K–$445K | Title and range recorded here; read the posting for the full list |
 | OpenAI: Systems Generalist, GPT Infrastructure | $293K–$445K | 8+ years; LLVM/MLIR, Triton, CUDA/ROCm; vLLM/SGLang |
 | OpenAI: Inference Performance Optimization | $266K–$500K | Title and range only; no URL recorded |
@@ -83,7 +83,7 @@ where the role sits, not as a promise.
 ### The four capabilities this roadmap builds
 
 | Capability | Stages | The proof |
-|---|---|---|
+| --- | --- | --- |
 | Write and tune kernels | F5, P1 | A GEMM ladder where a profiler counter explains every step |
 | Understand what generates and launches them | P2 | A custom op that compiles with zero graph breaks |
 | Scale across devices for training and serving | P3, P4 | Step time and SLO throughput predicted before they are measured |
@@ -112,7 +112,7 @@ flowchart TB
 ```
 
 | Stage | Depth | You build | Gate (Done when) | Deepens in this repo |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | F0 | [BUILD] | Float classifier; a CPU from NAND gates | Trace `c = a + b` to the ALU | — |
 | F1 | [BUILD] | Stable softmax; hand-derived backprop | FLOPs, bytes and intensity of a GEMM, unaided | Roadmap Weeks 1–2; textbook Week 1 |
 | F2 | [BUILD] | Sanitizer-clean C++ library with Python bindings | TSan race found and fixed | — |
@@ -151,7 +151,8 @@ refer to the documents linked in the introduction.
 **Why.** Every later performance argument comes down to bits moving between storage and arithmetic
 units. If this layer is fuzzy, every later explanation is folklore.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] Integers.** Binary and hex, unsigned and two's complement, overflow and wraparound,
   shifts and masks, and endianness.
 - **[BUILD] IEEE-754 floating point.**
@@ -175,7 +176,8 @@ units. If this layer is fuzzy, every later explanation is folklore.
 - **[BUILD] Tooling.** The Linux shell, git, a build tool and a debugger. Use `gcc -S` and `objdump -d`
   to read what the compiler emitted.
 
-**Build**
+**Build:**
+
 1. Nand2Tetris Part I: build up from NAND gates to a working CPU and its assembler.
 2. `floatbits` in C. It prints the sign, exponent and mantissa of any `float` or `double`, classifies
    the value (normal, subnormal, zero, infinity or NaN) and prints its neighbours using `nextafter`.
@@ -183,18 +185,21 @@ units. If this layer is fuzzy, every later explanation is folklore.
 3. Sum ten million random `float`s four ways: forwards, backwards, pairwise and with Kahan summation.
    Report each result against a `double` reference.
 
-**Done when**
+**Done when:**
+
 - You can trace `c = a + b`, for both integers and floats, from the C source to the emitted assembly,
   then to the ALU or FPU operation and its loads and stores.
 - Using your own numbers from Build 3, you can explain why summing the same values in a different
   order gives a different answer, and what that means when you compare GPU outputs.
 
-**Traps**
+**Traps:**
+
 - Exact float equality is not a correctness test. Tolerances depend on the format and the algorithm
   (F1, P5).
 - `volatile` does not synchronise threads (F2).
 
-**References**
+**References:**
+
 - Petzold, *Code: The Hidden Language of Computer Hardware and Software* (2nd ed.).
 - Nisan & Schocken, *The Elements of Computing Systems*, and its course site:
   <https://www.nand2tetris.org/>.
@@ -212,7 +217,8 @@ units. If this layer is fuzzy, every later explanation is folklore.
 **Why.** Performance engineering is counting: FLOPs, bytes and messages. Numerics is the other half
 of correctness.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] Linear algebra.**
   - Matmul three ways: as dot products, as outer products and as linear combinations of columns.
   - Shapes and broadcasting, transpose, rank and orthogonality.
@@ -240,7 +246,8 @@ of correctness.
 - **[BUILD] Cost arithmetic.** An M×K by K×N matmul costs 2·M·N·K FLOPs. With b bytes per element it
   must move at least b·(MK + KN + MN) bytes. **Arithmetic intensity** is FLOPs divided by bytes.
 
-**Build**
+**Build:**
+
 1. Matmul in NumPy three ways: triple loop, dot products and outer products. Check that they agree
    within tolerance, and time each one.
 2. Naive vs stable softmax and log-sum-exp. Find the input magnitude at which the naive version
@@ -250,17 +257,20 @@ of correctness.
 4. A FLOP-and-byte counter for matmul, softmax and LayerNorm. Tabulate arithmetic intensity across
    sizes.
 
-**Done when**
+**Done when:**
+
 - You derive backprop for a 2-layer MLP on paper, and your finite-difference check agrees.
 - For a BF16 GEMM of a given shape, you can state the FLOPs, the minimum bytes and the arithmetic
   intensity without notes.
 
-**Traps**
+**Traps:**
+
 - Gradient checks in FP32 with a tiny step size fail because round-off swamps the difference. Use FP64.
 - FLOPs (a count) and FLOP/s (a rate) are different things. *How to Scale Your Model* writes the rate
   explicitly as FLOPs/s for this reason.
 
-**References**
+**References:**
+
 - **In this repo:** [`../textbook/WEEK-01-MATHEMATICS-FOUNDATIONS.md`](../textbook/WEEK-01-MATHEMATICS-FOUNDATIONS.md);
   roadmap Weeks 1–2.
 - Deisenroth, Faisal & Ong, *Mathematics for Machine Learning*.
@@ -279,7 +289,8 @@ of correctness.
 **Why.** Kernels and runtimes are written in C++, while harnesses, experiments and frameworks are
 written in Python. You need both at production quality, and you must be able to cross between them.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] Python.** The data model (names bind to objects; mutability), iterators and generators,
   decorators, context managers, type hints, packaging and virtual environments. **[KNOW]** The GIL
   and what releases it; profiling with `cProfile` and `py-spy`.
@@ -307,7 +318,8 @@ written in Python. You need both at production quality, and you must be able to 
 - **[BUILD] Crossing the boundary.** pybind11 bindings, the buffer protocol, and releasing the GIL in
   native code.
 
-**Build**
+**Build:**
+
 1. A small C++ matrix library with strided views and matmul. It needs:
    - a GoogleTest suite;
    - CI jobs under ASan+UBSan and under TSan;
@@ -315,17 +327,20 @@ written in Python. You need both at production quality, and you must be able to 
 2. A deliberately racy counter. Show TSan reporting it, fix it once with an atomic and once with a
    mutex, and measure both under contention.
 
-**Done when**
+**Done when:**
+
 - The library is clean under all three sanitizers, and the bindings match NumPy within tolerance.
 - You can explain acquire/release with a message-passing example, and show how the relaxed version
   can fail.
 
-**Traps**
+**Traps:**
+
 - Benchmarking a debug build.
 - A Python benchmark that measures interpreter overhead instead of the work.
 - Returning a view whose owning buffer has been freed.
 
-**References**
+**References:**
+
 - Stroustrup, *A Tour of C++* (3rd ed.); Meyers, *Effective Modern C++*; Williams, *C++ Concurrency in
   Action* (2nd ed.); Ramalho, *Fluent Python* (2nd ed.).
 - Bakhvalov, *Performance Ninja*. Its labs cover vectorisation, dependency chains and false sharing:
@@ -338,7 +353,8 @@ written in Python. You need both at production quality, and you must be able to 
 **Why.** You cannot optimise what you cannot build. Every kernel in P1 is part of a model that you
 should be able to write from scratch.
 
-**Learn**
+**Learn:**
+
 - **[KNOW] ML foundations.** Train/validation/test splits, bias–variance, over- and under-fitting,
   regularisation (weight decay and dropout), and data leakage.
 - **[BUILD] Autograd.** The computational graph, reverse mode, topological ordering and gradient
@@ -357,25 +373,29 @@ should be able to write from scratch.
   gradient clipping, checkpointing and evaluation. **[KNOW]** Mixed precision; you build it properly in
   P5.
 
-**Build**
+**Build:**
+
 1. A scalar autograd engine in the style of micrograd. Train a small MLP with it.
 2. Tensor-level backprop through an MLP with a normalisation layer, written by hand without
    `loss.backward()`.
 3. A GPT from scratch, with a tokenizer you wrote. Train it on a small corpus and sample from it.
 4. A finite-difference gradient check of your attention block in FP64.
 
-**Done when**
+**Done when:**
+
 - Given batch size, sequence length, d_model, number of heads, number of KV heads, d_ff and vocabulary
   size, you can write every tensor shape through a decoder block from memory, including K and V
   under GQA.
 - Your GPT's validation loss falls well below a unigram baseline, and the gradient check passes.
 
-**Traps**
+**Traps:**
+
 - Silent broadcasting can train but learn the wrong thing, so assert shapes.
 - With a missing causal mask the training loss looks superb, but generation is garbage.
 - Losses are not comparable across different tokenizers.
 
-**References**
+**References:**
+
 - **In this repo:** roadmap Weeks 3–7.
 - Karpathy, *Neural Networks: Zero to Hero*. It covers micrograd, makemore (including the manual
   backprop lecture), "Let's build GPT" and "Let's build the GPT Tokenizer":
@@ -395,7 +415,8 @@ should be able to write from scratch.
 **Why.** This is the workload. Its arithmetic (parameters, FLOPs, activations and KV-cache bytes) is
 the input to every performance model you will build.
 
-**Learn**
+**Learn:**
+
 - **[KNOW] Architecture variants.**
   - Dense decoder-only models.
   - Mixture-of-experts: router, top-k selection, capacity factor and load-balancing loss.
@@ -427,7 +448,8 @@ the input to every performance model you will build.
 - **[AWARE]→[KNOW] Post-training.** SFT, RLHF and DPO. RL post-training puts inference throughput
   inside the training loop.
 
-**Build**
+**Build:**
+
 - `llm_calc.py`. Its input is a Llama-style config (layers, d_model, heads, KV heads, d_ff,
   vocabulary, tied embeddings) and a dtype. It computes:
   - parameters by component;
@@ -438,16 +460,19 @@ the input to every performance model you will build.
 - Validate it two ways. The parameter count must equal the sum of tensor sizes in a real checkpoint
   **exactly**. The KV bytes must match what your serving engine allocates, up to its block rounding.
 
-**Done when**
+**Done when:**
+
 - You can estimate training compute and serving memory for a config you have not seen, without help.
 - The calculator's parameter count matches a real checkpoint to the integer.
 
-**Traps**
+**Traps:**
+
 - Forgetting the embedding and unembedding matrices, or whether they are tied.
 - Using query heads instead of KV heads to size the KV cache of a GQA model.
 - Quoting tokens/s without the batch size, sequence lengths and precision.
 
-**References**
+**References:**
+
 - **In this repo:** roadmap Week 8.
 - Stanford CS336, *Language Modeling from Scratch*: <https://stanford-cs336.github.io/>.
 - Austin et al., *How to Scale Your Model*, chapter 4, "All the Transformer Math You Need to Know":
@@ -468,7 +493,8 @@ the input to every performance model you will build.
 **Why.** The execution model and the memory hierarchy decide what is fast. Almost every optimisation
 in P1 is one of a handful of moves against the model you learn here.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] Scaling laws of parallelism.** Amdahl's and Gustafson's laws; strong vs weak scaling.
   **[KNOW]** Work and span.
 - **[KNOW] CPU parallelism.** SIMD lanes, multicore, caches and coherence (deepened in roadmap #1,
@@ -500,6 +526,7 @@ in P1 is one of a handful of moves against the model you learn here.
   Learn the ridge point and the three regimes: compute-bound, memory-bound and overhead-bound.
 
 **Build** (HIP on an AMD GPU; the CUDA equivalents are acceptable)
+
 1. Vector add: measure achieved GB/s against peak HBM bandwidth.
 2. A reduction ladder, with GB/s at each step:
    1. global atomics;
@@ -511,18 +538,21 @@ in P1 is one of a handful of moves against the model you learn here.
 4. A measured roofline for your GPU, from a bandwidth microbenchmark and an FMA-throughput
    microbenchmark. Compare it with the roofline that `rocprof-compute` produces (AMD-GPU-PATH §9).
 
-**Done when**
+**Done when:**
+
 - For every kernel in this stage, you predict compute-bound or memory-bound **before** profiling, and
   the counters confirm the prediction.
 - Your measured roofline is within a margin of the vendor's peak that you state in advance, or you
   can explain the gap.
 
-**Traps**
+**Traps:**
+
 - Timing without synchronising the device measures the launch, not the kernel.
 - Including the first launch in the timing adds code-object load, allocation and cold caches.
 - Treating occupancy as the objective. The objective is throughput.
 
-**References**
+**References:**
+
 - **In this repo:** roadmap §10.3 (GPU execution model); [`AMD-GPU-PATH.md`](AMD-GPU-PATH.md) §4–§6,
   §9, and §12 Stages 0–2; [`AMD-AI-STACK.md`](AMD-AI-STACK.md) §5, §5B, §7 and §8.
 - Hwu, Kirk & El Hajj, *Programming Massively Parallel Processors* (4th ed.).
@@ -543,7 +573,8 @@ in P1 is one of a handful of moves against the model you learn here.
 **Why.** A number that nobody can reproduce is not a result. This stage lets every later claim
 survive review.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] Benchmark design.**
   - Warm up first, then run enough repetitions to estimate the spread.
   - Report the median and p95/p99 with the spread, not a single mean.
@@ -571,7 +602,8 @@ survive review.
   5. the bottleneck analysis;
   6. what was not tested.
 
-**Build**
+**Build:**
+
 - A `bench/` harness that:
   - runs a warm-up plus N timed repetitions, synchronising correctly;
   - records the raw samples **and** the environment to JSON (GPU, driver and ROCm versions, framework
@@ -581,17 +613,20 @@ survive review.
 - Plant a small regression, such as an extra pass over memory. Show that the harness flags it, and
   that it does not flag an unchanged re-run.
 
-**Done when**
+**Done when:**
+
 - Repeat runs on an idle machine fall inside your stated noise band.
 - The planted regression is flagged and the unchanged build is not.
 - Someone else can reproduce your headline number from the JSON record alone.
 
-**Traps**
+**Traps:**
+
 - Averages can hide a bimodal distribution, so plot it.
 - Comparing two builds measured on different days, machines or driver versions.
 - Using timings from a profiled run as benchmark results. Profiling perturbs the run.
 
-**References**
+**References:**
+
 - **In this repo:** roadmap §10.4 (profiling and measurement); [`AMD-GPU-PATH.md`](AMD-GPU-PATH.md) §9
   and §13; [`AMD-AI-STACK.md`](AMD-AI-STACK.md) §15.
 - Gregg, *Systems Performance* (2nd ed.).
@@ -608,7 +643,8 @@ survive review.
 **Why.** This is the core craft. Every framework operator ends up as a kernel, and this stage teaches
 you to write one, read one and fix one.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] The GEMM ladder.** Climb it one rung at a time and measure every rung:
   1. naive;
   2. coalesced global loads;
@@ -645,7 +681,8 @@ you to write one, read one and fix one.
 - **[KNOW] Libraries.** hipBLASLt and rocBLAS, Composable Kernel, rocWMMA and AITER
   (AMD-AI-STACK §9–§10); CUTLASS and CuTe on NVIDIA.
 
-**Build**
+**Build:**
+
 1. A HIP GEMM ladder with one commit per rung. For each rung, record:
    - GFLOP/s and % of peak;
    - the **counter** that explains the change, such as LDS bank conflicts, VGPRs, occupancy or cache
@@ -658,19 +695,22 @@ you to write one, read one and fix one.
    sequence lengths.
 3. The AMDGCN of your best HIP GEMM, with the inner loop annotated line by line.
 
-**Done when**
+**Done when:**
+
 - Every rung has a measured delta and a counter that explains it.
 - Your best GEMM reaches a fraction of hipBLASLt that you state, at shapes that you state, and you
   can say what closing the rest of the gap would take.
 - Your FlashAttention forward matches the reference within tolerance and scales with sequence length
   as its I/O analysis predicts.
 
-**Traps**
+**Traps:**
+
 - Benchmarking only square, power-of-two shapes. In decode GEMMs, M equals the batch size.
 - Declaring victory against your naive kernel instead of the vendor library.
 - A faster kernel that gives wrong results on tail sizes because a mask is missing.
 
-**References**
+**References:**
+
 - **In this repo:** roadmap §10.6 (kernel authoring in Python) and §10.17 Stage 3;
   [`AMD-GPU-PATH.md`](AMD-GPU-PATH.md) §7, §8, §11, and §12 Stages 3–4;
   [`AMD-AI-STACK.md`](AMD-AI-STACK.md) §9–§10.
@@ -697,7 +737,8 @@ you to write one, read one and fix one.
 **Why.** Most kernels that ship were generated or selected by a framework or a compiler. You must be
 able to see what it did and change it.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] PyTorch internals.**
   - A tensor is a storage plus sizes, strides and an offset, and views share storage.
   - Each call dispatches on device and layout, then on dtype, with autograd in front (Yang, 2019).
@@ -723,7 +764,8 @@ able to see what it did and change it.
 - **[AWARE]→[KNOW] Scheduling languages.** Halide's separation of algorithm and schedule; TVM;
   search-based autotuning.
 
-**Build**
+**Build:**
+
 1. A fused RMSNorm as a Triton kernel, registered through `torch.library` with a fake kernel and
    autograd. It passes `torch.library.opcheck` and compiles under `torch.compile` with no graph break.
 2. `torch.compile` a small transformer and read the Triton code that Inductor generated. Find a missed
@@ -731,17 +773,20 @@ able to see what it did and change it.
 3. MLIR's Toy tutorial through chapter 6 (lowering to LLVM).
 4. Dump Triton's IR stages for your P1 softmax, and find where the layout decisions appear in TTGIR.
 
-**Done when**
+**Done when:**
+
 - Your custom op passes `opcheck`, compiles with zero graph breaks and matches eager mode within
   tolerance.
 - From the dumped IR, you can explain one decision the compiler made and one decision you changed.
 
-**Traps**
+**Traps:**
+
 - The first `torch.compile` call includes compilation. Do not time it as runtime.
 - Dynamic shapes can cause silent storms of recompilation.
 - A custom op without a fake kernel breaks tracing.
 
-**References**
+**References:**
+
 - **In this repo:** roadmap §10.17 Stages 1–2; [`AMD-GPU-PATH.md`](AMD-GPU-PATH.md) §2–§4 and §8;
   [`AMD-AI-STACK.md`](AMD-AI-STACK.md) §11.
 - Yang, "PyTorch internals" (2019): <https://blog.ezyang.com/2019/05/pytorch-internals/>. His 2020
@@ -764,7 +809,8 @@ able to see what it did and change it.
 **Why.** Frontier models do not fit on one device. The performance problem becomes compute plus
 memory plus communication across thousands of devices.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] Collectives.**
   - The operations: broadcast, reduce, all-reduce, reduce-scatter, all-gather and all-to-all.
   - Ring vs tree algorithms.
@@ -790,7 +836,8 @@ memory plus communication across thousands of devices.
   - A step-time breakdown into compute, exposed communication, bubbles and the input pipeline.
 - **[KNOW] Reliability at scale.** Checkpoint strategy, failure rates, stragglers and restarts.
 
-**Build**
+**Build:**
+
 1. Your own ring all-reduce built on `torch.distributed` point-to-point operations. Validate it
    against the library collective, and fit its bandwidth-vs-message-size curve to α and B.
 2. Train a GPT of 100M–1B parameters on 2–8 GPUs, moving through DDP, then FSDP, then tensor
@@ -798,18 +845,21 @@ memory plus communication across thousands of devices.
    GPU, tokens/s, MFU and a trace that shows the overlap.
 3. Before each run, predict the step time from your F4 calculator plus the α–β model.
 
-**Done when**
+**Done when:**
+
 - Measured step time matches your prediction within an error that you stated in advance.
 - You can attribute the residual to exposed communication, bubbles or kernel efficiency.
 
-**Traps**
+**Traps:**
+
 - Computing MFU with the wrong FLOP count: leaving out attention FLOPs at long context, or counting
   recomputation (that makes it HFU).
 - Comparing throughput at different global batch sizes.
 - Communication that appears to overlap on the trace but is actually serialised on the same stream
   or engine.
 
-**References**
+**References:**
+
 - **In this repo:** roadmap §10.17 Stage 4; [`AMD-GPU-PATH.md`](AMD-GPU-PATH.md) §10.
 - *How to Scale Your Model*, chapters 3 (sharded matrices), 5 (parallelising training) and 6
   (training LLaMA 3).
@@ -833,7 +883,8 @@ memory plus communication across thousands of devices.
 **Why.** Serving is where a model meets its users. The objective changes from raw throughput to
 throughput under a latency SLO, at a given cost per token.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] The two phases.** Prefill has a large M and is compute-bound. Decode has M equal to the
   batch size and is bandwidth-bound at small batch sizes. Use the crossover batch size from F4.
 - **[BUILD] KV-cache management.**
@@ -860,7 +911,8 @@ throughput under a latency SLO, at a given cost per token.
 - **[KNOW] Engines.** vLLM and SGLang (on AMD with AITER; AMD-AI-STACK §10, §12); llama.cpp for local
   use. **[AWARE]** TensorRT-LLM.
 
-**Build**
+**Build:**
+
 1. Serve an open model with vLLM on ROCm (AMD-AI-STACK §12). Sweep the request rate, then plot TTFT
    and ITL at p50 and p99 against throughput. Find the highest throughput that meets an SLO you set.
 2. Place decode on your F5 roofline: compare bytes per token against achieved bandwidth, and explain
@@ -870,17 +922,20 @@ throughput under a latency SLO, at a given cost per token.
 4. Toggle one attention-backend or AITER option (AMD-AI-STACK §10, §12), and attribute the change
    with a profile.
 
-**Done when**
+**Done when:**
+
 - Your predicted maximum throughput at the SLO matches the measured value within a stated error. The
   prediction comes from F4 arithmetic plus measured kernel efficiency.
 
-**Traps**
+**Traps:**
+
 - Fixed-length synthetic prompts can make batching or prefix caching look better (or worse) than
   real traffic.
 - Reporting throughput without the latency it cost.
 - Comparing tokens/s across different tokenizers or output lengths.
 
-**References**
+**References:**
+
 - **In this repo:** roadmap §10.5 (optimisation and inference); [`AMD-AI-STACK.md`](AMD-AI-STACK.md)
   §10, §12 and §16; [`QUALCOMM-AI-STACK.md`](QUALCOMM-AI-STACK.md) §9 (on-device speculative decoding).
 - *How to Scale Your Model*, chapters 7 (inference) and 8 (serving LLaMA 3).
@@ -901,7 +956,8 @@ throughput under a latency SLO, at a given cost per token.
 **Why.** Lower precision is the largest single lever on compute, memory and bandwidth at once. It is
 also the easiest way to ship a wrong answer quickly.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] Formats.**
   - FP32, and **[KNOW]** TF32.
   - FP16 vs BF16: precision vs range.
@@ -931,7 +987,8 @@ also the easiest way to ship a wrong answer quickly.
   2. per layer: activation statistics;
   3. end task: perplexity plus at least one downstream evaluation.
 
-**Build**
+**Build:**
+
 - One model quantised three ways, for example FP8, INT4 weight-only with AWQ or GPTQ, and MXFP4
   where the hardware supports it. Put the results in one table:
   - perplexity and one task score;
@@ -940,16 +997,19 @@ also the easiest way to ship a wrong answer quickly.
 - An FP8 GEMM emulator in PyTorch. It quantises, multiplies in higher precision and compares the
   result with an FP32 reference. Plot the error against K and against scaling granularity.
 
-**Done when**
+**Done when:**
+
 - Every speed number in your table has an accuracy number beside it, measured the same way on the
   same data.
 
-**Traps**
+**Traps:**
+
 - Evaluating on the calibration set.
 - Reporting only perplexity. Some quantisation damage shows up only on tasks.
 - Mixing OCP and FNUZ FP8 kernels or checkpoints across GPU generations.
 
-**References**
+**References:**
+
 - **In this repo:** [`AMD-AI-STACK.md`](AMD-AI-STACK.md) §5, §14 and §19;
   [`QUALCOMM-AI-STACK.md`](QUALCOMM-AI-STACK.md) §9 (LLM quantisation types).
 - Micikevicius et al., "Mixed Precision Training" (ICLR 2018), and "FP8 Formats for Deep Learning"
@@ -969,7 +1029,8 @@ also the easiest way to ship a wrong answer quickly.
 **Why.** A fast kernel that silently regresses next month is not a result. This stage turns one-off
 wins into systems that are protected and observable.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] Packaging.** Containers with pinned base images and pinned driver, ROCm, framework and
   library versions; reproducible builds. **[AWARE]** SBOMs and supply-chain controls.
 - **[KNOW] Orchestration.** Kubernetes with a GPU device plugin (resource requests and node
@@ -985,7 +1046,8 @@ wins into systems that are protected and observable.
   and keep a history dashboard.
 - **[BUILD] Cost.** Convert $/GPU-hour to $/million tokens using measured throughput and utilisation.
 
-**Build**
+**Build:**
+
 - Deploy your P4 server on Kubernetes (or equivalent). It needs:
   - autoscaling;
   - a dashboard for TTFT, ITL, throughput and GPU metrics;
@@ -993,17 +1055,20 @@ wins into systems that are protected and observable.
 - Inject faults, such as killing a replica or saturating the queue. Show the alert firing and the SLO
   burn.
 
-**Done when**
+**Done when:**
+
 - CI blocks a planted regression.
 - An injected failure raises an alert.
 - The cost-per-token figure is derived from measured numbers.
 
-**Traps**
+**Traps:**
+
 - Unpinned `latest` images change the benchmark underneath you.
 - Dashboards that show averages. Users feel the tail.
 - Alerting on causes, such as GPU utilisation, instead of symptoms, such as latency and errors.
 
-**References**
+**References:**
+
 - **In this repo:** roadmap Week 9.
 - Beyer et al., *Site Reliability Engineering*; Kleppmann, *Designing Data-Intensive Applications*;
   Huyen, *Designing Machine Learning Systems*.
@@ -1016,7 +1081,8 @@ wins into systems that are protected and observable.
 coverage. It is optional for the datacenter track, and required if you target client or mobile
 silicon.
 
-**Learn**
+**Learn:**
+
 - **[KNOW] Formats and runtimes.**
   - ONNX, and ONNX Runtime execution providers.
   - The Vitis AI execution provider on Ryzen AI (AMD-AI-STACK §13).
@@ -1033,21 +1099,25 @@ silicon.
 - **[KNOW] On-device LLMs.** OGA and Lemonade on Ryzen AI (AMD-AI-STACK §13); Genie on Qualcomm
   (QUALCOMM-AI-STACK §9); llama.cpp.
 
-**Build**
+**Build:**
+
 - Run a vision model and a small LLM on a Ryzen AI laptop using the NPU and iGPU:
   1. List every operator that falls back to the CPU, and why.
   2. Remove at least one fallback by rewriting, re-quantising or re-exporting.
   3. Measure latency and power before and after.
 
-**Done when**
+**Done when:**
+
 - Every CPU fallback is listed with its reason, at least one has been removed, and the before/after
   latency is measured.
 
-**Traps**
+**Traps:**
+
 - Timing the first run, which includes compilation.
 - Comparing NPU INT8 accuracy against a GPU FP16 baseline without saying so.
 
-**References**
+**References:**
+
 - **In this repo:** roadmap §10.17 Stage 6; [`AMD-AI-STACK.md`](AMD-AI-STACK.md) §6, §13, §13B, §14
   and §17; [`QUALCOMM-AI-STACK.md`](QUALCOMM-AI-STACK.md) §3B–§6B and §9.
 - MIT 6.5940, *TinyML and Efficient Deep Learning Computing*: <https://hanlab.mit.edu/course>.
@@ -1059,7 +1129,8 @@ silicon.
 **Why.** This is the job. You take a model from its reference implementation to an optimised,
 validated and reproducible deployment on target hardware, and you prove every step.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] Porting.** CUDA → HIP with `hipify-perl` or `hipify-clang`, and what they cannot fix
   (AMD-AI-STACK §8); library and framework equivalents; triage of unsupported operators.
 - **[BUILD] Parity testing.**
@@ -1080,21 +1151,25 @@ validated and reproducible deployment on target hardware, and you prove every st
 
 **Build (capstone)**
 Pick an open LLM and deliver:
+
 1. a parity report against the PyTorch reference, per layer and on end tasks;
 2. an optimised AMD serving configuration, with the dominant kernels placed on the roofline;
 3. at least one kernel or compiler fix that you wrote, submitted upstream with benchmarks;
 4. a throughput and cost-per-token report, backed by an SLO;
 5. a one-command reproduction script.
 
-**Done when**
+**Done when:**
+
 - A stranger reproduces your headline numbers from your repository alone.
 - Every claim in your report traces back to a measurement.
 
-**Traps**
+**Traps:**
+
 - Tuning the benchmark instead of the workload.
 - A parity "pass" at a tolerance you chose after seeing the error.
 
-**References**
+**References:**
+
 - **In this repo:** roadmap §10.17 Stage 5 and the §10.17 completion criteria;
   [`AMD-GPU-PATH.md`](AMD-GPU-PATH.md) §13; [`AMD-AI-STACK.md`](AMD-AI-STACK.md) §8, §16 and §19.
 - Mattson et al., "MLPerf Training Benchmark" (MLSys 2020); Reddi et al., "MLPerf Inference
@@ -1181,13 +1256,15 @@ These are standard results. Check the cited paper before you quote them in your 
 
 ## Primary sources
 
-**Role postings (fetched 2026-09-23)**
+**Role postings (fetched 2026-09-23):**
+
 - OpenAI, Workload Porting & Performance Engineer —
   <https://jobs.ashbyhq.com/openai/ec0a4e03-bbcc-4c64-813f-b53dabb8f53a>
 - OpenAI, Systems Generalist, GPT Infrastructure —
   <https://jobs.ashbyhq.com/openai/78c2a68b-cc77-4c62-8891-96afb603650a>
 
-**Courses and books with free online material**
+**Courses and books with free online material:**
+
 - Nand2Tetris — <https://www.nand2tetris.org/>
 - *Operating Systems: Three Easy Pieces* — <https://pages.cs.wisc.edu/~remzi/OSTEP/>
 - *Neural Networks: Zero to Hero* — <https://karpathy.ai/zero-to-hero.html>
@@ -1204,7 +1281,8 @@ These are standard results. Check the cited paper before you quote them in your 
 - MIT 6.5940 (Han Lab) — <https://hanlab.mit.edu/course>
 - GPU MODE lectures — <https://github.com/gpu-mode/lectures>
 
-**Articles**
+**Articles:**
+
 - "Transformer Math 101" — <https://blog.eleuther.ai/transformer-math/>
 - "Transformer Inference Arithmetic" — <https://kipp.ly/transformer-inference-arithmetic/>
 - "Making Deep Learning Go Brrrr From First Principles" — <https://horace.io/brrr_intro.html>
@@ -1212,13 +1290,15 @@ These are standard results. Check the cited paper before you quote them in your 
   <https://siboehm.com/articles/22/CUDA-MMM>
 - "PyTorch internals" — <https://blog.ezyang.com/2019/05/pytorch-internals/>
 
-**Documentation**
+**Documentation:**
+
 - Triton tutorials — <https://triton-lang.org/main/getting-started/tutorials/index.html>
 - MLIR Toy tutorial — <https://mlir.llvm.org/docs/Tutorials/Toy/>
 - vLLM documentation — <https://docs.vllm.ai/en/latest/>
 - MLCommons benchmarks — <https://mlcommons.org/benchmarks/>
 
-**Specifications and papers**
+**Specifications and papers:**
+
 - OCP Microscaling Formats (MX) v1.0 —
   <https://www.opencompute.org/documents/ocp-microscaling-formats-mx-v1-0-spec-final-pdf>
 - Rouhani et al., "Microscaling Data Formats for Deep Learning" — <https://arxiv.org/abs/2310.10537>

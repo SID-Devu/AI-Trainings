@@ -37,7 +37,7 @@ Related documents in this repo:
 ## Contents
 
 | § | Section | What you learn |
-|---|---|---|
+| --- | --- | --- |
 | 1 | The role: what "done" looks like | Real postings, and what they ask for |
 | 2 | The whole path in one picture | Prerequisites, A1–A8, and what each stage consumes |
 | 3 | Prerequisites: prove them, don't re-read them | The F0–F6 and P1–P5 exit tests |
@@ -74,7 +74,7 @@ what algorithms will look like when the chips become available, "often 2 to 3 ye
 Fetched on 2026-09-23. The base ranges are shown as posted and will drift.
 
 | Posting | Base range (as posted) | What it asks for |
-|---|---|---|
+| --- | --- | --- |
 | OpenAI: HW/SW CoDesign Engineer | $381K–$485K | See the breakdown below |
 | OpenAI: Performance Modeling Lead | $347K–$445K | Performance modelling "from silicon through full-scale deployments" |
 | OpenAI: 3P Systems Architect | $342K–$555K | Title and range recorded here; read the posting for the full list |
@@ -83,14 +83,16 @@ Fetched on 2026-09-23. The base ranges are shown as posted and will drift.
 
 The HW/SW CoDesign Engineer posting asks for the following.
 
-**Responsibilities**
+**Responsibilities:**
+
 - Co-design future vendor hardware.
 - Deliver kernels and compiler support.
 - Drive decisions about compute cores and the memory hierarchy.
 - Model scale-up, scale-out and front-end networking.
 - Cover datacenter networks, racks and buildings.
 
-**Qualifications**
+**Qualifications:**
+
 - 4+ years of experience.
 - CUDA or Triton.
 - Low-precision accuracy.
@@ -131,7 +133,7 @@ The table shows what each A-stage consumes from the prerequisites. Each A-stage 
 something you built in roadmap #2, so the prerequisites are load-bearing.
 
 | A-stage | Consumes | Why |
-|---|---|---|
+| --- | --- | --- |
 | A1 | F0 | Gates, adders and binary arithmetic |
 | A2 | F0, F2, F6 | Cache behaviour, validated against hardware counters |
 | A3 | F5, P1 | The model must predict your own GEMM ladder |
@@ -149,7 +151,7 @@ Pass each exit test cold. If you fail one, do that stage in roadmap #2 (its § n
 column), then return.
 
 | Stage | Scope | Exit test | In roadmap #2 |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | F0 | Integers, IEEE-754, logic, CPU, OS | Trace `c = a + b` to the ALU; explain why summation order changes a float sum | [§4](ROADMAP-AI-PERFORMANCE-ENGINEER.md) |
 | F1 | Linear algebra, calculus, statistics, numerics | Derive MLP backprop by hand; state a GEMM's FLOPs, bytes and intensity unaided | [§5](ROADMAP-AI-PERFORMANCE-ENGINEER.md) |
 | F2 | Python, C++, sanitizers, concurrency | Build a sanitizer-clean C++ library with bindings; explain acquire/release | [§6](ROADMAP-AI-PERFORMANCE-ENGINEER.md) |
@@ -173,7 +175,8 @@ hardware features actually matter, and it supplies evidence for A8.
 **Why.** Every hardware proposal ends up as area, power and timing. Before you ask for a feature,
 you need to know what it costs in gates.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] Combinational logic.**
   - Boolean algebra.
   - Muxes, decoders and comparators.
@@ -205,7 +208,8 @@ you need to know what it costs in gates.
 - **[BUILD] Open tools.** Verilator for linting and fast simulation, Yosys for synthesis, and a
   waveform viewer (GTKWave or Surfer).
 
-**Build**
+**Build:**
+
 - A parameterised N×N output-stationary systolic array of MAC processing elements, with INT8 operands
   and INT32 accumulators:
   1. Write a self-checking testbench against a NumPy GEMM, including non-square and tail shapes.
@@ -216,20 +220,23 @@ you need to know what it costs in gates.
      array edges, and the fill and drain latency.
 - Compare your design with the systolic-array RTL example in the SCALE-Sim repository.
 
-**Done when**
+**Done when:**
+
 - From your own RTL and synthesis numbers, you can show how three quantities scale with N:
   MACs/cycle (N²), edge operand bandwidth (about 2N elements per cycle) and cell count.
 - For a decode-shaped GEMM with a small M, you can predict what fraction of a larger array sits idle,
   including fill and drain.
 
-**Traps**
+**Traps:**
+
 - Yosys's `read_verilog` does not check syntax. Its README says to lint with Verilator first.
 - Blocking assignments in sequential logic make simulation and synthesis disagree.
 - Comparing area without a timing constraint. A design may "win" only because it runs at a lower
   clock.
 - Treating generic cell counts as silicon area. They are only a relative proxy.
 
-**References**
+**References:**
+
 - Harris & Harris, *Digital Design and Computer Architecture, RISC-V Edition*.
 - Weste & Harris, *CMOS VLSI Design* (4th ed.).
 - Mutlu, *Digital Design and Computer Architecture* lectures (ETH Zürich).
@@ -246,7 +253,8 @@ you need to know what it costs in gates.
 memory scheduling. They make different trade-offs, and the architect must reason about those
 trade-offs quantitatively.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] Quantitative principles.** Execution time = instructions × CPI × cycle time, and Amdahl's
   law applied to hardware. **[KNOW]** Dynamic power ∝ C·V²·f, the end of Dennard scaling, and dark
   silicon.
@@ -281,23 +289,27 @@ trade-offs quantitatively.
 - **[KNOW] Energy.** Compare the energy per operation with the energy per byte moved at each level.
   That comparison is what makes data movement the central design problem.
 
-**Build**
+**Build:**
+
 - A trace-driven cache simulator in Python or C++. Make the size, associativity, line size and
   replacement policy configurable, and support two or more levels.
   1. Drive it with the address streams of a CPU matmul at several tile sizes.
   2. Validate its miss counts against hardware counters from `perf stat` on the same loop.
   3. Optionally, cross-check one configuration against gem5.
 
-**Done when**
+**Done when:**
+
 - Before each run, you predict the direction and rough size of the miss-rate change for a new tile
   size or cache geometry.
 - The simulator agrees with the measured counters within an error that you state.
 
-**Traps**
+**Traps:**
+
 - Reporting a single "miss rate" when the cost depends on which level misses.
 - Validating against hardware without accounting for prefetchers.
 
-**References**
+**References:**
+
 - Hennessy & Patterson, *Computer Architecture: A Quantitative Approach* (6th ed.).
 - Nagarajan, Sorin, Hill & Wood, *A Primer on Memory Consistency and Cache Coherence* (2nd ed.).
 - Shen & Lipasti, *Modern Processor Design*.
@@ -313,7 +325,8 @@ trade-offs quantitatively.
 **Why.** Before you can propose the next GPU feature, you must be able to predict how today's kernels
 use today's GPU. That prediction comes from counters, not from marketing.
 
-**Learn**
+**Learn:**
+
 - **[KNOW]→[BUILD] The compute unit.** SIMD units and wavefront schedulers; instruction issue and
   arbitration; scalar vs vector units (SGPRs and VGPRs). **[KNOW]** Register-file organisation and
   banking.
@@ -346,7 +359,8 @@ use today's GPU. That prediction comes from counters, not from marketing.
   - asynchronous warp-group MMA;
   - thread-block clusters with distributed shared memory.
 
-**Build**
+**Build:**
+
 1. A microbenchmark suite for your AMD GPU that measures:
    - pointer-chase latency per memory level;
    - bandwidth per level;
@@ -356,17 +370,20 @@ use today's GPU. That prediction comes from counters, not from marketing.
 2. An analytical model in Python that uses those measured parameters to predict every rung of your
    P1 GEMM ladder and your P1 softmax.
 
-**Done when**
+**Done when:**
+
 - The model predicts each P1 rung within an error that you stated in advance.
 - For each miss, you can name the mechanism that the model leaves out.
 
-**Traps**
+**Traps:**
+
 - Latency benchmarks with a regular stride, which prefetchers hide. Use a randomised pointer chase.
 - Using datasheet peaks instead of measured sustained numbers.
 - Extrapolating the CDNA 3 instruction table to CDNA 4. AMD-GPU-PATH §15 explicitly warns against
   this.
 
-**References**
+**References:**
+
 - Aamodt, Fung & Rogers, *General-Purpose Graphics Processor Architectures*.
 - AMD's CDNA 3 architecture whitepaper and CDNA 3 ISA reference guide.
 - NVIDIA's Hopper and Blackwell architecture whitepapers.
@@ -386,7 +403,8 @@ use today's GPU. That prediction comes from counters, not from marketing.
 **Why.** Dataflow decides which operand stays in place while the others move. It is the central
 decision in every AI accelerator, and it sets energy far more than the MAC units do.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] Loop nests.** Write GEMM, convolution and attention as loop nests. Learn tiling, loop
   order, and temporal vs spatial reuse.
 - **[BUILD] Dataflows.** Weight-stationary, output-stationary and input-stationary. **[KNOW]**
@@ -404,7 +422,8 @@ decision in every AI accelerator, and it sets energy far more than the MAC units
   (QUALCOMM-AI-STACK §6). **[AWARE]** Wafer-scale and dataflow start-ups.
 - **[AWARE] Processing-in-memory and near-memory compute.**
 
-**Build**
+**Build:**
+
 - Model three LLM operators in Timeloop + Accelergy, or in SCALE-Sim for a systolic design:
   - the QKV projection;
   - attention (QKᵀ and PV);
@@ -413,15 +432,18 @@ decision in every AI accelerator, and it sets energy far more than the MAC units
   Model each at prefill and decode shapes, on two dataflows. Report utilisation, DRAM traffic and
   energy per operator.
 
-**Done when**
+**Done when:**
+
 - Using your model's numbers, you can justify which dataflow and buffer sizes you would choose for
   prefill and for decode, and what each choice costs the other phase.
 
-**Traps**
+**Traps:**
+
 - Optimising MAC utilisation while DRAM traffic dominates the energy.
 - Accepting the mapper's best mapping without checking that a compiler could actually produce it.
 
-**References**
+**References:**
+
 - Sze, Chen, Yang & Emer, *Efficient Processing of Deep Neural Networks*.
 - MIT 6.5930/1, *Hardware Architecture for Deep Learning*: <https://csg.csail.mit.edu/6.5930/info.html>
 - Stanford CS217, *Hardware Accelerators for Machine Learning*: <https://cs217.stanford.edu/>
@@ -444,7 +466,8 @@ decision in every AI accelerator, and it sets energy far more than the MAC units
 **Why.** A format choice sets multiplier area, energy, memory footprint and bandwidth all at once. It
 is also the lever most tightly coupled to model accuracy.
 
-**Learn**
+**Learn:**
+
 - **[KNOW] Arithmetic hardware.**
   - An array multiplier's area grows roughly with the square of the significand width.
   - A floating-point multiply is a significand multiply, plus an exponent add, plus normalise and
@@ -477,7 +500,8 @@ is also the lever most tightly coupled to model accuracy.
   they sit in the pipeline.
 - **[KNOW] Low-precision training stability.** What goes wrong at FP8 and FP4, and what fixes it.
 
-**Build**
+**Build:**
+
 1. Emulate FP8 GEMMs (both E4M3 and E5M2) and MXFP4 GEMMs in PyTorch:
    1. Quantise, dequantise and multiply in FP32.
    2. Compare the result with an FP32 reference.
@@ -489,16 +513,19 @@ is also the lever most tightly coupled to model accuracy.
    1. Synthesise them with Yosys and compare relative cell counts.
    2. Add an FP32 accumulator and measure its share of the total.
 
-**Done when**
+**Done when:**
+
 - For a named tensor class (weights, activations, KV cache or gradients), you recommend a format and
   block size, with accuracy from Build 1 and relative area from Build 2 side by side.
 
-**Traps**
+**Traps:**
+
 - Gaussian test tensors hide the outliers that break real models.
 - Leaving the scale factors out of the "bits per element" figure.
 - Comparing multiplier area alone when the accumulator dominates.
 
-**References**
+**References:**
+
 - Muller et al., *Handbook of Floating-Point Arithmetic* (2nd ed.).
 - Higham, *Accuracy and Stability of Numerical Algorithms*.
 - OCP MX v1.0:
@@ -519,7 +546,8 @@ is also the lever most tightly coupled to model accuracy.
 **Why.** This is the architect's main instrument. A proposal is only as good as the model that
 predicts its benefit, and the model is only as good as its validation.
 
-**Learn**
+**Learn:**
+
 - **[KNOW] Model types.** Analytical models (roofline and hierarchical roofline), queueing models,
   trace-driven simulation and cycle-level simulation, and their trade-offs in accuracy, speed and
   effort.
@@ -546,7 +574,8 @@ predicts its benefit, and the model is only as good as its validation.
 - **[BUILD] Sensitivity analysis.** The partial derivative of step time and of cost per token with
   respect to each hardware parameter; tornado charts; Pareto frontiers.
 
-**Build**
+**Build:**
+
 - A Python model that covers TP, PP, DP and EP, with these hardware parameters:
   - FLOP/s per format;
   - HBM capacity and bandwidth;
@@ -556,17 +585,20 @@ predicts its benefit, and the model is only as good as its validation.
   compare three changes (2× HBM bandwidth, 2× matrix FLOP/s and 2× scale-up bandwidth) across three
   workloads: dense training, MoE training and long-context decode.
 
-**Done when**
+**Done when:**
+
 - The model is validated within a stated error on held-out runs.
 - You can present the hardware levers ranked for each workload, together with the sensitivities that
   justify the ranking.
 
-**Traps**
+**Traps:**
+
 - Validating on the same runs you calibrated on.
 - Assuming that compute and communication overlap perfectly.
 - Forgetting that achievable efficiency depends on shape, especially for small-M decode GEMMs.
 
-**References**
+**References:**
+
 - *How to Scale Your Model* (all chapters): <https://jax-ml.github.io/scaling-book/>
 - Williams, Waterman & Patterson, "Roofline" (*CACM*, 2009).
 - Culler et al., "LogP" (PPoPP 1993); Alexandrov et al., "LogGP" (SPAA 1995).
@@ -582,7 +614,8 @@ predicts its benefit, and the model is only as good as its validation.
 **Why.** At frontier scale, the network, power and cooling are part of the computer. The co-design
 posting in §1 explicitly extends to datacenter networks, racks and buildings.
 
-**Learn**
+**Learn:**
+
 - **[KNOW] Scale-up fabrics.**
   - NVLink and NVSwitch.
   - AMD Infinity Fabric (link rates are in AMD-AI-STACK §5).
@@ -608,7 +641,8 @@ posting in §1 explicitly extends to datacenter networks, racks and buildings.
 - **[BUILD] Total cost of ownership.** Capital cost (accelerators, network, facility) plus operating
   cost (power, cooling, staff), with $/token and performance per watt as the decision metrics.
 
-**Build**
+**Build:**
+
 - A paper design of a 1,024-accelerator training cluster for a named model. It must cover:
   - the scale-up domain size;
   - the scale-out topology and oversubscription;
@@ -619,18 +653,21 @@ posting in §1 explicitly extends to datacenter networks, racks and buildings.
   - rack power and cooling;
   - TCO per training run.
 
-**Done when**
+**Done when:**
+
 - Every number traces to a source or to a stated assumption.
 - The design survives one changed assumption (for example, MoE instead of dense), with the impact
   quantified.
 
-**Traps**
+**Traps:**
+
 - Mixing unidirectional and bidirectional bandwidth figures. kipply's post shows that an A100's
   advertised "600 GB/s" is 300 GB/s in each direction.
 - Ignoring failure rates. At scale, the time lost to interruptions is a first-order term.
 - Assuming the network is non-blocking when it is actually oversubscribed.
 
-**References**
+**References:**
+
 - Dally & Towles, *Principles and Practices of Interconnection Networks*.
 - Barroso, Hölzle & Ranganathan, *The Datacenter as a Computer* (3rd ed.).
 - Guo et al., "RDMA over Commodity Ethernet at Scale" (SIGCOMM 2016).
@@ -653,7 +690,8 @@ posting in §1 explicitly extends to datacenter networks, racks and buildings.
 **Why.** The deliverable of this role is a decision: a hardware change that a chip or systems team
 funds, backed by evidence that survives adversarial review.
 
-**Learn**
+**Learn:**
+
 - **[BUILD] From trend to requirement.**
   - The trends: MoE, long context, low precision, attention variants such as MLA, speculative
     decoding and RL post-training.
@@ -689,7 +727,8 @@ funds, backed by evidence that survives adversarial review.
   - Write a one-page executive summary.
   - Disagree with data.
 
-**Build (capstone)**
+**Build (capstone):**
+
 - A 10-page hardware proposal. Possible topics include native MXFP4 with higher-precision
   accumulation, a larger LDS, or a larger scale-up domain. It must contain:
   1. workload evidence from your own P-stage measurements;
@@ -700,17 +739,20 @@ funds, backed by evidence that survives adversarial review.
   6. the alternatives you considered;
   7. the risks, and the measurement that would prove the proposal wrong.
 
-**Done when**
+**Done when:**
+
 - Every claimed benefit traces to a measurement or to a validated model.
 - The cost side states its method.
 - A reviewer can reproduce your key figure.
 
-**Traps**
+**Traps:**
+
 - Designing for today's benchmark instead of the workload two to three years out.
 - A proposal with no falsifier.
 - Counting the hardware cost but not the compiler, kernel and software cost of exploiting it.
 
-**References**
+**References:**
+
 - "Insights into DeepSeek-V3: Scaling Challenges and Reflections on Hardware for AI Architectures"
   (ISCA '25 industry track): <https://arxiv.org/abs/2505.09343>
 - Hooker, "The Hardware Lottery" (2020).
@@ -726,7 +768,7 @@ funds, backed by evidence that survives adversarial review.
 ## 12. What each role owns, layer by layer
 
 | Layer | Roadmap #2 (Performance Engineer) optimises within it | Roadmap #1 (Systems Architect) decides it |
-|---|---|---|
+| --- | --- | --- |
 | Model and algorithm | Picks fusions, attention variants and batching for a given model | Predicts which model trends the next hardware must serve |
 | Framework and compiler | Fixes graph breaks, adds custom ops, tunes code generation | Specifies what the compiler must do to exploit a new feature, and budgets that work |
 | Kernels | Writes them and tunes them against the roofline | Uses them as evidence, and as the adoption cost of a feature |
@@ -818,7 +860,8 @@ This section follows the same approach as the other reference documents.
 
 ## Primary sources
 
-**Role postings**
+**Role postings:**
+
 - OpenAI, HW/SW CoDesign Engineer —
   <https://jobs.ashbyhq.com/openai/bdbb2292-ecb3-42dc-ba89-65edf397d8f8>
 - OpenAI, Performance Modeling Lead —
@@ -828,13 +871,15 @@ This section follows the same approach as the other reference documents.
 - NVIDIA, Deep Learning Performance Architect (search excerpt only; not fetched) —
   <https://jobs.nvidia.com/careers/job/893397115694>
 
-**Courses and books with free online material**
+**Courses and books with free online material:**
+
 - MIT 6.5930/1, *Hardware Architecture for Deep Learning* — <https://csg.csail.mit.edu/6.5930/info.html>
 - Stanford CS217, *Hardware Accelerators for Machine Learning* — <https://cs217.stanford.edu/>
 - *How to Scale Your Model* — <https://jax-ml.github.io/scaling-book/>
 - GPU MODE lectures — <https://github.com/gpu-mode/lectures>
 
-**Tools and simulators**
+**Tools and simulators:**
+
 - Verilator — <https://www.veripool.org/verilator/>
 - Yosys — <https://github.com/YosysHQ/yosys>
 - gem5 — <https://www.gem5.org/>
@@ -843,7 +888,8 @@ This section follows the same approach as the other reference documents.
 - SCALE-Sim — <https://github.com/scalesim-project/SCALE-Sim>
 - Timeloop and Accelergy — <https://timeloop.csail.mit.edu/>
 
-**Specifications and papers**
+**Specifications and papers:**
+
 - "Insights into DeepSeek-V3: Scaling Challenges and Reflections on Hardware for AI Architectures" —
   <https://arxiv.org/abs/2505.09343>
 - OCP Microscaling Formats (MX) v1.0 —
