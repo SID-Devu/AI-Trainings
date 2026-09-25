@@ -1102,15 +1102,18 @@ right there. Unified memory makes the handoff cheap. On the datacenter side the 
 at all — it is GPUs, end to end.
 
 **Qualcomm — the NPU is the destination, and precision decides who else gets the work.** The CPU
-takes control flow and unsupported operators. Hexagon takes quantised models — and *only* quantised
-models. Adreno takes **float** models as a complete inference backend, and also does
-pre/post-processing. Genie exposes the choice as a backend field (`QnnHtp` / `QnnGpu` /
-`QnnGenAiTransformer`), and the same shape of stack runs on a phone and in Cloud AI 100.
+takes control flow and unsupported operators. Hexagon takes quantised models, which Qualcomm's
+documented rule requires (one exception is below). Adreno takes **float** models as a complete
+inference backend, and also does pre/post-processing. Genie exposes the choice as a backend field
+(`QnnHtp` / `QnnGpu` / `QnnGenAiTransformer`), and the same shape of stack runs on a phone and in
+Cloud AI 100.
 
 > **Do not read "secondary" as "helper."** Qualcomm's own whitepaper cites Llama 2-7B at more than
 > 13 tokens/second on the Adreno GPU. The GPU is secondary in *priority*, not in capability — and
-> for an unquantised model it is not secondary at all, because HTP cannot accept one. See the
-> Qualcomm doc's §3B for the compatibility rule.
+> for an unquantised model it is the documented path, because Qualcomm's rule is that HTP requires
+> a quantised model (the Qualcomm doc's §3B). ONNX Runtime's QNN EP documents an exception: its
+> `enable_htp_fp16_precision` option, on by default, runs an FP32 model on HTP at FP16 precision
+> (the Qualcomm doc's §8).
 
 **One structural asymmetry worth naming:** AMD can split a *single* graph across NPU and iGPU
 (Hybrid mode). Qualcomm cannot — a QNN context is bound to one backend, so a graph is split between
