@@ -26,7 +26,7 @@ side, each with its own build and gate, and §3H maps them domain by domain: ker
 GPU and for an NPU, serving for a thousand users and for one, releases for a cluster and for a
 fleet of devices.
 
-Want it as a calendar? [`PLAN-15-MONTHS.md`](PLAN-15-MONTHS.md) schedules every stage of this
+Want it as a calendar? [`PLAN-22-MONTHS.md`](PLAN-22-MONTHS.md) schedules every stage of this
 roadmap over its first 450 days at a full-time pace, naming every Learn topic on its day, with
 each month's tech stack, gates and track hour; roadmap #1 follows in days 451–660.
 
@@ -219,7 +219,7 @@ In the Learn lists and study paths, the short names *roadmap*, *AMD-GPU-PATH*, *
   test you fail is where you start studying. Tick every test you pass in §23 as you go.
 - **To see the whole field at once**, read §3D. It lists every subject the role touches, from basic
   to expert, and names the stage whose exit test proves each one.
-- **If you want a calendar**, follow [`PLAN-15-MONTHS.md`](PLAN-15-MONTHS.md): this roadmap in
+- **If you want a calendar**, follow [`PLAN-22-MONTHS.md`](PLAN-22-MONTHS.md): this roadmap in
   450 days, each naming its concepts, its task and the evidence it leaves, then roadmap #1 in 210
   more. The gates still decide when a stage is done.
 

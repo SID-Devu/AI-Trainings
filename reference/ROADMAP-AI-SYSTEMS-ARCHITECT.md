@@ -210,7 +210,7 @@ formats. Pass those before you start them.
   software, systems and ML side.
 - **If you are starting from class 10**, begin with roadmap #2 §3E. Roadmap #2 §3G shows the whole
   career ladder, from AI systems engineer to systems architect, and where this roadmap sits on it.
-  [`PLAN-15-MONTHS.md`](PLAN-15-MONTHS.md) is the calendar for both: roadmap #2 in days 1–450,
+  [`PLAN-22-MONTHS.md`](PLAN-22-MONTHS.md) is the calendar for both: roadmap #2 in days 1–450,
   then this roadmap, every stage and both sides, in days 451–660.
 
 ### How to study a stage
