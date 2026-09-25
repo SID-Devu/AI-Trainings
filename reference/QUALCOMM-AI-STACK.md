@@ -239,7 +239,7 @@ So the decision tree has nothing to do with speed:
         │            GPU and CPU backends will not take it.
         │
         └── NO (still float) ──►  GPU or CPU.
-                     HTP will not take it.
+                     HTP will not take it (except refinement 3 below).
 ```
 
 **The NPU eats integers. The GPU and CPU eat floats.** They are not a fast lane and a slow lane —
@@ -248,7 +248,7 @@ CPU" question resolves to this one table.
 
 ### The nuance that stops this being a lie
 
-Two refinements, both worth knowing before you quote the rule as absolute:
+Three refinements, all worth knowing before you quote the rule as absolute:
 
 **1. Weight-only quantisation works on the GPU.** ONNX Runtime: the GPU backend runs FP32/FP16
 models without prior quantisation, and "to help reduce the size of large models, **quantizing
@@ -261,6 +261,12 @@ Adreno GPU is "designed for parallel processing AI in high precision formats, su
 floating point (FP32), 16-bit floating point (FP16), and 8-bit integer (INT8)." The restriction in
 the table above is a property of the **QNN GPU backend's model intake**, not a claim that Adreno
 silicon cannot do integer maths. Keep those two statements separate or you will confuse yourself.
+
+**3. ONNX Runtime also documents a float path onto HTP.** The ONNX Runtime page quoted above lists
+the provider option `enable_htp_fp16_precision`, whose default, `1`, is to "Enable the float32
+model to be inferenced with fp16 precision" (§8). It does not reconcile this with the rule
+above. Treat the option as a documented exception on the ONNX Runtime path, not as a reason to
+skip quantisation, and confirm on your own target what loads and how accurate it is.
 
 ### How the NPU is actually reached — the library chain
 
@@ -618,7 +624,7 @@ A 7-billion-parameter language model is not pre-processing. The accurate framing
 matching Qualcomm's own "medium-power, medium-performance" description of the GPU:
 
 ```
-  NPU (HTP)     highest perf/watt, integers only     ← ship quantised models here
+  NPU (HTP)     highest perf/watt, integers (§3B)    ← ship quantised models here
   GPU (Adreno)  medium power, medium perf, floats    ← ship float models here
   CPU           lowest perf, floats, always works    ← reference and fallback
 ```
@@ -806,7 +812,7 @@ opts = {"backend_type": "htp",                 # 'cpu' | 'gpu' | 'htp' | 'saver'
 so = ort.SessionOptions()
 so.add_session_config_entry("session.disable_cpu_ep_fallback", "1")   # see below
 
-sess = ort.InferenceSession("model.qdq.onnx",  # QUANTISED — htp takes nothing else
+sess = ort.InferenceSession("model.qdq.onnx",  # QUANTISED — the documented HTP input (§3B)
                             sess_options=so,
                             providers=["QNNExecutionProvider"],
                             provider_options=[opts])
@@ -1103,7 +1109,7 @@ of the deployment errors that have no CUDA/ROCm equivalent.
 
 | # | Mistake | What you see | Fix |
 |---|---|---|---|
-| 1 | Float model sent to the **HTP** backend | Load or session-creation failure | HTP takes quantised models only (§3B). Quantise it, or switch to the GPU backend |
+| 1 | Float model sent to the **HTP** backend | Load or session-creation failure, except through ONNX Runtime, which documents an FP16 path for it (§3B, refinement 3) | Qualcomm's rule is quantised models only on HTP (§3B). Quantise it, or switch to the GPU backend |
 | 2 | Quantised model sent to the **GPU/CPU** backend | Load failure or nonsense output | Those backends take float only (§3B). This is the mirror image of mistake 1 |
 | 3 | **Silent CPU fallback** | "The NPU is slow" | Set `session.disable_cpu_ep_fallback = 1` while bringing up |
 | 4 | **Dynamic shapes** left in the model | Nodes rejected, or the whole graph falls to CPU | QNN EP requires fixed shapes on *every* backend. Freeze batch size and input dims |
@@ -1222,6 +1228,7 @@ Recorded deliberately, so the same errors do not get re-introduced:
 | `qnn-context-binary-generator` command presented as stable | Marked UNVERIFIED with a `--help` warning | Flag surface has shifted across QAIRT releases |
 | §11 listed no Qualcomm GPU DL-primitive library | Adreno OpenCL ML SDK added | It exists and is the MIOpen counterpart |
 | §11 implied the ROCm EP is AMD's current ORT path | MIGraphX EP noted for GPU | ROCm EP was removed in ONNX Runtime 1.23 |
+| HTP said to refuse every float model (§3B tree, §6B tiers, §8 comment, §12 mistake 1) | Qualcomm's quantised-only rule, plus ONNX Runtime's documented FP16 exception (§3B, refinement 3) | ORT's QNN EP page documents `enable_htp_fp16_precision`, default `1`, which runs a float32 model at FP16 |
 
 ---
 
