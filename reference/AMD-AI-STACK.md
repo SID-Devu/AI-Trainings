@@ -1049,7 +1049,7 @@ becomes a consequence.
                                           ("reuses Hexagon NPU and Oryon CPU")
 
    Primary engine: THE GPU                Primary engine: THE NPU
-   The NPU is the addition.               The GPU (Adreno) is the assist.
+   The NPU is the addition.               The GPU (Adreno) is the float path.
 ```
 
 Qualcomm's datacenter parts reuse Hexagon and Oryon IP — the phone architecture grown up. AMD's
@@ -1060,7 +1060,7 @@ client NPU is a genuinely different architecture (an AIE tile array) bolted alon
 | | **AMD** | **Qualcomm** |
 |---|---|---|
 | **Primary AI engine** | GPU — CDNA in datacenter, RDNA on client | **NPU** — Hexagon, everywhere |
-| **Secondary engine** | XDNA NPU, **client only** | Adreno GPU, assist and fallback |
+| **Secondary engine** | XDNA NPU, **client only** | Adreno GPU — a **full float inference backend** (`libQnnGpu`), plus pre/post-processing |
 | **Number of AI architectures** | **three** (CDNA, RDNA, XDNA) | essentially **one** (Hexagon), scaled |
 | **Software stacks** | **two, and they are separate** — ROCm (datacenter) vs Ryzen AI (client) | **one** — QAIRT/QNN from phone to datacenter |
 | **What crosses the divide** | almost nothing except **Quark** | the whole toolchain |
@@ -1101,10 +1101,20 @@ and decode across the XDNA NPU and the RDNA iGPU (§13B), because AMD has a *cap
 right there. Unified memory makes the handoff cheap. On the datacenter side the NPU does not exist
 at all — it is GPUs, end to end.
 
-**Qualcomm — the NPU is the destination and the others are support staff.** The CPU takes control
-flow and unsupported operators; Adreno takes pre/post-processing and FP fallback; Hexagon takes the
-model. Genie exposes this as a backend field (`QnnHtp` / `QnnGpu` / `QnnGenAiTransformer`), and the
-same shape of stack runs on a phone and in Cloud AI 100.
+**Qualcomm — the NPU is the destination, and precision decides who else gets the work.** The CPU
+takes control flow and unsupported operators. Hexagon takes quantised models — and *only* quantised
+models. Adreno takes **float** models as a complete inference backend, and also does
+pre/post-processing. Genie exposes the choice as a backend field (`QnnHtp` / `QnnGpu` /
+`QnnGenAiTransformer`), and the same shape of stack runs on a phone and in Cloud AI 100.
+
+> **Do not read "secondary" as "helper."** Qualcomm's own whitepaper cites Llama 2-7B at more than
+> 13 tokens/second on the Adreno GPU. The GPU is secondary in *priority*, not in capability — and
+> for an unquantised model it is not secondary at all, because HTP cannot accept one. See the
+> Qualcomm doc's §3B for the compatibility rule.
+
+**One structural asymmetry worth naming:** AMD can split a *single* graph across NPU and iGPU
+(Hybrid mode). Qualcomm cannot — a QNN context is bound to one backend, so a graph is split between
+your chosen accelerator and the **CPU**, never across HTP and Adreno together.
 
 **Where they converge, interestingly:** both ended up needing **software-managed on-chip memory**
 for their NPUs — Qualcomm's **VTCM** and AMD's **XDNA tile memory**. Both abandoned the GPU's
