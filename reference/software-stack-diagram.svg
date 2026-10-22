@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1680" viewBox="0 0 1920 1680" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">NVIDIA, AMD, and Qualcomm software-stack comparison</title>
+  <desc id="diagram-description">A logical layered map of AI frameworks, libraries, compilers, graphics, drivers, developer tools, and hardware. NVIDIA CUDA and AMD ROCm are GPU-compute paths. AMD Ryzen AI and Qualcomm QNN provide separate NPU paths. Graphics and profiling are parallel or cross-cutting, not mandatory stages of one inference chain. Research date: 17 October 2026. Sources and support limitations are in the companion software-stack-report.md.</desc>
+  <defs>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; fill: #17263b; }
+      .title { font-size: 40px; font-weight: 700; fill: #ffffff; }
+      .subtitle { font-size: 21px; fill: #d5e0f0; }
+      .eyebrow { font-size: 16px; font-weight: 700; letter-spacing: 2px; fill: #a9bfdc; }
+      .vendor { font-size: 32px; font-weight: 700; }
+      .vendor-sub { font-size: 18px; fill: #41536d; }
+      .label { font-size: 18px; font-weight: 700; fill: #50637e; }
+      .label-note { font-size: 16px; fill: #6a7c93; }
+      .cell-title { font-size: 20px; font-weight: 700; }
+      .body { font-size: 19px; fill: #34465f; }
+      .small { font-size: 17px; fill: #50637e; }
+      .note-title { font-size: 19px; font-weight: 700; }
+      .nv { fill: #f5faed; stroke: #d9e6c0; }
+      .amd { fill: #fff4f3; stroke: #efd3d0; }
+      .qc { fill: #f1f6ff; stroke: #d5e1f4; }
+      .card { stroke-width: 1; }
+    </style>
+  </defs>
+  <rect width="1920" height="1680" fill="#f5f7fb"/>
+  <rect width="1920" height="192" fill="#122137"/>
+  <text class="eyebrow" x="48" y="42">TECHNICAL LANDSCAPE / 17 OCTOBER 2026</text>
+  <text class="title" x="48" y="98">NVIDIA, AMD, and Qualcomm</text>
+  <text class="subtitle" x="48" y="139">Software stacks from application frameworks to drivers and silicon</text>
+  <text class="subtitle" x="48" y="171">AI + general-purpose compute + graphics + media + developer tools</text>
+
+  <g data-region="nvidia-header">
+    <rect class="nv card" x="252" y="214" width="524" height="88" rx="12"/>
+    <rect x="252" y="214" width="8" height="88" rx="4" fill="#76a822"/>
+    <text class="vendor" x="276" y="252">NVIDIA</text>
+    <text class="vendor-sub" x="276" y="282">CUDA / RTX / Jetson</text>
+  </g>
+  <g data-region="amd-header">
+    <rect class="amd card" x="800" y="214" width="524" height="88" rx="12"/>
+    <rect x="800" y="214" width="8" height="88" rx="4" fill="#ce393d"/>
+    <text class="vendor" x="824" y="252">AMD</text>
+    <text class="vendor-sub" x="824" y="282">ROCm / Radeon / Ryzen AI</text>
+  </g>
+  <g data-region="qualcomm-header">
+    <rect class="qc card" x="1348" y="214" width="524" height="88" rx="12"/>
+    <rect x="1348" y="214" width="8" height="88" rx="4" fill="#356dd1"/>
+    <text class="vendor" x="1372" y="252">Qualcomm</text>
+    <text class="vendor-sub" x="1372" y="282">Snapdragon / QNN / Cloud AI</text>
+  </g>
+
+  <text class="label" x="48" y="347">COMMON</text>
+  <text class="label" x="48" y="372">ENTRY POINTS</text>
+  <g data-region="common-entry">
+    <rect x="252" y="318" width="1620" height="88" rx="12" fill="#e7edf6"/>
+    <text class="cell-title" x="276" y="351">Applications, trained models, and standard APIs</text>
+    <text class="body" x="276" y="381">PyTorch / TensorFlow exports / ONNX | DirectX / Vulkan / OpenGL families | OS media APIs | Support varies by target</text>
+  </g>
+
+  <text class="label" x="48" y="462">DEPLOYMENT &amp;</text>
+  <text class="label" x="48" y="487">FRAMEWORKS</text>
+  <text class="label-note" x="48" y="523">Application-facing</text>
+  <g data-region="nvidia-deployment">
+    <rect class="nv card" x="252" y="424" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="272" y="454">Training, inference, and services</text>
+    <text class="body" x="272" y="484">CUDA builds; TensorRT / TensorRT-LLM</text>
+    <text class="body" x="272" y="512">Triton server; NIM; JetPack at the edge</text>
+    <text class="body" x="272" y="540">PCs: Windows ML + TensorRT for RTX</text>
+  </g>
+  <g data-region="amd-deployment">
+    <rect class="amd card" x="800" y="424" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="820" y="454">GPU and NPU routes stay separate</text>
+    <text class="body" x="820" y="484">GPU: ROCm builds; vLLM; MIGraphX</text>
+    <text class="body" x="820" y="512">NPU: Ryzen AI / VitisAI; Windows ML</text>
+    <text class="body" x="820" y="540">CPU: conventional frameworks + AOCL</text>
+  </g>
+  <g data-region="qualcomm-deployment">
+    <rect class="qc card" x="1348" y="424" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="1368" y="454">Deploy trained models to the target</text>
+    <text class="body" x="1368" y="484">AI Hub Workbench: compile / profile</text>
+    <text class="body" x="1368" y="512">ONNX Runtime QNN / LiteRT delegates</text>
+    <text class="body" x="1368" y="540">Cloud AI SDK: separate server branch</text>
+  </g>
+
+  <text class="label" x="48" y="614">AI LIBRARIES &amp;</text>
+  <text class="label" x="48" y="639">OPTIMIZATION</text>
+  <text class="label-note" x="48" y="675">Model acceleration</text>
+  <g data-region="nvidia-libraries">
+    <rect class="nv card" x="252" y="576" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="272" y="606">CUDA acceleration libraries</text>
+    <text class="body" x="272" y="636">cuBLAS / cuDNN; NCCL collectives</text>
+    <text class="body" x="272" y="664">TensorRT optimization; Model Optimizer</text>
+    <text class="body" x="272" y="692">Kernel and precision support varies</text>
+  </g>
+  <g data-region="amd-libraries">
+    <rect class="amd card" x="800" y="576" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="820" y="606">ROCm libraries + model tools</text>
+    <text class="body" x="820" y="636">rocBLAS / hipBLASLt / MIOpen / RCCL</text>
+    <text class="body" x="820" y="664">MIGraphX graph optimization; Quark</text>
+    <text class="body" x="820" y="692">NPU compilation belongs to Ryzen AI</text>
+  </g>
+  <g data-region="qualcomm-libraries">
+    <rect class="qc card" x="1348" y="576" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="1368" y="606">Graph optimization + NPU execution</text>
+    <text class="body" x="1368" y="636">QAIRT / QNN backend libraries</text>
+    <text class="body" x="1368" y="664">AIMET / model quantization workflows</text>
+    <text class="body" x="1368" y="692">CPU, Adreno GPU, or Hexagon HTP*</text>
+  </g>
+
+  <text class="label" x="48" y="766">COMPILERS &amp;</text>
+  <text class="label" x="48" y="791">COMPUTE RUNTIME</text>
+  <text class="label-note" x="48" y="827">Programming model</text>
+  <g data-region="nvidia-runtime">
+    <rect class="nv card" x="252" y="728" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="272" y="758">General-purpose GPU programming</text>
+    <text class="body" x="272" y="788">CUDA C++ / nvcc; runtime + driver API</text>
+    <text class="body" x="272" y="816">HPC SDK: C++ / Fortran / OpenACC</text>
+    <text class="body" x="272" y="844">CUDA device code targets NVIDIA GPUs</text>
+  </g>
+  <g data-region="amd-runtime">
+    <rect class="amd card" x="800" y="728" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="820" y="758">HIP GPU programming</text>
+    <text class="body" x="820" y="788">LLVM / Clang; HIP; ROCr on Linux</text>
+    <text class="body" x="820" y="816">Source-porting path, not CUDA binaries</text>
+    <text class="body" x="820" y="844">XDNA NPU uses a different runtime</text>
+  </g>
+  <g data-region="qualcomm-runtime">
+    <rect class="qc card" x="1348" y="728" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="1368" y="758">AI graph and heterogeneous runtime</text>
+    <text class="body" x="1368" y="788">QNN graph conversion / compilation</text>
+    <text class="body" x="1368" y="816">Accelerator-specific backend libraries</text>
+    <text class="body" x="1368" y="844">Native Arm64 app toolchain + BSP</text>
+  </g>
+
+  <text class="label" x="48" y="918">GRAPHICS &amp;</text>
+  <text class="label" x="48" y="943">MEDIA</text>
+  <text class="label-note" x="48" y="979">Parallel to AI compute</text>
+  <g data-region="nvidia-graphics">
+    <rect class="nv card" x="252" y="880" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="272" y="910">RTX graphics and video</text>
+    <text class="body" x="272" y="940">DirectX / Vulkan / OpenGL; RTX SDKs</text>
+    <text class="body" x="272" y="968">Video Codec SDK: NVENC / NVDEC</text>
+    <text class="body" x="272" y="996">Graphics does not require CUDA</text>
+  </g>
+  <g data-region="amd-graphics">
+    <rect class="amd card" x="800" y="880" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="820" y="910">Radeon graphics and video</text>
+    <text class="body" x="820" y="940">DirectX / Vulkan / OpenGL; FSR SDK*</text>
+    <text class="body" x="820" y="968">AMF; Linux Mesa RADV / radeonsi</text>
+    <text class="body" x="820" y="996">Graphics does not require ROCm</text>
+  </g>
+  <g data-region="qualcomm-graphics">
+    <rect class="qc card" x="1348" y="880" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="1368" y="910">Adreno graphics and SoC media</text>
+    <text class="body" x="1368" y="940">DirectX (Windows); Vulkan / OpenGL ES</text>
+    <text class="body" x="1368" y="968">OEM / OS media and camera interfaces</text>
+    <text class="body" x="1368" y="996">Graphics does not require QNN</text>
+  </g>
+
+  <text class="label" x="48" y="1070">DRIVERS, OS &amp;</text>
+  <text class="label" x="48" y="1095">PLATFORM</text>
+  <text class="label-note" x="48" y="1131">Device integration</text>
+  <g data-region="nvidia-drivers">
+    <rect class="nv card" x="252" y="1032" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="272" y="1062">Matched driver + user-space stack</text>
+    <text class="body" x="272" y="1092">NVIDIA GPU driver; Linux / Windows*</text>
+    <text class="body" x="272" y="1120">Jetson: Jetson Linux + JetPack</text>
+    <text class="body" x="272" y="1148">Open kernel modules != open full stack</text>
+  </g>
+  <g data-region="amd-drivers">
+    <rect class="amd card" x="800" y="1032" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="820" y="1062">Different drivers for GPU and NPU</text>
+    <text class="body" x="820" y="1092">Linux: amdgpu / KFD; Mesa or ROCm</text>
+    <text class="body" x="820" y="1120">Windows: Radeon + supported AI stack</text>
+    <text class="body" x="820" y="1148">NPU: XDNA driver; Linux path exists*</text>
+  </g>
+  <g data-region="qualcomm-drivers">
+    <rect class="qc card" x="1348" y="1032" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="1368" y="1062">Platform-specific driver / firmware</text>
+    <text class="body" x="1368" y="1092">Android / Windows on Snapdragon*</text>
+    <text class="body" x="1368" y="1120">Linux / embedded support follows BSP</text>
+    <text class="body" x="1368" y="1148">GPU and Hexagon NPU are separate</text>
+  </g>
+
+  <text class="label" x="48" y="1222">DEVELOPER &amp;</text>
+  <text class="label" x="48" y="1247">OPERATIONS TOOLS</text>
+  <text class="label-note" x="48" y="1283">Cross-cutting tools</text>
+  <g data-region="nvidia-tools">
+    <rect class="nv card" x="252" y="1184" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="272" y="1214">Nsight suite</text>
+    <text class="body" x="272" y="1244">Systems: timelines; Compute: kernels</text>
+    <text class="body" x="272" y="1272">Graphics: frame / shader analysis</text>
+    <text class="body" x="272" y="1300">CUDA debugging; NVIDIA-SMI</text>
+  </g>
+  <g data-region="amd-tools">
+    <rect class="amd card" x="800" y="1184" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="820" y="1214">ROCm tools + Radeon tools</text>
+    <text class="body" x="820" y="1244">rocprofiler SDK / Compute / Systems</text>
+    <text class="body" x="820" y="1272">AMD SMI; RGP / RGA / RMV / RGD</text>
+    <text class="body" x="820" y="1300">Ryzen AI tooling for the NPU</text>
+  </g>
+  <g data-region="qualcomm-tools">
+    <rect class="qc card" x="1348" y="1184" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="1368" y="1214">System + model diagnostics</text>
+    <text class="body" x="1368" y="1244">Snapdragon Profiler; QNN profiling</text>
+    <text class="body" x="1368" y="1272">AI Hub device profiling + evaluation</text>
+    <text class="body" x="1368" y="1300">Verify DSP counters per platform</text>
+  </g>
+
+  <text class="label" x="48" y="1374">HARDWARE</text>
+  <text class="label" x="48" y="1399">TARGETS</text>
+  <text class="label-note" x="48" y="1435">Physical foundation</text>
+  <g data-region="nvidia-hardware">
+    <rect class="nv card" x="252" y="1336" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="272" y="1366">NVIDIA GPUs / Jetson platforms</text>
+    <text class="body" x="272" y="1396">Data-center GPUs; RTX / workstation</text>
+    <text class="body" x="272" y="1424">Host CPUs can be x86-64 or Arm64*</text>
+    <text class="body" x="272" y="1452">Target architecture gates capabilities</text>
+  </g>
+  <g data-region="amd-hardware">
+    <rect class="amd card" x="800" y="1336" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="820" y="1366">AMD GPUs + separate XDNA NPUs</text>
+    <text class="body" x="820" y="1396">Instinct; Radeon; Ryzen integrated GPU</text>
+    <text class="body" x="820" y="1424">Ryzen AI NPU; EPYC / Ryzen CPU</text>
+    <text class="body" x="820" y="1452">One PC may expose CPU + GPU + NPU</text>
+  </g>
+  <g data-region="qualcomm-hardware">
+    <rect class="qc card" x="1348" y="1336" width="524" height="136" rx="10"/>
+    <text class="cell-title" x="1368" y="1366">Snapdragon heterogeneous SoCs</text>
+    <text class="body" x="1368" y="1396">Arm CPU + Adreno GPU + Hexagon NPU</text>
+    <text class="body" x="1368" y="1424">Cloud AI accelerators: distinct stack</text>
+    <text class="body" x="1368" y="1452">Not a like-for-like training GPU stack</text>
+  </g>
+
+  <g data-region="reading-notes">
+    <rect x="48" y="1496" width="1824" height="148" rx="12" fill="#e7edf6"/>
+    <text class="note-title" x="72" y="1528">HOW TO READ THIS MAP</text>
+    <text class="body" x="72" y="1557">Logical layers, not a single dependency chain. Graphics runs beside AI; developer tools span multiple layers.</text>
+    <text class="small" x="72" y="1585">* Verify device + OS + driver/firmware + runtime + model support. SDK/API feature support is release-specific; no performance ranking is implied.</text>
+    <text class="small" x="72" y="1614">Current caveats: old ONNX Runtime ROCm EP removed; AMDVLK discontinued; DirectML maintained, with new Windows guidance favoring Windows ML.</text>
+  </g>
+  <text class="small" x="48" y="1667">Original comparison diagram. Definitions, execution paths, source links, and verification limits: software-stack-report.md</text>
+</svg>
