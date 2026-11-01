@@ -36,7 +36,7 @@ Open your month, follow its daily plan and linked lessons, then use Next month. 
 
 **Every original word is preserved.** Only added navigation and explanatory clutter have been simplified.
 
-[Breadth and deployment checklist](#breadth-upgrade) | [Topic index](#master-contents) | [Sources and verification](#source-order-index)
+[Major AI-field expansion](#ai-field-expansion) | [Breadth and deployment checklist](#breadth-upgrade) | [Topic index](#master-contents) | [Sources and verification](#source-order-index)
 
 <details>
 <summary>About this roadmap</summary>
@@ -12787,6 +12787,17 @@ Use the checkpoint for this month, not the whole module again. This is additiona
 </details>
 
 <details>
+<summary>AI-field extensions connected to this foundation (3)</summary>
+
+- [E06. Probabilistic graphical models and Bayesian inference](#field-e06)
+- [E07. Causal inference and counterfactual reasoning](#field-e07)
+- [E08. Learning theory, optimisation and generalisation](#field-e08)
+
+These are prerequisite connections, not extra tasks assumed to fit this month. Complete the listed prerequisites and allow [additional study time](#ai-field-expansion), during or after the core programme.
+
+</details>
+
+<details>
 <summary>Related topics</summary>
 
 [Mathematics, calculus, optimisation, information theory and numerics](#phase-02) | [Probability, statistics, SQL, data analysis and experimentation](#phase-03) | [C, C++, operating systems, networks and distributed foundations](#phase-05)
@@ -12870,6 +12881,19 @@ memory allocator. **Gate this month:** F1.
 - [B03. Full-stack applications and accessible user experience](#breadth-b03)
 
 Use the checkpoint for this month, not the whole module again. This is additional practice; reuse existing work and [allow extra time](#breadth-upgrade).
+
+</details>
+
+<details>
+<summary>AI-field extensions connected to this foundation (5)</summary>
+
+- [E01. Search, heuristics and adversarial game AI](#field-e01)
+- [E02. Constraints, combinatorial optimisation and scheduling](#field-e02)
+- [E11. Tabular AI, data-centric learning and AutoML](#field-e11)
+- [E12. Time series, forecasting, anomaly and event detection](#field-e12)
+- [E30. Evolutionary, swarm, fuzzy and computational intelligence](#field-e30)
+
+These are prerequisite connections, not extra tasks assumed to fit this month. Complete the listed prerequisites and allow [additional study time](#ai-field-expansion), during or after the core programme.
 
 </details>
 
@@ -12959,6 +12983,18 @@ and threads. **Gate this month:** F2.
 - [B09. Domain breadth through contrasting workload experiments](#breadth-b09)
 
 Use the checkpoint for this month, not the whole module again. This is additional practice; reuse existing work and [allow extra time](#breadth-upgrade).
+
+</details>
+
+<details>
+<summary>AI-field extensions connected to this foundation (4)</summary>
+
+- [E09. Representation, self-supervised, transfer and meta-learning](#field-e09)
+- [E10. Active, online and continual learning](#field-e10)
+- [E16. Computer vision, video and document intelligence](#field-e16)
+- [E29. Scientific ML, physical modeling and AI for simulation](#field-e29)
+
+These are prerequisite connections, not extra tasks assumed to fit this month. Complete the listed prerequisites and allow [additional study time](#ai-field-expansion), during or after the core programme.
 
 </details>
 
@@ -13053,6 +13089,22 @@ Use the checkpoint for this month, not the whole module again. This is additiona
 </details>
 
 <details>
+<summary>AI-field extensions connected to this foundation (8)</summary>
+
+- [E03. Knowledge representation, ontologies and knowledge graphs](#field-e03)
+- [E13. Graph learning and geometric deep learning](#field-e13)
+- [E14. NLP, information extraction and computational linguistics](#field-e14)
+- [E15. Speech, audio, music and spoken interaction](#field-e15)
+- [E18. Generative modeling across modalities](#field-e18)
+- [E19. Multimodal and foundation-model systems](#field-e19)
+- [E20. Reinforcement learning and sequential decision-making](#field-e20)
+- [E24. Information retrieval, recommendation, ranking and bandits](#field-e24)
+
+These are prerequisite connections, not extra tasks assumed to fit this month. Complete the listed prerequisites and allow [additional study time](#ai-field-expansion), during or after the core programme.
+
+</details>
+
+<details>
 <summary>Related topics</summary>
 
 [Sequence models, transformers, language models and research literacy](#phase-07) | [Accelerator fundamentals, systems thinking, profiling and measurement](#phase-09)
@@ -13142,6 +13194,15 @@ Use the checkpoint for this month, not the whole module again. This is additiona
 </details>
 
 <details>
+<summary>AI-field extensions connected to this foundation (1)</summary>
+
+- [E17. 3D, spatial, geospatial and embodied perception](#field-e17)
+
+These are prerequisite connections, not extra tasks assumed to fit this month. Complete the listed prerequisites and allow [additional study time](#ai-field-expansion), during or after the core programme.
+
+</details>
+
+<details>
 <summary>Related topics</summary>
 
 [C, C++, operating systems, networks and distributed foundations](#phase-05) | [Accelerator fundamentals, systems thinking, profiling and measurement](#phase-09)
@@ -13221,6 +13282,16 @@ latency you can predict. **Gate this month:** F6.
 - [12. P1: GPU kernels](#block-p-057)
 
 <details>
+<summary>AI-field extensions connected to this foundation (2)</summary>
+
+- [E05. Automated planning and goal-directed decision systems](#field-e05)
+- [E21. Multi-agent learning, game theory and coordination](#field-e21)
+
+These are prerequisite connections, not extra tasks assumed to fit this month. Complete the listed prerequisites and allow [additional study time](#ai-field-expansion), during or after the core programme.
+
+</details>
+
+<details>
 <summary>Related topics</summary>
 
 [C, C++, operating systems, networks and distributed foundations](#phase-05) | [GPU kernels, vendor programming and performance optimisation](#phase-10)
@@ -13298,6 +13369,15 @@ matrix cores. **Gate this month:** F7.
 
 - [12. P1: GPU kernels](#block-p-057)
 - [13. P2: Frameworks and compilers](#block-p-058)
+
+<details>
+<summary>AI-field extensions connected to this foundation (1)</summary>
+
+- [E04. Logic, theorem proving, program synthesis and neuro-symbolic AI](#field-e04)
+
+These are prerequisite connections, not extra tasks assumed to fit this month. Complete the listed prerequisites and allow [additional study time](#ai-field-expansion), during or after the core programme.
+
+</details>
 
 <details>
 <summary>Related topics</summary>
@@ -13575,6 +13655,15 @@ Use the checkpoint for this month, not the whole module again. This is additiona
 </details>
 
 <details>
+<summary>AI-field extensions connected to this foundation (1)</summary>
+
+- [E26. Robustness, interpretability and defensive AI security](#field-e26)
+
+These are prerequisite connections, not extra tasks assumed to fit this month. Complete the listed prerequisites and allow [additional study time](#ai-field-expansion), during or after the core programme.
+
+</details>
+
+<details>
 <summary>Related topics</summary>
 
 [Data engineering, cloud, deployment, MLOps, operations and security](#phase-14)
@@ -13668,6 +13757,18 @@ Use the checkpoint for this month, not the whole module again. This is additiona
 </details>
 
 <details>
+<summary>AI-field extensions connected to this foundation (4)</summary>
+
+- [E23. Tool-using agents and AI for software engineering](#field-e23)
+- [E25. Privacy-preserving, federated and decentralized learning](#field-e25)
+- [E27. Alignment, safety, fairness and AI governance](#field-e27)
+- [E28. Human-AI interaction, cognitive systems and accessibility](#field-e28)
+
+These are prerequisite connections, not extra tasks assumed to fit this month. Complete the listed prerequisites and allow [additional study time](#ai-field-expansion), during or after the core programme.
+
+</details>
+
+<details>
 <summary>Related topics</summary>
 
 [Data engineering, cloud, deployment, MLOps, operations and security](#phase-14) | [Edge, mobile, NPU and heterogeneous deployment](#phase-15) | [Model enablement, integrated capstones and cross-stack qualification](#phase-16)
@@ -13753,6 +13854,15 @@ cloud behind it. **Gates this month:** P8 edge, P9, P9 edge, P10 and P10 cloud.
 - [B10. Architecture decisions, integration contracts and technical influence](#breadth-b10)
 
 Use the checkpoint for this month, not the whole module again. This is additional practice; reuse existing work and [allow extra time](#breadth-upgrade).
+
+</details>
+
+<details>
+<summary>AI-field extensions connected to this foundation (1)</summary>
+
+- [E22. Robotics, control and embodied AI](#field-e22)
+
+These are prerequisite connections, not extra tasks assumed to fit this month. Complete the listed prerequisites and allow [additional study time](#ai-field-expansion), during or after the core programme.
 
 </details>
 
@@ -14009,6 +14119,15 @@ shared memory, and the start of a model of your own GPU. **Gates this month:** A
 - [B10. Architecture decisions, integration contracts and technical influence](#breadth-b10)
 
 Use the checkpoint for this month, not the whole module again. This is additional practice; reuse existing work and [allow extra time](#breadth-upgrade).
+
+</details>
+
+<details>
+<summary>AI-field extensions connected to this foundation (1)</summary>
+
+- [E31. Neuromorphic, spiking and alternative AI hardware](#field-e31)
+
+These are prerequisite connections, not extra tasks assumed to fit this month. Complete the listed prerequisites and allow [additional study time](#ai-field-expansion), during or after the core programme.
 
 </details>
 
@@ -14358,6 +14477,17 @@ A9 and A9 edge.
 Use the checkpoint for this month, not the whole module again. This is additional practice; reuse existing work and [allow extra time](#breadth-upgrade).
 
 </details>
+
+<details>
+<summary>AI-field extensions connected to this foundation (1)</summary>
+
+- [E32. Research practice, frontier questions and quantum ML](#field-e32)
+
+These are prerequisite connections, not extra tasks assumed to fit this month. Complete the listed prerequisites and allow [additional study time](#ai-field-expansion), during or after the core programme.
+
+</details>
+
+**Beyond Month 22:** continue through the [32 AI-discipline tracks and 10 domain pathways](#ai-field-expansion); the original calendar does not include their full workload.
 
 <details>
 <summary>Related topics</summary>
@@ -16494,3 +16624,1635 @@ The check applies to the four original roadmaps; navigation and clearly labelled
 </details>
 
 [All months](#month-index)
+
+---
+<a id="ai-field-expansion"></a>
+<!-- ADDED-AI-FIELD-BEGIN -->
+# The wider AI field: detailed discipline roadmaps (ADDED)
+
+This extension broadens the engineering-heavy core into a map of the major AI
+method families, research disciplines and application areas. It supplies **32
+discipline tracks and 10 application-domain pathways**, with actual learning
+sequences, builds, evaluation requirements and resources.
+
+**Coverage boundary:** this is a comprehensive major-field curriculum, not a claim
+to contain every AI paper, algorithm, industry requirement or future discovery.
+The field overlaps and changes. Research directions below are questions to study,
+not solved capabilities or promises of expertise.
+
+**Nothing is removed.** The four original roadmaps, the complete 660-day calendar,
+the 16-step deployment pathway and the B01-B10 breadth modules remain intact.
+These E tracks are an additional expansion, not a replacement.
+
+## How this connects to your months
+
+The core remains **Months 1-15: performance engineering**, then **Months 16-22:
+systems architecture**. Each E track links to one core month whose knowledge
+helps unlock it. **A core connection is a prerequisite checkpoint, not a claim
+that the entire track fits into that month.** Pass its listed prerequisites first.
+
+You may interleave a track once ready, or study the expansion after Month 22.
+These tracks require **additional time beyond both the original calendar and the
+122-190-hour B-module estimate**. There is no credible fixed deadline for mastering
+every advanced research direction. Log your actual effort on the first two tracks
+and use that evidence to plan the next ones; move dates rather than deleting work.
+
+## What completing this expansion means
+
+For broad working competence, complete the baseline builds and exit gates of all
+32 tracks, then the 10 domain case studies. Reuse datasets, infrastructure and
+well-tested components, but keep each distinct experiment and result identifiable.
+Advanced directions identify where deeper specialization continues; they are not
+automatically mastered by passing an introductory project.
+
+For every build, keep:
+
+- the problem, assumptions and appropriate non-AI or simpler baseline;
+- lawful data sources, splits, permitted uses and preprocessing versions;
+- tests, configuration, environment, seeds where meaningful and reproduction steps;
+- quality, uncertainty, resource cost and representative failures;
+- an explanation of why the method fits this problem and where it fails.
+
+Set numerical tolerances and application acceptance criteria before comparing
+methods. A useful negative result passes the learning objective if the method,
+evaluation and explanation are sound. A leaderboard score alone does not.
+
+Use small instances, public or synthetic data, CPU baselines and bounded simulators
+first. Do not connect learning agents to real machinery, accounts or consequential
+actions merely to make a demonstration more impressive.
+
+## Major discipline index
+
+| Detailed track | Core connection, not a deadline | Required extension tracks |
+|---|---|---|
+| [E01. Search, heuristics and adversarial game AI](#field-e01) | [Month 5](#month-05) | Core prerequisites only |
+| [E02. Constraints, combinatorial optimisation and scheduling](#field-e02) | [Month 5](#month-05) | [E01](#field-e01) |
+| [E03. Knowledge representation, ontologies and knowledge graphs](#field-e03) | [Month 7](#month-07) | Core prerequisites only |
+| [E04. Logic, theorem proving, program synthesis and neuro-symbolic AI](#field-e04) | [Month 10](#month-10) | [E01](#field-e01), [E02](#field-e02), [E03](#field-e03) |
+| [E05. Automated planning and goal-directed decision systems](#field-e05) | [Month 9](#month-09) | [E01](#field-e01), [E02](#field-e02), [E03](#field-e03) |
+| [E06. Probabilistic graphical models and Bayesian inference](#field-e06) | [Month 4](#month-04) | Core prerequisites only |
+| [E07. Causal inference and counterfactual reasoning](#field-e07) | [Month 4](#month-04) | [E06](#field-e06) |
+| [E08. Learning theory, optimisation and generalisation](#field-e08) | [Month 4](#month-04) | Core prerequisites only |
+| [E09. Representation, self-supervised, transfer and meta-learning](#field-e09) | [Month 6](#month-06) | [E08](#field-e08) |
+| [E10. Active, online and continual learning](#field-e10) | [Month 6](#month-06) | [E06](#field-e06), [E09](#field-e09) |
+| [E11. Tabular AI, data-centric learning and AutoML](#field-e11) | [Month 5](#month-05) | Core prerequisites only |
+| [E12. Time series, forecasting, anomaly and event detection](#field-e12) | [Month 5](#month-05) | [E06](#field-e06) |
+| [E13. Graph learning and geometric deep learning](#field-e13) | [Month 7](#month-07) | [E09](#field-e09) |
+| [E14. NLP, information extraction and computational linguistics](#field-e14) | [Month 7](#month-07) | Core prerequisites only |
+| [E15. Speech, audio, music and spoken interaction](#field-e15) | [Month 7](#month-07) | [E14](#field-e14) |
+| [E16. Computer vision, video and document intelligence](#field-e16) | [Month 6](#month-06) | Core prerequisites only |
+| [E17. 3D, spatial, geospatial and embodied perception](#field-e17) | [Month 8](#month-08) | [E16](#field-e16) |
+| [E18. Generative modeling across modalities](#field-e18) | [Month 7](#month-07) | [E06](#field-e06), [E09](#field-e09) |
+| [E19. Multimodal and foundation-model systems](#field-e19) | [Month 7](#month-07) | [E14](#field-e14), [E15](#field-e15), [E16](#field-e16) |
+| [E20. Reinforcement learning and sequential decision-making](#field-e20) | [Month 7](#month-07) | [E01](#field-e01), [E06](#field-e06) |
+| [E21. Multi-agent learning, game theory and coordination](#field-e21) | [Month 9](#month-09) | [E20](#field-e20) |
+| [E22. Robotics, control and embodied AI](#field-e22) | [Month 15](#month-15) | [E05](#field-e05), [E17](#field-e17), [E20](#field-e20) |
+| [E23. Tool-using agents and AI for software engineering](#field-e23) | [Month 14](#month-14) | [E04](#field-e04), [E05](#field-e05), [E14](#field-e14) |
+| [E24. Information retrieval, recommendation, ranking and bandits](#field-e24) | [Month 7](#month-07) | [E11](#field-e11) |
+| [E25. Privacy-preserving, federated and decentralized learning](#field-e25) | [Month 14](#month-14) | [E06](#field-e06), [E10](#field-e10) |
+| [E26. Robustness, interpretability and defensive AI security](#field-e26) | [Month 13](#month-13) | [E08](#field-e08), [E09](#field-e09) |
+| [E27. Alignment, safety, fairness and AI governance](#field-e27) | [Month 14](#month-14) | [E20](#field-e20), [E23](#field-e23), [E26](#field-e26) |
+| [E28. Human-AI interaction, cognitive systems and accessibility](#field-e28) | [Month 14](#month-14) | [E03](#field-e03), [E27](#field-e27) |
+| [E29. Scientific ML, physical modeling and AI for simulation](#field-e29) | [Month 6](#month-06) | [E06](#field-e06), [E08](#field-e08) |
+| [E30. Evolutionary, swarm, fuzzy and computational intelligence](#field-e30) | [Month 5](#month-05) | [E02](#field-e02) |
+| [E31. Neuromorphic, spiking and alternative AI hardware](#field-e31) | [Month 18](#month-18) | [E09](#field-e09), [E16](#field-e16) |
+| [E32. Research practice, frontier questions and quantum ML](#field-e32) | [Month 22](#month-22) | [E08](#field-e08), [E26](#field-e26), [E27](#field-e27) |
+
+### Application-domain index
+
+- [D01. Healthcare and clinical decision support](#domain-d01)
+- [D02. Biology, bioinformatics and molecular data](#domain-d02)
+- [D03. Climate, energy, Earth observation and agriculture](#domain-d03)
+- [D04. Manufacturing, industrial IoT and supply chains](#domain-d04)
+- [D05. Transportation, mobility and autonomous systems](#domain-d05)
+- [D06. Finance, economics, risk and business decisions](#domain-d06)
+- [D07. Education, learning support and accessibility](#domain-d07)
+- [D08. Law, public services and institutional knowledge](#domain-d08)
+- [D09. Commerce, media, games and creative applications](#domain-d09)
+- [D10. Defensive cybersecurity, IT operations and developer productivity](#domain-d10)
+
+
+## Where the existing engineering material fits
+
+| Field-wide capability | Complete existing home |
+|---|---|
+| Programming, mathematics, statistics, OS, DSA, DBMS and networking | [Foundations](#phase-01), [mathematics](#phase-02), [data/statistics](#phase-03), [systems](#phase-05) |
+| Classical ML, deep learning and transformers | [ML](#phase-04), [DL](#phase-06), [language models](#phase-07) |
+| Model training, frameworks, compilers, GPU kernels and scaling | [Performance](#phase-09), [kernels](#phase-10), [compilers](#phase-11), [distributed training](#phase-12) |
+| Serving, compression, deployment, MLOps, security and cost | [Inference](#phase-13), [production](#phase-14), [complete deployment pathway](#deployment-roadmap) |
+| Edge, NPU, hardware/software co-design and fleets | [Edge](#phase-15), [architecture](#phase-17) |
+| Product, frontend, identity, operations and technical influence | [Practical breadth modules](#breadth-upgrade) |
+
+The expansion does not duplicate those full courses simply to increase page count.
+It adds the missing families and deeper specialist pathways around them.
+
+<a id="field-e01"></a>
+<!-- FIELD-TRACK-BEGIN E01 -->
+## E01. Search, heuristics and adversarial game AI
+
+**Core connection:** [Month 5](#month-05).
+**Track dependencies:** None.
+**Prerequisites:** Python, DSA, graphs, asymptotic analysis and basic probability.
+
+**Learning sequence:**
+1. Model states, actions, transitions, goals and costs; distinguish a tree from a
+   state graph and prevent duplicate-state expansion.
+2. Implement breadth-first, depth-first, uniform-cost and iterative-deepening
+   search. Compare completeness, optimality, time and memory under stated assumptions.
+3. Add greedy best-first and A* search; study admissible/consistent heuristics,
+   tie-breaking, reopening states and heuristic dominance.
+4. Learn local search, hill climbing, simulated annealing and beam search; explain
+   local optima, plateaus and why pruning can sacrifice guarantees.
+5. For games, study minimax, alpha-beta pruning, expectimax, evaluation functions,
+   transposition tables and Monte Carlo tree search.
+
+**Tools:** Python and a small graph/game environment first; AIMA examples and
+OpenSpiel later. Do not hide the first implementation behind a search library.
+
+**Build:** a weighted-grid route planner and a small board-game player. Keep
+reference exhaustive search for tiny instances, then compare search budgets,
+heuristics and game-playing strength against simple opponents.
+
+**Exit gate:** return valid paths and optimal costs on exhaustively checked small
+graphs; handle unreachable goals and repeated states. Report expanded states,
+memory and wall time. Explain one case where the heuristic or beam choice loses
+optimality. Evaluate games over both starting positions and multiple opponents.
+
+**Advanced directions:** learned heuristics, real-time search, imperfect-information
+search, proof-number search and search integrated with learned world models.
+**Resources:** [R01](#field-r01), [R20](#field-r20).
+<!-- FIELD-TRACK-END E01 -->
+
+<a id="field-e02"></a>
+<!-- FIELD-TRACK-BEGIN E02 -->
+## E02. Constraints, combinatorial optimisation and scheduling
+
+**Core connection:** [Month 5](#month-05).
+**Track dependencies:** [E01](#field-e01).
+**Prerequisites:** sets, logic, graphs, linear algebra and algorithmic complexity.
+
+**Learning sequence:**
+1. Separate decision variables, domains, constraints and objective functions.
+   Model constraint satisfaction separately from constrained optimisation.
+2. Build backtracking with forward checking and variable/value-ordering heuristics;
+   study arc consistency, propagation and constraint graphs.
+3. Learn Boolean satisfiability, SAT encodings, SMT at a conceptual level, integer
+   programming, CP-SAT and branch-and-bound.
+4. Study assignment, matching, flow, routing, scheduling, resource constraints,
+   precedence, soft penalties and multi-objective trade-offs.
+5. Distinguish feasible, optimal, infeasible, unbounded and time-limited solver
+   outcomes. Understand lower bounds and optimality gaps.
+
+**Tools:** a small handwritten solver, then OR-Tools and one suitable SAT/SMT or
+mathematical-programming tool. Select a solver from the problem structure.
+
+**Build:** a course/exam scheduler or simulated compute-job scheduler with hard
+constraints, preference penalties and conflicting requirements. Compare a greedy
+baseline, exact solving on small cases and a bounded large-instance run.
+
+**Exit gate:** validate every returned solution independently of the solver.
+Exercise infeasible inputs, empty instances and timeouts; never relabel a feasible
+timeout result as proven optimal. Report objective value, bounds and sensitivity
+to a changed constraint.
+
+**Advanced directions:** robust/stochastic optimisation, decomposition, large
+neighborhood search, learned branching and differentiable optimisation layers.
+**Resources:** [R02](#field-r02), [R01](#field-r01).
+<!-- FIELD-TRACK-END E02 -->
+
+<a id="field-e03"></a>
+<!-- FIELD-TRACK-BEGIN E03 -->
+## E03. Knowledge representation, ontologies and knowledge graphs
+
+**Core connection:** [Month 7](#month-07).
+**Track dependencies:** None.
+**Prerequisites:** logic, data structures, relational data modeling and SQL basics.
+
+**Learning sequence:**
+1. Represent entities, relations, attributes, identity and provenance. Distinguish
+   a database record, a logical assertion and an uncertain extracted claim.
+2. Learn propositional/first-order representations, rules, taxonomies, frames and
+   ontologies; study closed-world versus open-world assumptions.
+3. Use RDF triples, identifiers, named graphs, schema vocabularies and SPARQL;
+   compare semantic graphs with property graphs and relational models.
+4. Study ontology alignment, entity resolution, temporal/versioned facts,
+   consistency checks and the limits of automated inference.
+5. Connect document extraction and retrieval to a graph without treating
+   model-generated assertions as verified knowledge.
+
+**Tools:** RDFLib or a graph database, a small ontology tool and ordinary SQL.
+Choose the smallest representation that supports the needed queries.
+
+**Build:** a provenance-aware graph of a lawful technical-document corpus.
+Include entity resolution, a rule-based inference task and queries that require
+multiple relations. Compare graph queries with a relational baseline.
+
+**Exit gate:** trace each answer to supporting assertions; test contradictory,
+missing, duplicated, withdrawn and time-dependent facts. Explain the chosen world
+assumption and demonstrate that an inferred fact is not confused with a directly
+observed one. Measure extraction errors separately from reasoning errors.
+
+**Advanced directions:** description logics, ontology reasoning, temporal knowledge
+graphs, probabilistic logic, graph completion and neuro-symbolic retrieval.
+**Resources:** [R03](#field-r03), [R01](#field-r01).
+<!-- FIELD-TRACK-END E03 -->
+
+<a id="field-e04"></a>
+<!-- FIELD-TRACK-BEGIN E04 -->
+## E04. Logic, theorem proving, program synthesis and neuro-symbolic AI
+
+**Core connection:** [Month 10](#month-10).
+**Track dependencies:** [E01](#field-e01), [E02](#field-e02), [E03](#field-e03).
+**Prerequisites:** discrete mathematics, induction, typed programming and compiler fundamentals.
+
+**Learning sequence:**
+1. Work with syntax, semantics, entailment, soundness and completeness; distinguish
+   truth under a model from provability in a chosen formal system.
+2. Learn unification, resolution, Horn clauses, logic programming and proof search.
+3. Introduce types, propositions-as-types, dependent types and proof assistants.
+   Check proofs with the trusted kernel rather than accepting plausible prose.
+4. Study synthesis from examples/specifications, counterexample-guided refinement,
+   constraint-based synthesis and test-guided program search.
+5. Combine learned proposal generation with symbolic checking; understand which
+   properties are actually checked and which remain assumptions.
+
+**Tools:** Lean for small proofs; a logic language or SMT solver; a restricted
+interpreter for synthesis exercises. Keep generated programs isolated.
+
+**Build:** prove several elementary properties, then synthesize a tiny arithmetic
+or list-processing program from a specification. Compare enumeration, constraints
+and a model-proposed candidate checked by the same verifier.
+
+**Exit gate:** reject an incorrect proof/program with a concrete counterexample
+or failed formal check. State the specification, trusted components, search bound
+and unsupported cases. Passing examples is not equivalent to a proof over all inputs.
+
+**Advanced directions:** inductive logic programming, theorem-proving agents,
+abstract interpretation, verified compilers and differentiable/neuro-symbolic reasoning.
+**Resources:** [R04](#field-r04), [R01](#field-r01), [R02](#field-r02).
+<!-- FIELD-TRACK-END E04 -->
+
+<a id="field-e05"></a>
+<!-- FIELD-TRACK-BEGIN E05 -->
+## E05. Automated planning and goal-directed decision systems
+
+**Core connection:** [Month 9](#month-09).
+**Track dependencies:** [E01](#field-e01), [E02](#field-e02), [E03](#field-e03).
+**Prerequisites:** state-space modeling, graph search and logical action representations.
+
+**Learning sequence:**
+1. Define action preconditions, effects, goals and invariants. Separate planning
+   from scheduling, policy learning and a language model describing a plan.
+2. Learn STRIPS-style representations, PDDL, forward/backward search, planning
+   graphs and relaxed-plan heuristics.
+3. Add temporal actions, resources, numeric constraints and hierarchical task
+   networks. Distinguish a decomposition rule from an executable action.
+4. Study execution monitoring, replanning, contingency handling and partial
+   observability; connect uncertain action outcomes to decision models.
+5. Combine a symbolic planner with learned perception or language interfaces while
+   keeping state validation and execution permissions outside the model.
+
+**Tools:** Unified Planning or a supported PDDL planner; a deterministic toy simulator.
+
+**Build:** a warehouse, cooking or service-workflow planner in simulation. Validate
+plans independently, then inject a failed action or changed observation and replan.
+Compare a fixed script, search and hierarchical decomposition.
+
+**Exit gate:** every executed action satisfies preconditions; goals and resource
+constraints are checked against simulator state. Detect impossible goals, stale
+state and invalid proposed actions. A plan that reads well but cannot execute fails.
+
+**Advanced directions:** belief-space planning, task-and-motion planning,
+planning under uncertainty and learning reusable planning abstractions.
+**Resources:** [R05](#field-r05), [R01](#field-r01).
+<!-- FIELD-TRACK-END E05 -->
+
+<a id="field-e06"></a>
+<!-- FIELD-TRACK-BEGIN E06 -->
+## E06. Probabilistic graphical models and Bayesian inference
+
+**Core connection:** [Month 4](#month-04).
+**Track dependencies:** None.
+**Prerequisites:** probability, conditional independence, calculus and linear algebra.
+
+**Learning sequence:**
+1. Work with priors, likelihoods, posteriors, predictive distributions and
+   conjugate examples. Separate uncertainty about parameters from observation noise.
+2. Learn Bayesian networks, Markov random fields, factor graphs, conditional
+   independence and graphical-model factorization.
+3. Implement exact enumeration/variable elimination on small models, then study
+   belief propagation, Monte Carlo, importance sampling and MCMC.
+4. Learn variational inference, amortized inference, hierarchical models,
+   Gaussian processes and probabilistic programming.
+5. Study latent-state models: HMMs, Kalman filters and particle filtering.
+   Check model fit with posterior predictive analysis and sensitivity to priors.
+
+**Tools:** NumPy for exact reference cases; one probabilistic-programming system
+such as PyMC or Pyro for a larger example.
+
+**Build:** a Bayesian small-data predictor and a noisy state-estimation model.
+Compare exact or analytic results on toy cases with approximate inference.
+Examine convergence diagnostics and a deliberately misspecified model.
+
+**Exit gate:** probabilities normalize, analytic checks agree within declared
+tolerances, and interval behavior is assessed on repeated/simulated data.
+Report approximation and prior sensitivity; a sampler producing samples does not
+establish that it mixed or that the model is correct.
+
+**Advanced directions:** scalable inference, Bayesian nonparametrics, causal
+graphical models and uncertainty-aware decision-making.
+**Resources:** [R06](#field-r06), [R01](#field-r01).
+<!-- FIELD-TRACK-END E06 -->
+
+<a id="field-e07"></a>
+<!-- FIELD-TRACK-BEGIN E07 -->
+## E07. Causal inference and counterfactual reasoning
+
+**Core connection:** [Month 4](#month-04).
+**Track dependencies:** [E06](#field-e06).
+**Prerequisites:** statistical estimation, experiments, probability and graph representations.
+
+**Learning sequence:**
+1. Distinguish association, intervention and counterfactual questions. Define
+   treatment, outcome, population, estimand and the decision being supported.
+2. Learn structural causal models, DAGs, confounders, colliders, mediators,
+   selection bias and identification assumptions.
+3. Study randomized experiments, potential outcomes, overlap, propensity methods,
+   outcome models and doubly robust estimation.
+4. Learn the assumptions behind instrumental variables, regression discontinuity,
+   difference-in-differences and natural experiments.
+5. Study heterogeneous effects, causal discovery limitations, sensitivity analysis,
+   transportability and policy evaluation.
+
+**Tools:** simulated structural models, statistical libraries and DoWhy for
+explicit modeling, identification, estimation and refutation workflows.
+
+**Build:** generate data from a known causal process and recover an intervention
+effect using appropriate and deliberately inappropriate designs. Then write a
+carefully bounded analysis of a lawful observational dataset.
+
+**Exit gate:** state identification assumptions separately from fitted model
+choices; show how confounding or selection can reverse a naive conclusion.
+Use placebo/sensitivity checks where appropriate and explain what remains
+unidentifiable. Feature attribution and prediction accuracy are not causal evidence.
+
+**Advanced directions:** longitudinal treatment, causal representation learning,
+causal reinforcement learning and counterfactual fairness debates.
+**Resources:** [R07](#field-r07), [R06](#field-r06); also [the existing causal pathway](#phase-03).
+<!-- FIELD-TRACK-END E07 -->
+
+<a id="field-e08"></a>
+<!-- FIELD-TRACK-BEGIN E08 -->
+## E08. Learning theory, optimisation and generalisation
+
+**Core connection:** [Month 4](#month-04).
+**Track dependencies:** None.
+**Prerequisites:** calculus, probability, linear algebra and implemented supervised-learning baselines.
+
+**Learning sequence:**
+1. Formalize empirical/population risk, hypothesis classes, loss functions,
+   approximation/estimation/optimization error and inductive bias.
+2. Study concentration, PAC-style reasoning, capacity, VC dimension and
+   Rademacher complexity at increasing levels of mathematical rigor.
+3. Connect regularization, stability, bias/variance, calibration and distribution
+   shift to generalization rather than memorizing isolated formulas.
+4. Learn convexity, constrained optimization, duality, first/second-order methods,
+   stochastic optimization, conditioning and convergence assumptions.
+5. Study deep-learning phenomena such as overparameterization, implicit bias,
+   scaling and double descent without treating unsettled explanations as universal laws.
+
+**Tools:** symbolic/algebraic derivations plus small reproducible numerical experiments.
+
+**Build:** derive and test a simple learning bound or convergence result in a
+setting where its assumptions hold. Sweep data size, capacity and regularization;
+then construct an example violating one assumption.
+
+**Exit gate:** distinguish a theorem, an empirical trend and a hypothesis.
+Verify gradient/optimization calculations against a trusted reference and report
+held-out generalization rather than training error alone. State why a loose bound
+may be mathematically valid yet operationally uninformative.
+
+**Advanced directions:** optimization for large models, information-theoretic
+learning, online regret, singular learning theory and theoretical alignment questions.
+**Resources:** [R06](#field-r06), [R08](#field-r08); deepen the [original mathematics](#phase-02).
+<!-- FIELD-TRACK-END E08 -->
+
+<a id="field-e09"></a>
+<!-- FIELD-TRACK-BEGIN E09 -->
+## E09. Representation, self-supervised, transfer and meta-learning
+
+**Core connection:** [Month 6](#month-06).
+**Track dependencies:** [E08](#field-e08).
+**Prerequisites:** backpropagation, neural training, embeddings and honest evaluation.
+
+**Learning sequence:**
+1. Compare hand-designed features, learned embeddings, supervised representation
+   learning and unsupervised reconstruction objectives.
+2. Study contrastive learning, negative sampling, augmentation assumptions,
+   masked prediction, redundancy reduction and representation collapse.
+3. Learn transfer learning, linear probing, frozen versus adapted backbones,
+   domain adaptation and parameter-efficient adaptation.
+4. Introduce metric learning, few-shot evaluation, episodic training and
+   optimization-based/model-based meta-learning.
+5. Examine representation geometry, invariance/equivariance, disentanglement
+   claims and performance under domain/task shift.
+
+**Tools:** PyTorch and a small image, text or time-series dataset with controlled
+augmentations; begin with a modest encoder rather than a foundation-scale run.
+
+**Build:** pretrain a representation, then compare linear probing and adaptation
+with a supervised-from-scratch baseline under several label budgets. Include
+an ablation of the chosen augmentation or negative-sampling rule.
+
+**Exit gate:** split pretraining/adaptation/evaluation carefully, report label and
+compute budgets, and test on a meaningful shifted subset. A visually attractive
+embedding plot is not a substitute for a task evaluation.
+
+**Advanced directions:** cross-modal self-supervision, meta-generalization,
+object-centric representations, world models and continual foundation-model adaptation.
+**Resources:** [R08](#field-r08), [R13](#field-r13), [R15](#field-r15).
+<!-- FIELD-TRACK-END E09 -->
+
+<a id="field-e10"></a>
+<!-- FIELD-TRACK-BEGIN E10 -->
+## E10. Active, online and continual learning
+
+**Core connection:** [Month 6](#month-06).
+**Track dependencies:** [E06](#field-e06), [E09](#field-e09).
+**Prerequisites:** supervised training, uncertainty, data pipelines and sequential evaluation.
+
+**Learning sequence:**
+1. Distinguish batch retraining, online updates, concept drift and continual
+   learning; specify what information is available at each time step.
+2. Study active-learning query strategies, uncertainty/diversity selection,
+   annotation costs, selection bias and stopping rules.
+3. Learn online loss/regret, incremental models, delayed labels and feedback loops.
+4. Study catastrophic forgetting, replay, regularization, parameter isolation,
+   task/class/domain-incremental protocols and memory budgets.
+5. Connect retraining decisions to monitoring and approval: detected drift does
+   not automatically justify an unconstrained production update.
+
+**Tools:** a simple streaming simulator, incremental estimators and Avalanche
+for standardized continual-learning experiments.
+
+**Build:** compare random labeling with an active strategy under the same budget;
+then compare sequential fine-tuning with replay on a task stream. Preserve a
+fixed historical test suite alongside evaluation on new data.
+
+**Exit gate:** report performance across old and new tasks, forgetting, label cost,
+memory and update time. Prevent future-data leakage and test delayed/missing
+labels. Reusing a test set to choose which samples to label invalidates the result.
+
+**Advanced directions:** open-world recognition, continual agents, lifelong
+representation learning and online learning under privacy constraints.
+**Resources:** [R09](#field-r09), [R06](#field-r06); reuse [production monitoring](#phase-14).
+<!-- FIELD-TRACK-END E10 -->
+
+<a id="field-e11"></a>
+<!-- FIELD-TRACK-BEGIN E11 -->
+## E11. Tabular AI, data-centric learning and AutoML
+
+**Core connection:** [Month 5](#month-05).
+**Track dependencies:** None.
+**Prerequisites:** the original classical-ML, SQL, statistics and model-selection work.
+
+**Learning sequence:**
+1. Deepen tabular preprocessing, missingness, categoricals, imbalanced targets,
+   noisy labels, leakage, group structure and cost-sensitive objectives.
+2. Compare linear models, tree ensembles, boosting, generalized additive models
+   and neural tabular approaches with justified preprocessing.
+3. Study feature selection, feature crosses, calibration, threshold choice,
+   stacking and the data assumptions behind each method.
+4. Learn search spaces, random/Bayesian search, multi-fidelity optimization,
+   early stopping, nested validation and AutoML budget accounting.
+5. Treat labeling, schema fixes and data collection as alternatives to adding
+   model complexity; connect dataset improvements to measured outcomes.
+
+**Tools:** scikit-learn, one boosting library and optionally AutoGluon.
+An AutoML system does not choose a valid data split or business objective for you.
+
+**Build:** a fixed-budget comparison of manual baselines and automated search.
+Include a data-quality intervention and an ablation showing whether it helps
+more than a more complex estimator.
+
+**Exit gate:** preprocessing/search never fit on the final test set; group/time
+boundaries are respected; tuning expense and inference cost are included.
+Report a reliable simple baseline even when AutoML does not beat it.
+
+**Advanced directions:** tabular foundation models, weak supervision, automated
+feature construction, uncertainty-aware AutoML and human-guided data debugging.
+**Resources:** [R10](#field-r10), [R06](#field-r06); retain [the full original ML modules](#phase-04).
+<!-- FIELD-TRACK-END E11 -->
+
+<a id="field-e12"></a>
+<!-- FIELD-TRACK-BEGIN E12 -->
+## E12. Time series, forecasting, anomaly and event detection
+
+**Core connection:** [Month 5](#month-05).
+**Track dependencies:** [E06](#field-e06).
+**Prerequisites:** regression, probability, statistics and time-aware data preparation.
+
+**Learning sequence:**
+1. Learn timestamps, sampling, trend, seasonality, autocorrelation, missing
+   intervals, irregular observations and revision/vintage effects.
+2. Build naive/seasonal baselines, exponential smoothing, ARIMA-style and
+   state-space models; state stationarity and exogenous-variable assumptions.
+3. Add lagged-feature ML, multivariate/global models, sequence models,
+   probabilistic forecasts and hierarchical reconciliation.
+4. Study anomaly scores, change points, event windows, delayed labels,
+   thresholds, alert fatigue and false-alarm costs.
+5. Evaluate with rolling origins, multiple horizons, intervals, grouped series
+   and realistic feature-availability timestamps.
+
+**Tools:** statistical forecasting libraries, a tabular baseline and one neural
+model if justified. The forecasting text uses R; the concepts transfer, but code
+translation should be tested rather than assumed equivalent.
+
+**Build:** a demand or sensor forecast plus an event-detection experiment on lawful
+or synthetic data. Compare forecasts with a seasonal baseline and test a planted
+regime change without exposing future observations during fitting.
+
+**Exit gate:** report per-horizon errors, interval behavior, detection delay and
+false alarms using appropriate metrics. Show how the system handles missing or
+late data. Random train/test shuffling is not accepted for dependent temporal evaluation.
+
+**Advanced directions:** intermittent demand, long-horizon models, temporal
+causality, survival analysis and spatiotemporal forecasting.
+**Resources:** [R11](#field-r11), [R06](#field-r06).
+<!-- FIELD-TRACK-END E12 -->
+
+<a id="field-e13"></a>
+<!-- FIELD-TRACK-BEGIN E13 -->
+## E13. Graph learning and geometric deep learning
+
+**Core connection:** [Month 7](#month-07).
+**Track dependencies:** [E09](#field-e09).
+**Prerequisites:** graphs, sparse matrices, embeddings and neural-network training.
+
+**Learning sequence:**
+1. Define node, edge and graph tasks; learn graph statistics, neighborhoods,
+   homophily/heterophily and permutation invariance/equivariance.
+2. Implement message passing, aggregation and readout; study GCN, GraphSAGE,
+   attention-based and relational graph models.
+3. Learn neighborhood sampling, mini-batching, heterogeneous/temporal graphs,
+   link prediction and negative sampling.
+4. Study oversmoothing, oversquashing, expressive power, positional information
+   and graph transformers.
+5. Extend geometric reasoning to sets, point clouds and symmetry-aware models;
+   keep geometric equivariance distinct from generic graph connectivity.
+
+**Tools:** PyTorch Geometric, sparse tensor operations and small graph fixtures.
+
+**Build:** compare a graph model with a feature-only baseline for node or graph
+prediction, then add a link-prediction task with a documented negative-sampling
+strategy. Test a permutation of node identifiers and a graph without useful edges.
+
+**Exit gate:** verify permutation behavior and message-passing shapes; prevent
+edge/label leakage between splits. State whether the experiment is transductive or
+inductive and test generalization to unseen graphs or times where relevant.
+Include memory and neighbor-sampling effects, not only a single accuracy score.
+
+**Advanced directions:** equivariant molecular models, dynamic graphs,
+topological learning, graph foundation models and relational reasoning.
+**Resources:** [R12](#field-r12), [R08](#field-r08).
+<!-- FIELD-TRACK-END E13 -->
+
+<a id="field-e14"></a>
+<!-- FIELD-TRACK-BEGIN E14 -->
+## E14. NLP, information extraction and computational linguistics
+
+**Core connection:** [Month 7](#month-07).
+**Track dependencies:** None.
+**Prerequisites:** the original sequence/transformer curriculum, probability and evaluation.
+
+**Learning sequence:**
+1. Study morphology, tokenization, syntax, semantics, pragmatics and discourse;
+   distinguish language structure from model tokenization conventions.
+2. Build lexical/statistical baselines, embeddings, sequence tagging and
+   structured extraction before relying entirely on instruction prompts.
+3. Learn parsing, named entities, relations, coreference, document classification,
+   translation, summarization and question answering.
+4. Study multilingual/low-resource settings, Unicode, code-switching, domain
+   terminology, annotation ambiguity and cross-language evaluation.
+5. Connect information extraction, retrieval and generation; separate factual
+   correctness, linguistic quality, task usefulness and calibrated abstention.
+
+**Tools:** a text-processing library, a classical baseline and Transformers.
+Retain exact span offsets and original text when extraction tasks require them.
+
+**Build:** one structured extraction pipeline and one multilingual or domain-shift
+comparison. Contrast a non-generative baseline with a prompted/adapted model using
+the same labeled examples and explicit output schema.
+
+**Exit gate:** evaluate exact spans or task-appropriate matches, resolve schema
+errors explicitly, and report performance by language/domain where data permits.
+Check unsupported questions and untrusted documents. Fluent text is not evidence
+of factual correctness or a valid structured extraction.
+
+**Advanced directions:** discourse reasoning, linguistic generalization,
+semantic parsing, grounded language and language technology for low-resource communities.
+**Resources:** [R13](#field-r13), [R08](#field-r08); retain [the original NLP track](#phase-08).
+<!-- FIELD-TRACK-END E14 -->
+
+<a id="field-e15"></a>
+<!-- FIELD-TRACK-BEGIN E15 -->
+## E15. Speech, audio, music and spoken interaction
+
+**Core connection:** [Month 7](#month-07).
+**Track dependencies:** [E14](#field-e14).
+**Prerequisites:** sequence models, probability, basic signal processing and language evaluation.
+
+**Learning sequence:**
+1. Learn sampling, aliasing, quantization, windowing, Fourier transforms,
+   spectrograms, mel features and time/frequency resolution.
+2. Study speech recognition with alignment, CTC, encoder-decoder and transducer
+   ideas; distinguish offline recognition from streaming recognition.
+3. Learn voice activity detection, diarization, source separation, denoising,
+   sound-event classification and acoustic domain shift.
+4. Survey speech synthesis, vocoders, prosody, music representations and audio
+   generation using lawful, consented or synthetic material.
+5. Design spoken interfaces for latency, interruptions, correction, noisy
+   environments and accessibility; avoid unsupported identity/emotion inferences.
+
+**Tools:** SpeechBrain or another documented audio toolkit, signal-processing
+libraries and small consented/public audio fixtures.
+
+**Build:** a streaming transcription or sound-event application with a simple
+baseline. Add noise and microphone/domain shifts; measure recognition accuracy,
+latency and the behavior of partial versus finalized outputs.
+
+**Exit gate:** report appropriate word/character or event metrics with the
+normalization policy, speaker/session-safe splits and noise slices. Verify sample
+rates, silence handling and cancellation. Synthesis demonstrations must not
+impersonate an unconsenting person or present synthetic speech as authentic.
+
+**Advanced directions:** low-resource ASR, speech-language foundation models,
+audio-visual speech, expressive synthesis and music understanding.
+**Resources:** [R14](#field-r14), [R13](#field-r13).
+<!-- FIELD-TRACK-END E15 -->
+
+<a id="field-e16"></a>
+<!-- FIELD-TRACK-BEGIN E16 -->
+## E16. Computer vision, video and document intelligence
+
+**Core connection:** [Month 6](#month-06).
+**Track dependencies:** None.
+**Prerequisites:** image basics, convolution, PyTorch and supervised-learning evaluation.
+
+**Learning sequence:**
+1. Learn image formation, color, filtering, edges, local features and geometric
+   transforms; classical vision remains useful beyond recognition.
+2. Deepen CNN/ViT classification, detection, segmentation, keypoints and pose
+   representations; study IoU, matching, mAP and boundary-sensitive errors.
+3. Study optical flow, tracking, temporal aggregation, action/event recognition,
+   scene changes and video-efficient inference.
+4. Learn OCR, document layout, tables, reading order and visual grounding; distinguish
+   extraction fidelity from downstream language-model reasoning.
+5. Study augmentation, domain shift, uncertainty, class imbalance, open-set
+   failures and operational constraints such as blur, lighting and occlusion.
+
+**Tools:** OpenCV, a vision model library and a small lawful image/video dataset.
+
+**Build:** complete detection or segmentation in addition to the original image
+classifier; add a short-video or document-layout task. Compare a simple classical
+or lightweight baseline with a larger model under the same input conditions.
+
+**Exit gate:** keep related frames/documents out of opposing splits, inspect
+annotation quality and report meaningful slices. Test corrupt images, empty
+scenes, scale changes and coordinate conversions. Do not use a visual model to
+claim sensitive personal traits or identities unsupported by the task.
+
+**Advanced directions:** open-vocabulary vision, self-supervised perception,
+video foundation models, visual reasoning and vision-language-action interfaces.
+**Resources:** [R15](#field-r15), [R18](#field-r18); reuse [the CNN curriculum](#phase-06).
+<!-- FIELD-TRACK-END E16 -->
+
+<a id="field-e17"></a>
+<!-- FIELD-TRACK-BEGIN E17 -->
+## E17. 3D, spatial, geospatial and embodied perception
+
+**Core connection:** [Month 8](#month-08).
+**Track dependencies:** [E16](#field-e16).
+**Prerequisites:** linear algebra, coordinate frames, optimization, probability and vision.
+
+**Learning sequence:**
+1. Learn camera projection, calibration, distortion, homogeneous coordinates,
+   rotations, rigid transformations and coordinate conventions.
+2. Study stereo/depth, structure from motion, multi-view geometry, point clouds,
+   registration, surface reconstruction and pose estimation.
+3. Introduce localization, mapping, SLAM, sensor fusion and uncertainty propagation;
+   distinguish a map estimate from verified ground truth.
+4. Survey neural fields, neural rendering and Gaussian-splatting representations,
+   including their geometry, memory and view-dependence limitations.
+5. Add geospatial reference systems, remote-sensing bands, spatial resolution,
+   georeferencing and spatial/temporal split design.
+
+**Tools:** Open3D, calibrated camera fixtures or a simulator; GIS tools where
+geospatial data is used. Start with synthetic transforms whose answer is known.
+
+**Build:** reconstruct/register a small scene and test a localization or spatial
+prediction pipeline. Include noisy sensors, missing views and a held-out region
+or trajectory rather than randomly splitting near-duplicate observations.
+
+**Exit gate:** validate frame transformations, units and calibration; report
+reprojection, registration or trajectory error with the alignment convention.
+Quantify failures from poor geometry and drift. A convincing rendered view does
+not establish metric accuracy or safe navigation.
+
+**Advanced directions:** dynamic scene models, event cameras, spatial foundation
+models, embodied mapping and spatiotemporal Earth-observation AI.
+**Resources:** [R16](#field-r16), [R22](#field-r22), [R15](#field-r15).
+<!-- FIELD-TRACK-END E17 -->
+
+<a id="field-e18"></a>
+<!-- FIELD-TRACK-BEGIN E18 -->
+## E18. Generative modeling across modalities
+
+**Core connection:** [Month 7](#month-07).
+**Track dependencies:** [E06](#field-e06), [E09](#field-e09).
+**Prerequisites:** probability, neural training, latent representations and evaluation.
+
+**Learning sequence:**
+1. Compare explicit likelihood, latent-variable and implicit generative models;
+   distinguish density estimation, sampling and conditional generation.
+2. Study autoregressive models, autoencoders/VAEs, GAN objectives and mode collapse.
+3. Learn normalizing flows, change of variables, energy-based ideas, score
+   matching, diffusion and flow matching at mathematical and implementation levels.
+4. Study conditioning, guidance, latent generation, editing, consistency/distillation
+   and generation of images, audio, video and structured data.
+5. Evaluate quality, diversity, coverage, memorization risk, conditioning fidelity
+   and sampling cost; no single generative metric answers all these questions.
+
+**Tools:** PyTorch and Diffusers after implementing a small toy model.
+
+**Build:** fit at least two generative families to a simple distribution or small
+licensed dataset. Visualize their failure modes, then profile one conditional
+generation pipeline and test an efficiency change.
+
+**Exit gate:** verify the objective/sampling implementation on known toy cases,
+report quality and diversity alongside compute, and include a conditioning failure
+analysis. Use authorized training/reference material and document synthetic output;
+do not infer originality or absence of memorization from visual inspection alone.
+
+**Advanced directions:** long-form generation, controllable simulation,
+discrete/structured generation, generative world models and reliable evaluation.
+**Resources:** [R17](#field-r17), [R06](#field-r06), [R08](#field-r08).
+<!-- FIELD-TRACK-END E18 -->
+
+<a id="field-e19"></a>
+<!-- FIELD-TRACK-BEGIN E19 -->
+## E19. Multimodal and foundation-model systems
+
+**Core connection:** [Month 7](#month-07).
+**Track dependencies:** [E14](#field-e14), [E15](#field-e15), [E16](#field-e16).
+**Prerequisites:** modality-specific data preparation, transformers and representation learning.
+
+**Learning sequence:**
+1. Compare early/late fusion, shared embeddings, cross-attention, modality
+   encoders, adapters and alignment objectives.
+2. Study contrastive image-text learning, visual question answering, captioning,
+   audio-language interfaces and structured cross-modal outputs.
+3. Learn data alignment, synchronization, missing modalities, paired/unpaired
+   training, modality imbalance and provenance.
+4. Study foundation-model adaptation, retrieval augmentation, long contexts,
+   multimodal token budgets and distributed training/serving consequences.
+5. Evaluate grounding, modality contribution, cross-modal contradictions,
+   prompt injection through non-text inputs and human-facing uncertainty.
+
+**Tools:** Transformers and a documented multimodal model; reuse small encoders
+and controlled fixtures before considering large-scale pretraining.
+
+**Build:** a visual/audio document assistant or multimodal retrieval system.
+Compare unimodal and multimodal baselines; ablate each input modality and introduce
+missing, mismatched and contradictory input pairs.
+
+**Exit gate:** show that the system uses the relevant evidence rather than a
+dataset shortcut. Report task-level grounding, retrieval/answer errors, resource
+cost and failure under missing modalities. A model accepting an image is not proof
+that its answer is supported by that image.
+
+**Advanced directions:** unified multimodal representations, action-conditioned
+models, cross-modal reasoning and long-horizon multimodal memory.
+**Resources:** [R18](#field-r18), [R13](#field-r13), [R17](#field-r17).
+<!-- FIELD-TRACK-END E19 -->
+
+<a id="field-e20"></a>
+<!-- FIELD-TRACK-BEGIN E20 -->
+## E20. Reinforcement learning and sequential decision-making
+
+**Core connection:** [Month 7](#month-07).
+**Track dependencies:** [E01](#field-e01), [E06](#field-e06).
+**Prerequisites:** probability, optimization, function approximation and controlled experiments.
+
+**Learning sequence:**
+1. Define MDPs, trajectories, returns, policies, value functions and Bellman
+   equations; distinguish termination from time-limit truncation.
+2. Implement dynamic programming, Monte Carlo evaluation, temporal-difference
+   learning, SARSA and Q-learning in small environments.
+3. Study function approximation, DQN, replay, target networks, policy gradients,
+   actor-critic methods, PPO and entropy-regularized approaches.
+4. Learn exploration, partial observability, model-based RL, planning with learned
+   dynamics, offline RL, imitation learning and preference-based objectives.
+5. Study off-policy evaluation, reward specification, safety constraints,
+   sample efficiency and sensitivity to seeds and hyperparameters.
+
+**Tools:** Gymnasium and a small bounded simulator; implement a tabular reference
+before using a full deep-RL library.
+
+**Build:** solve a small MDP with an exact/reference method and a learned policy;
+then compare two learning approaches on a simulated control or game task.
+Include a deliberately misspecified reward and a held-out environment variation.
+
+**Exit gate:** evaluate frozen policies separately from training, report multiple
+seeds and interactions used, and compare with a simple policy. Detect reward
+exploitation and incorrect reset/termination handling. Keep exploration away from
+real machines, financial accounts and consequential human decisions.
+
+**Advanced directions:** offline/online adaptation, distributional and hierarchical
+RL, world models, preference learning and RL post-training of language models.
+**Resources:** [R19](#field-r19), [R01](#field-r01), [R22](#field-r22).
+<!-- FIELD-TRACK-END E20 -->
+
+<a id="field-e21"></a>
+<!-- FIELD-TRACK-BEGIN E21 -->
+## E21. Multi-agent learning, game theory and coordination
+
+**Core connection:** [Month 9](#month-09).
+**Track dependencies:** [E20](#field-e20).
+**Prerequisites:** single-agent RL, probability, optimization and basic strategic games.
+
+**Learning sequence:**
+1. Model normal/extensive-form games, payoffs, information sets, best responses,
+   equilibria and cooperative versus competitive objectives.
+2. Study repeated games, self-play, fictitious play, regret minimization,
+   imperfect information and population-based evaluation.
+3. Learn multi-agent non-stationarity, credit assignment, centralized training
+   with decentralized execution, communication and coordination.
+4. Introduce auctions, mechanism-design concepts, incentives, social choice and
+   collective behavior without conflating individual reward with social benefit.
+5. Distinguish multi-agent RL from several LLM processes exchanging messages;
+   evaluate coordination and failure costs rather than counting agents.
+
+**Tools:** OpenSpiel or a small multi-agent simulator with fixed rules and logged episodes.
+
+**Build:** analyze a small game with known strategic properties, then compare
+independent learners with a coordination/self-play approach in simulation.
+Use held-out opponents and altered information/communication conditions.
+
+**Exit gate:** report exploitability/regret or task-appropriate strategic metrics
+where calculable; otherwise disclose the proxy used. Test both roles and multiple
+opponent types. Winning against one training partner does not establish robustness
+or equilibrium behavior.
+
+**Advanced directions:** cooperative MARL, emergent communication, opponent
+modeling, mechanism learning and multi-agent safety.
+**Resources:** [R20](#field-r20), [R01](#field-r01).
+<!-- FIELD-TRACK-END E21 -->
+
+<a id="field-e22"></a>
+<!-- FIELD-TRACK-BEGIN E22 -->
+## E22. Robotics, control and embodied AI
+
+**Core connection:** [Month 15](#month-15).
+**Track dependencies:** [E05](#field-e05), [E17](#field-e17), [E20](#field-e20).
+**Prerequisites:** dynamics, coordinate frames, state estimation, planning and simulation.
+
+**Learning sequence:**
+1. Learn kinematics, dynamics, actuation limits, sensing, feedback and latency.
+   Separate perception, state estimation, planning and control responsibilities.
+2. Study PID, state-space control, stability concepts, LQR and model-predictive
+   control; understand when an ordinary controller is preferable to a learned policy.
+3. Learn collision-free motion planning, navigation, manipulation, task-and-motion
+   planning and uncertainty-aware state estimation.
+4. Study imitation learning, sim-to-real limitations, domain randomization,
+   learned dynamics and vision-language-action research.
+5. Learn robotics middleware concepts: nodes, topics, services, actions,
+   transforms, recorded sensor data and simulation time.
+
+**Tools:** a suitable ROS 2 distribution, a simulator and conventional control
+baselines. Check supported OS/distribution combinations before setup.
+
+**Build:** a simulated mobile robot or manipulator with a classical controller,
+then one learned component. Inject delayed/noisy observations, changed dynamics
+and blocked paths; keep a bounded fallback and explicit stop conditions.
+
+**Exit gate:** validate units/transforms, tracking error, collision/constraint
+violations, recovery and latency. Compare the learned component against the
+classical baseline. Simulation success does not qualify a system for physical use;
+real deployment requires qualified safety review and domain-specific validation.
+
+**Advanced directions:** dexterous manipulation, embodied foundation models,
+safe exploration, contact-rich control and long-horizon autonomy.
+**Resources:** [R21](#field-r21), [R22](#field-r22), [R16](#field-r16).
+<!-- FIELD-TRACK-END E22 -->
+
+<a id="field-e23"></a>
+<!-- FIELD-TRACK-BEGIN E23 -->
+## E23. Tool-using agents and AI for software engineering
+
+**Core connection:** [Month 14](#month-14).
+**Track dependencies:** [E04](#field-e04), [E05](#field-e05), [E14](#field-e14).
+**Prerequisites:** tested APIs, software engineering, identity boundaries and application evaluation.
+
+**Learning sequence:**
+1. Separate deterministic workflows, planners and model-driven action selection.
+   Model state, tools, permissions, observations, memory and completion criteria.
+2. Study retrieval/context assembly, structured tool schemas, MCP-style
+   integrations, execution traces and state/checkpoint management.
+3. Design timeouts, cancellation, bounded retries, idempotency, approval and
+   validation around untrusted model outputs and tool results.
+4. Learn code retrieval, repository understanding, test generation, repair,
+   specification checking and tool-assisted program synthesis.
+5. Evaluate whole-task success, regressions, cost, latency and contamination,
+   not merely whether an agent produced a patch or used many tools.
+
+**Tools:** a small explicit workflow first; optional agent libraries and isolated
+test repositories. No real secrets, production access or unrestricted command execution.
+
+**Build:** a bounded coding assistant that repairs seeded defects in a toy
+repository, or a read-only operational assistant with one approved write action.
+Use held-out tasks, hidden tests and a non-agent baseline.
+
+**Exit gate:** success requires correct outputs and passing independent checks.
+Exercise malicious/untrusted retrieved text, unavailable tools, budget exhaustion,
+cancelled work and attempted unauthorized actions. Preserve the distinction
+between a suggested action, an attempted action and verified completion.
+
+**Advanced directions:** long-horizon reliability, formal verifiers, agent
+benchmark design, multi-agent coordination and secure capability management.
+**Resources:** [R23](#field-r23), [R04](#field-r04); reuse [the original agent pathway](#phase-08).
+<!-- FIELD-TRACK-END E23 -->
+
+<a id="field-e24"></a>
+<!-- FIELD-TRACK-BEGIN E24 -->
+## E24. Information retrieval, recommendation, ranking and bandits
+
+**Core connection:** [Month 7](#month-07).
+**Track dependencies:** [E11](#field-e11).
+**Prerequisites:** statistics, embeddings, databases and the original ranking curriculum.
+
+**Learning sequence:**
+1. Compare lexical retrieval, dense retrieval, hybrid search, query/document
+   representations and approximate nearest-neighbor indexing.
+2. Study collaborative filtering, matrix factorization, two-tower models, negative
+   sampling, cold start and implicit-feedback assumptions.
+3. Deepen pointwise/pairwise/listwise ranking, cross-encoder reranking,
+   calibration, freshness, diversity and multi-objective constraints.
+4. Learn position/selection bias, exposure, counterfactual/off-policy evaluation,
+   online experiments and contextual bandits.
+5. Operate index/embedding refresh, feature consistency, caching and latency
+   budgets while accounting for feedback loops and user control.
+
+**Tools:** a lexical engine or simple baseline, an ANN library and a lightweight
+ranker. Reuse the original two-stage recommendation project.
+
+**Build:** compare retrieval candidates and rankers under the same time-aware
+evaluation. Add a simulated exploration policy and study the effect of biased
+logged feedback on offline conclusions.
+
+**Exit gate:** report retrieval recall and ranking metrics separately, plus
+latency, coverage/diversity and calibration where scores are probabilities.
+Test index staleness, unavailable features and cold-start cases. Offline logged-data
+improvements are not automatically online user benefit.
+
+**Advanced directions:** sequential recommenders, generative retrieval,
+multi-stakeholder recommendation, graph retrieval and long-term outcomes.
+**Resources:** [R24](#field-r24), [R13](#field-r13); retain [all original ranking material](#phase-08).
+<!-- FIELD-TRACK-END E24 -->
+
+<a id="field-e25"></a>
+<!-- FIELD-TRACK-BEGIN E25 -->
+## E25. Privacy-preserving, federated and decentralized learning
+
+**Core connection:** [Month 14](#month-14).
+**Track dependencies:** [E06](#field-e06), [E10](#field-e10).
+**Prerequisites:** distributed training, optimization, statistics and an explicit threat model.
+
+**Learning sequence:**
+1. Distinguish distributed training, federated learning, split learning and
+   decentralized optimization; define who sees raw data, updates and outputs.
+2. Learn federated averaging, non-IID clients, participation bias, local update
+   drift, unreliable devices and communication/computation trade-offs.
+3. Study secure aggregation, differential privacy, clipping/noise and privacy
+   accounting; distinguish mathematical guarantees from implementation assumptions.
+4. Survey secure multiparty computation, homomorphic encryption and trusted
+   execution environments, including performance and trust boundaries.
+5. Examine leakage risks, aggregation robustness, deletion/retention obligations
+   and the difference between anonymization and a privacy guarantee.
+
+**Tools:** a local multi-client simulation with Flower; use an appropriate privacy
+library only with its documented accounting and assumptions.
+
+**Build:** compare centralized and federated learning on partitioned synthetic or
+permitted data. Vary client distributions, participation and update budgets;
+add one narrowly specified privacy mechanism.
+
+**Exit gate:** report per-client and aggregate quality, communication cost and
+failure behavior. State the privacy unit, accountant, parameters and threat model
+where differential privacy is claimed. Federated execution or encrypted transport
+alone must not be presented as proof that training data cannot leak.
+
+**Advanced directions:** personalized federated learning, cross-silo governance,
+privacy-preserving inference and decentralized foundation-model adaptation.
+**Resources:** [R25](#field-r25), [R06](#field-r06), [R27](#field-r27).
+<!-- FIELD-TRACK-END E25 -->
+
+<a id="field-e26"></a>
+<!-- FIELD-TRACK-BEGIN E26 -->
+## E26. Robustness, interpretability and defensive AI security
+
+**Core connection:** [Month 13](#month-13).
+**Track dependencies:** [E08](#field-e08), [E09](#field-e09).
+**Prerequisites:** evaluation, neural models, uncertainty and controlled test environments.
+
+**Learning sequence:**
+1. Separate in-distribution accuracy, corruptions, domain shift, out-of-distribution
+   detection and adversarial robustness.
+2. Study feature attribution, example-based explanations, concept methods,
+   surrogate models, counterfactual explanations and mechanistic analysis.
+3. Learn explanation faithfulness/stability checks and why attribution is not
+   automatically causal, human-understandable or sufficient for compliance.
+4. Examine defensive threat models for data poisoning, untrusted model artifacts,
+   prompt injection, information leakage and unsafe tool use.
+5. Build assurance through validation, least privilege, provenance, isolation,
+   monitoring and incident handling; no single guardrail solves every failure mode.
+
+**Tools:** Captum, ordinary perturbation fixtures, isolated test models and the
+existing application-security controls. Use authorized toy tests, not real targets.
+
+**Build:** an evaluation suite for one classifier and one retrieval/tool application.
+Add controlled corruptions, explanation sanity checks and boundary tests for
+untrusted inputs and restricted actions.
+
+**Exit gate:** state the threat/shift model, compare defenses at matched task
+quality and report failures. Test whether explanations change when model parameters
+or inputs are intentionally altered. Do not claim general robustness from a
+single attack family, a saliency image or a blocked prompt.
+
+**Advanced directions:** certified robustness, mechanistic interpretability,
+model provenance, scalable oversight and compositional security.
+**Resources:** [R26](#field-r26), [R27](#field-r27); retain [the original P9 material](#phase-14).
+<!-- FIELD-TRACK-END E26 -->
+
+<a id="field-e27"></a>
+<!-- FIELD-TRACK-BEGIN E27 -->
+## E27. Alignment, safety, fairness and AI governance
+
+**Core connection:** [Month 14](#month-14).
+**Track dependencies:** [E20](#field-e20), [E23](#field-e23), [E26](#field-e26).
+**Prerequisites:** preference learning, system evaluation, threat modeling and human oversight.
+
+**Learning sequence:**
+1. Define intended use, affected stakeholders, unacceptable outcomes, uncertainty
+   and the limits of the evaluation environment.
+2. Study supervised instruction tuning, reward modeling, RLHF, preference
+   optimization, feedback quality, reward hacking and distribution shift.
+3. Learn fairness formulations, group/individual trade-offs, calibration conflicts,
+   measurement bias and the role of domain-specific values.
+4. Study assurance cases, model/system cards, data governance, audit trails,
+   release gates, human escalation and incident reporting.
+5. Examine open research on scalable oversight, deception, evaluation validity
+   and long-horizon agents without treating speculative scenarios as established results.
+
+**Tools:** an evaluation harness, documented review process and the NIST AI RMF
+as a risk-management reference rather than a claim of regulatory certification.
+
+**Build:** a safety/assurance case for an existing application, including intended
+use, testable risks, evidence, residual limitations and an operational response.
+Compare two feedback or preference strategies on a small bounded task.
+
+**Exit gate:** demonstrate that quality and safety regressions can block release;
+record affected slices and failure cases. Explain conflicting objectives and
+unmeasured risks. An alignment technique, fairness metric or completed checklist
+does not prove a system safe for every use.
+
+**Advanced directions:** preference aggregation, scalable oversight, formal
+assurance, alignment evaluation and governance of increasingly capable systems.
+**Resources:** [R27](#field-r27), [R33](#field-r33), [R01](#field-r01).
+<!-- FIELD-TRACK-END E27 -->
+
+<a id="field-e28"></a>
+<!-- FIELD-TRACK-BEGIN E28 -->
+## E28. Human-AI interaction, cognitive systems and accessibility
+
+**Core connection:** [Month 14](#month-14).
+**Track dependencies:** [E03](#field-e03), [E27](#field-e27).
+**Prerequisites:** usable application delivery, knowledge representation and responsible evaluation.
+
+**Learning sequence:**
+1. Study user goals, mental models, mixed-initiative interaction, feedback,
+   controllability, uncertainty communication and recoverable failure.
+2. Learn human-in-the-loop labeling, interactive learning, explanations,
+   calibrated reliance and the risks of automation bias.
+3. Introduce cognitive architectures, memory, symbolic/subsymbolic representations,
+   bounded rationality and computational models of cognition.
+4. Design accessible input/output, keyboard and assistive-technology support,
+   multilingual interaction and alternatives for unavailable modalities.
+5. Evaluate task outcomes with suitable usability methods, consent and sampling;
+   separate a convenience study from population-level psychological conclusions.
+
+**Tools:** a simple UI, controlled interaction prototypes, accessibility testing
+and the HAX design resources; optionally inspect a cognitive-architecture simulator.
+
+**Build:** compare two interfaces to the same AI capability, such as hidden versus
+explicit uncertainty or automatic versus confirmable actions. Include error
+recovery, user correction and a non-AI fallback.
+
+**Exit gate:** verify the workflow with keyboard/assistive-technology checks and
+representative failure cases. Measure task completion and inappropriate reliance
+without deceptive or harmful experiments. Explain study limitations and preserve
+user agency; persuasive behavior is not automatically a desirable success metric.
+
+**Advanced directions:** collaborative intelligence, adaptive interfaces,
+cognitive modeling and accessible embodied/multimodal assistants.
+**Resources:** [R28](#field-r28), [R01](#field-r01), [R27](#field-r27).
+<!-- FIELD-TRACK-END E28 -->
+
+<a id="field-e29"></a>
+<!-- FIELD-TRACK-BEGIN E29 -->
+## E29. Scientific ML, physical modeling and AI for simulation
+
+**Core connection:** [Month 6](#month-06).
+**Track dependencies:** [E06](#field-e06), [E08](#field-e08).
+**Prerequisites:** numerical analysis, differential equations, optimization and neural training.
+
+**Learning sequence:**
+1. Learn units, dimensional analysis, conservation, discretization error and
+   conventional numerical solvers before substituting a learned model.
+2. Study inverse problems, parameter identification, uncertainty propagation
+   and differentiable simulation.
+3. Learn physics-informed objectives, neural ODEs, hybrid mechanistic/learned
+   models, operator learning and surrogate modeling.
+4. Study experimental design, active sampling, multi-fidelity methods, data
+   assimilation and constraints from scientific measurements.
+5. Distinguish interpolation from extrapolation across geometry, parameters,
+   boundary conditions and physical regimes.
+
+**Tools:** a trusted differential-equation solver, PyTorch or a suitable SciML
+stack. Julia is optional for the cited ecosystem, not a prerequisite for all SciML.
+
+**Build:** a surrogate or inverse model for a benign system such as a damped
+oscillator or heat equation. Compare it with the numerical solver across held-out
+parameters and boundary conditions; test a conservation/constraint violation.
+
+**Exit gate:** report units, solver/discretization settings, reference error,
+out-of-range behavior and end-to-end cost including training/data generation.
+A low training residual is not proof of a physically correct solution, and a fast
+surrogate is not automatically reliable outside its calibrated regime.
+
+**Advanced directions:** scientific foundation models, neural operators,
+uncertainty-aware discovery and multi-scale/multi-physics learning.
+**Resources:** [R29](#field-r29), [R06](#field-r06), [R08](#field-r08).
+<!-- FIELD-TRACK-END E29 -->
+
+<a id="field-e30"></a>
+<!-- FIELD-TRACK-BEGIN E30 -->
+## E30. Evolutionary, swarm, fuzzy and computational intelligence
+
+**Core connection:** [Month 5](#month-05).
+**Track dependencies:** [E02](#field-e02).
+**Prerequisites:** optimization, probability, constraints and algorithmic experiments.
+
+**Learning sequence:**
+1. Study population-based optimization, representation, fitness, selection,
+   variation, elitism and the exploration/exploitation trade-off.
+2. Learn genetic algorithms/programming, evolution strategies, differential
+   evolution and multi-objective Pareto optimization.
+3. Examine particle-swarm and ant-colony ideas, coordination, stagnation and
+   sensitivity to representation and hyperparameters.
+4. Learn fuzzy sets, membership functions, rule systems, inference and
+   defuzzification; fuzzy membership is not the same as probability.
+5. Compare computational-intelligence methods with random search, gradient-based,
+   classical control and exact optimization baselines.
+
+**Tools:** a small hand-written optimizer, DEAP for broader experiments and a
+simple fuzzy-rule implementation or documented library.
+
+**Build:** solve a constrained synthetic design problem with two optimization
+families, then build a small fuzzy decision/controller example in simulation.
+Compare methods at equal objective-evaluation budgets.
+
+**Exit gate:** test constraints and objective calculations independently; report
+multiple runs, budget, convergence behavior and failure cases. Do not infer
+general superiority from a single toy function or a visually appealing trajectory.
+Explain the semantics and limitations of each fuzzy rule.
+
+**Advanced directions:** quality-diversity search, neuroevolution, automated
+program construction, hybrid optimizers and evolving multi-agent systems.
+**Resources:** [R30](#field-r30), [R02](#field-r02), [R01](#field-r01).
+<!-- FIELD-TRACK-END E30 -->
+
+<a id="field-e31"></a>
+<!-- FIELD-TRACK-BEGIN E31 -->
+## E31. Neuromorphic, spiking and alternative AI hardware
+
+**Core connection:** [Month 18](#month-18).
+**Track dependencies:** [E09](#field-e09), [E16](#field-e16).
+**Prerequisites:** neural training, time-dependent systems and the original hardware/measurement track.
+
+**Learning sequence:**
+1. Learn spike-based representations, neuron dynamics, integrate-and-fire models,
+   event-driven processing and temporal coding.
+2. Study rate/latency coding, surrogate gradients, local learning rules,
+   network conversion and temporal credit assignment.
+3. Connect sparse event activity, memory movement, precision and hardware
+   mapping to actual energy/latency costs.
+4. Survey analog/in-memory, photonic and other accelerator approaches;
+   identify noise, conversion, programmability and software-support constraints.
+5. Compare claims at system level, including preprocessing, encoders, memory,
+   I/O and the cost of simulation or hardware emulation.
+
+**Tools:** snnTorch for a bounded spiking-network experiment; existing profiler,
+simulation and hardware-cost methods from the A-stage curriculum.
+
+**Build:** compare a small spiking model with a conventional neural baseline on a
+simple temporal/event or classification task. Sweep coding/time-step choices and
+produce a target-hardware feasibility note.
+
+**Exit gate:** report task quality, time steps, activity, latency and memory.
+Distinguish operation-count estimates from measured energy on real hardware.
+A CPU/GPU simulation does not establish a neuromorphic chip's power advantage;
+include conversion and interface costs before claiming system-level benefit.
+
+**Advanced directions:** event-based learning, mixed-signal co-design,
+neuromorphic sensing and hardware-aware learning rules.
+**Resources:** [R31](#field-r31); reuse [the complete hardware pathway](#phase-17).
+<!-- FIELD-TRACK-END E31 -->
+
+<a id="field-e32"></a>
+<!-- FIELD-TRACK-BEGIN E32 -->
+## E32. Research practice, frontier questions and quantum ML
+
+**Core connection:** [Month 22](#month-22).
+**Track dependencies:** [E08](#field-e08), [E26](#field-e26), [E27](#field-e27).
+**Prerequisites:** reproducible experiments, learning theory, critical evaluation and research literacy.
+
+**Learning sequence:**
+1. Formulate a falsifiable question, survey related work, identify assumptions,
+   select baselines and preregister an evaluation where appropriate.
+2. Reproduce a result with transparent deviations, resource accounting,
+   ablations, uncertainty and negative results.
+3. Study frontier questions in generalization, reasoning, memory, world models,
+   agency and general intelligence using explicit operational definitions.
+   Do not treat benchmark success as proof of consciousness or general intelligence.
+4. Introduce quantum information prerequisites, data encoding, quantum kernels,
+   variational circuits, measurement noise and trainability issues.
+5. Evaluate frontier claims against strong classical/conventional baselines,
+   including data loading, optimization, shot budgets, hardware access and full cost.
+
+**Tools:** normal research/evaluation tooling; an optional quantum simulator for
+the quantum study. Real quantum hardware is not required for introductory learning.
+
+**Build:** reproduce one bounded frontier result or quantum-ML toy experiment,
+then construct a meaningful baseline and a stress test likely to expose limitations.
+Write a short paper-style report and an explicit list of what was not reproduced.
+
+**Exit gate:** another person can rerun the important experiment and understand
+the assumptions. Distinguish evidence, speculation, simulation and hardware
+measurement. Do not claim practical quantum advantage or solved general intelligence
+without evidence that actually establishes that specific claim.
+
+**Advanced directions:** research-level specialization in any E track; update
+the literature map regularly rather than treating today's taxonomy as final.
+**Resources:** [R32](#field-r32), [R33](#field-r33), [R06](#field-r06).
+<!-- FIELD-TRACK-END E32 -->
+
+<a id="ai-domain-pathways"></a>
+## Applying the methods: 10 domain pathways
+
+Methods alone do not establish domain competence. For each pathway, reuse the
+relevant E tracks and the production core, then complete a small case study with
+domain-specific data, metrics, risks and a deployment boundary. These are major
+application families, not a claim to enumerate every profession or industry.
+
+For the full breadth route, complete all ten case studies. A case study can reuse
+an existing model or simulator, but must explain the domain-specific changes.
+High-stakes real-world deployment additionally requires qualified domain review,
+appropriate authorization and applicable legal/regulatory processes.
+
+<a id="domain-d01"></a>
+<!-- DOMAIN-PATHWAY-BEGIN D01 -->
+### D01. Healthcare and clinical decision support
+
+**Method connections:** [E07](#field-e07), [E12](#field-e12), [E16](#field-e16), [E27](#field-e27).
+**Learn:** intended clinical use, cohort definition, patient/site/time separation,
+missingness, prevalence, sensitivity/specificity, calibration, clinical utility,
+workflow effects, subgroup validity and prospective evaluation.
+**Build:** a non-clinical demonstration using permitted public or synthetic data,
+with a documented intended-use statement and a comparison with a simple baseline.
+**Exit gate:** rule out patient/site leakage, report uncertainty and clinically
+relevant error trade-offs, and identify the need for independent/prospective
+validation. Do not present a learning project as diagnostic advice, medical-device
+approval or readiness to influence patient care.
+<!-- DOMAIN-PATHWAY-END D01 -->
+
+<a id="domain-d02"></a>
+<!-- DOMAIN-PATHWAY-BEGIN D02 -->
+### D02. Biology, bioinformatics and molecular data
+
+**Method connections:** [E13](#field-e13), [E18](#field-e18), [E29](#field-e29).
+**Learn:** sequence/structure/graph representations, assay noise, related-sample
+leakage, biological versus statistical validation, batch effects and uncertainty.
+Focus introductory work on benign public benchmarks, not experimental biological engineering.
+**Build:** a bounded prediction or representation-comparison study on a lawful
+non-sensitive dataset, with splits that account for related samples.
+**Exit gate:** document data origin and use restrictions, compare strong baselines,
+test family/batch shift and distinguish computational predictions from experimentally
+established biological conclusions. Do not infer practical efficacy or safety from
+a benchmark alone; consequential work needs qualified scientific and safety review.
+<!-- DOMAIN-PATHWAY-END D02 -->
+
+<a id="domain-d03"></a>
+<!-- DOMAIN-PATHWAY-BEGIN D03 -->
+### D03. Climate, energy, Earth observation and agriculture
+
+**Method connections:** [E12](#field-e12), [E17](#field-e17), [E29](#field-e29).
+**Learn:** units, seasonal/spatial dependence, sensor resolution, missing coverage,
+georeferencing, uncertainty, physical constraints and changing environmental regimes.
+**Build:** a renewable-demand forecast, land-cover comparison or benign physical
+surrogate using permitted data; retain a seasonal or physics-based baseline.
+**Exit gate:** hold out regions/times meaningfully, reconcile coordinate systems
+and units, and test extrapolation limits. Report uncertainty and resource cost.
+A retrospective pattern is not automatically a causal climate conclusion or a
+safe operational recommendation.
+<!-- DOMAIN-PATHWAY-END D03 -->
+
+<a id="domain-d04"></a>
+<!-- DOMAIN-PATHWAY-BEGIN D04 -->
+### D04. Manufacturing, industrial IoT and supply chains
+
+**Method connections:** [E02](#field-e02), [E05](#field-e05), [E12](#field-e12), [E16](#field-e16).
+**Learn:** process variability, sensor quality, defect imbalance, maintenance
+labels, inspection costs, schedules, downtime and delayed feedback.
+**Build:** simulated predictive maintenance, visual inspection or production
+scheduling, comparing a simple rule/statistical baseline with an AI method.
+**Exit gate:** separate equipment/time groups, measure false alarms and missed
+events, validate constraints and test a regime change. Include operator review
+and recovery behavior. Keep the study disconnected from real plant actuation
+until qualified safety and operational reviews are complete.
+<!-- DOMAIN-PATHWAY-END D04 -->
+
+<a id="domain-d05"></a>
+<!-- DOMAIN-PATHWAY-BEGIN D05 -->
+### D05. Transportation, mobility and autonomous systems
+
+**Method connections:** [E05](#field-e05), [E17](#field-e17), [E20](#field-e20), [E22](#field-e22).
+**Learn:** perception/planning/control boundaries, scenario coverage, rare events,
+latency, uncertainty, simulation validity and operational design domains.
+**Build:** a bounded simulated navigation or traffic-planning case with a classical
+baseline and explicit constraints, interventions and failure logging.
+**Exit gate:** test changed weather/sensors/dynamics as supported by the simulator,
+record collisions/constraint violations and detect out-of-domain conditions.
+Do not extrapolate simulation results into claims of real-road or physical-system safety.
+<!-- DOMAIN-PATHWAY-END D05 -->
+
+<a id="domain-d06"></a>
+<!-- DOMAIN-PATHWAY-BEGIN D06 -->
+### D06. Finance, economics, risk and business decisions
+
+**Method connections:** [E07](#field-e07), [E11](#field-e11), [E12](#field-e12), [E24](#field-e24).
+**Learn:** temporal leakage, delayed outcomes, selection bias, calibration,
+economic costs, changing regimes, governance and fairness in consequential decisions.
+**Build:** a synthetic or permitted-data forecasting/risk case, or a simulated
+decision experiment with an explicit non-AI baseline and realistic costs.
+**Exit gate:** use time-aware evaluation, include relevant frictions and uncertainty,
+and distinguish retrospective backtests from future performance. Do not present
+the exercise as investment advice or deploy autonomous decisions affecting
+people's finances without appropriate authorization and domain oversight.
+<!-- DOMAIN-PATHWAY-END D06 -->
+
+<a id="domain-d07"></a>
+<!-- DOMAIN-PATHWAY-BEGIN D07 -->
+### D07. Education, learning support and accessibility
+
+**Method connections:** [E14](#field-e14), [E15](#field-e15), [E19](#field-e19), [E28](#field-e28).
+**Learn:** learning objectives, formative feedback, accessibility, age-appropriate
+design, privacy, content accuracy and the difference between engagement and learning.
+**Build:** a bounded study assistant or accessible interface grounded in permitted
+material, with correction, uncertainty and a human escalation path.
+**Exit gate:** test misleading questions, unsupported answers, accessibility
+failures and inappropriate data collection. Measure the intended task rather than
+claiming educational benefit from usage alone. Research involving learners,
+especially minors, needs suitable consent and institutional safeguards.
+<!-- DOMAIN-PATHWAY-END D07 -->
+
+<a id="domain-d08"></a>
+<!-- DOMAIN-PATHWAY-BEGIN D08 -->
+### D08. Law, public services and institutional knowledge
+
+**Method connections:** [E03](#field-e03), [E14](#field-e14), [E23](#field-e23), [E27](#field-e27).
+**Learn:** provenance, jurisdiction/version sensitivity, access control,
+auditability, retention, contested interpretations and accountable human decisions.
+**Build:** a document-discovery or policy-reference assistant on a small public
+corpus, with cited evidence and explicit unsupported-answer behavior.
+**Exit gate:** distinguish binding text from commentary, test stale/conflicting
+documents and access boundaries, and audit every cited passage. Do not present
+the learning system as a qualified legal adviser or an autonomous authority for
+decisions about public benefits, employment or individual rights.
+<!-- DOMAIN-PATHWAY-END D08 -->
+
+<a id="domain-d09"></a>
+<!-- DOMAIN-PATHWAY-BEGIN D09 -->
+### D09. Commerce, media, games and creative applications
+
+**Method connections:** [E01](#field-e01), [E18](#field-e18), [E21](#field-e21), [E24](#field-e24).
+**Learn:** recommendation feedback, catalog/content rights, diversity, user control,
+content provenance, game balance and disclosure of synthetic material.
+**Build:** a recommendation/search demonstration, a game-playing agent, or a
+generative tool using owned/licensed/public-domain content.
+**Exit gate:** evaluate task quality and unwanted outcomes, explain feedback bias,
+and respect content rights and user preferences. Do not equate increased engagement
+with user welfare or create deceptive impersonation to improve a demonstration.
+<!-- DOMAIN-PATHWAY-END D09 -->
+
+<a id="domain-d10"></a>
+<!-- DOMAIN-PATHWAY-BEGIN D10 -->
+### D10. Defensive cybersecurity, IT operations and developer productivity
+
+**Method connections:** [E12](#field-e12), [E23](#field-e23), [E26](#field-e26).
+**Learn:** authorized data collection, event correlation, alert imbalance,
+incident workflows, code quality, access boundaries and the cost of false alarms.
+**Build:** an isolated log-triage, anomaly-detection or seeded-code-repair exercise
+using synthetic/permitted data and a simple rule-based baseline.
+**Exit gate:** evaluate false positives and missed cases, retain evidence for
+review, and verify suggested changes with independent tests. Keep tools restricted
+to the lab; do not grant an experimental agent access to real targets, secrets or
+unapproved remediation actions.
+<!-- DOMAIN-PATHWAY-END D10 -->
+
+<a id="ai-field-evidence"></a>
+## Field-wide completion and maintenance
+
+Keep one experiment register with E/D identifier, prerequisite evidence, baseline,
+dataset/license, implementation, tests, results, failures, report and next question.
+Link related work instead of rebuilding the same infrastructure repeatedly.
+
+- [ ] E01-E05: demonstrate search, constraints, knowledge, logic and planning.
+- [ ] E06-E13: demonstrate uncertainty, causality, learning methods and structured data.
+- [ ] E14-E19: demonstrate language, audio, vision, spatial and generative/multimodal systems.
+- [ ] E20-E24: demonstrate sequential decisions, multi-agent behavior, embodiment and retrieval.
+- [ ] E25-E28: demonstrate privacy, robustness, assurance and human-facing evaluation.
+- [ ] E29-E32: demonstrate scientific/alternative methods and disciplined frontier research.
+- [ ] D01-D10: complete domain-specific case studies with their own validity boundaries.
+- [ ] Connect the results to the original deployment, performance and architecture gates.
+
+Passing the whole breadth route means you can recognize the important problem
+families, build small trustworthy baselines, choose appropriate evidence and know
+where specialist help is required. It does not imply mastery of every advanced
+topic or independent qualification for every high-stakes profession.
+
+Review the map quarterly: check changing APIs/support matrices, read recent surveys,
+revisit failures and update explicit assumptions. Add a new topic when it changes
+your methods or evidence needs, not merely because a new tool name is popular.
+
+<a id="ai-field-resources"></a>
+## Resource catalogue and verification
+
+Use one main text/course and the relevant official tool documentation per track.
+The links below were retrieved on **1 November 2026** from author, university,
+standards-body or project documentation sites. This verifies the referenced entry
+pages, not every outbound link or every claim in those resources.
+
+The learning paths and project/gate wording in this extension are newly written;
+the linked books and courses are not reproduced here. Access commercial or
+restricted materials lawfully and respect their licenses.
+
+The original ROS Rolling tutorial URL and an older Qiskit Machine Learning project
+URL returned 404 during checking. The catalogue uses the working ROS documentation
+entry point and IBM course instead. The Open3D reference is a concrete tutorial
+because its documentation landing page provided little readable content.
+
+<a id="field-r01"></a>
+**R01 - General AI:** [Russell and Norvig, Artificial Intelligence: A Modern Approach](https://aima.cs.berkeley.edu/).
+Search, games, knowledge, reasoning, planning, uncertainty and the wider AI taxonomy.
+
+<a id="field-r02"></a>
+**R02 - Constraints and optimisation:** [Google OR-Tools](https://developers.google.com/optimization).
+Modeling and solving routing, assignment, scheduling and mathematical-programming problems.
+
+<a id="field-r03"></a>
+**R03 - Knowledge representation:** [W3C RDF concepts and abstract syntax](https://www.w3.org/TR/rdf11-concepts/).
+The graph/data-model foundations of RDF-based knowledge representations.
+
+<a id="field-r04"></a>
+**R04 - Formal reasoning:** [Theorem Proving in Lean 4](https://lean-lang.org/theorem_proving_in_lean4/).
+Types, propositions, proofs and mechanically checked reasoning.
+
+<a id="field-r05"></a>
+**R05 - Planning:** [Unified Planning documentation](https://unified-planning.readthedocs.io/en/latest/).
+Planning-problem representations, transformations and solver integration.
+
+<a id="field-r06"></a>
+**R06 - Probabilistic ML:** [Kevin Murphy, Probabilistic Machine Learning: An Introduction](https://probml.github.io/pml-book/book1.html).
+Probability, statistical learning and probabilistic modeling; use the author's access/license guidance.
+
+<a id="field-r07"></a>
+**R07 - Causal inference:** [DoWhy documentation](https://www.pywhy.org/dowhy/main/).
+Modeling, identification, estimation and causal-refutation workflows.
+
+<a id="field-r08"></a>
+**R08 - Deep-learning foundations:** [Dive into Deep Learning](https://d2l.ai/).
+Mathematical explanations, model implementations and reproducible exercises.
+
+<a id="field-r09"></a>
+**R09 - Continual learning:** [Avalanche documentation](https://avalanche.continualai.org/).
+Continual-learning protocols, baselines and experiment infrastructure.
+
+<a id="field-r10"></a>
+**R10 - AutoML:** [AutoGluon documentation](https://auto.gluon.ai/stable/index.html).
+Automated prediction workflows; retain independent split, objective and budget decisions.
+
+<a id="field-r11"></a>
+**R11 - Forecasting:** [Hyndman and Athanasopoulos, Forecasting: Principles and Practice](https://otexts.com/fpp3/).
+Forecasting methods and evaluation; examples use R.
+
+<a id="field-r12"></a>
+**R12 - Graph learning:** [PyTorch Geometric documentation](https://pytorch-geometric.readthedocs.io/en/latest/).
+Graph models, datasets, batching and geometric-learning tools.
+
+<a id="field-r13"></a>
+**R13 - Language and speech:** [Jurafsky and Martin, Speech and Language Processing draft](https://web.stanford.edu/~jurafsky/slp3/).
+Computational linguistics, NLP and speech; chapter organization can change between drafts.
+
+<a id="field-r14"></a>
+**R14 - Audio systems:** [SpeechBrain](https://speechbrain.github.io/).
+Speech/audio modeling tools and task recipes.
+
+<a id="field-r15"></a>
+**R15 - Vision:** [Stanford CS231n](https://cs231n.stanford.edu/).
+Computer-vision and deep-learning course material.
+
+<a id="field-r16"></a>
+**R16 - 3D geometry:** [Open3D point-cloud tutorial](https://www.open3d.org/docs/release/tutorial/geometry/pointcloud.html).
+Concrete point-cloud operations, with links onward to geometry and reconstruction topics.
+
+<a id="field-r17"></a>
+**R17 - Generative models:** [Hugging Face Diffusers](https://huggingface.co/docs/diffusers/index).
+Diffusion pipelines, model components and image/video/audio generation workflows.
+
+<a id="field-r18"></a>
+**R18 - Multimodal models:** [Transformers image-text-to-text guide](https://huggingface.co/docs/transformers/tasks/image_text_to_text).
+Vision-language model interfaces and inference examples.
+
+<a id="field-r19"></a>
+**R19 - RL environments:** [Gymnasium basic usage](https://gymnasium.farama.org/introduction/basic_usage/).
+Environment interaction and RL experiment foundations.
+
+<a id="field-r20"></a>
+**R20 - Games and multi-agent research:** [OpenSpiel documentation](https://openspiel.readthedocs.io/en/latest/).
+Game environments and algorithms for strategic decision experiments.
+
+<a id="field-r21"></a>
+**R21 - Robotics integration:** [ROS documentation](https://docs.ros.org/).
+Choose a supported distribution and follow its installation/tutorial guidance.
+
+<a id="field-r22"></a>
+**R22 - Dynamics and control:** [MIT Underactuated Robotics](https://underactuated.mit.edu/).
+Dynamics, control, optimization and robotics reasoning.
+
+<a id="field-r23"></a>
+**R23 - Software-agent evaluation:** [SWE-bench](https://www.swebench.com/).
+Task definitions and benchmark context; scores require careful interpretation and contamination controls.
+
+<a id="field-r24"></a>
+**R24 - Recommendation:** [Google Recommendation Systems course](https://developers.google.com/machine-learning/recommendation).
+Recommendation methods, factorization and neural approaches.
+
+<a id="field-r25"></a>
+**R25 - Federated learning:** [Flower framework documentation](https://flower.ai/docs/framework/).
+Federated applications, simulation and distributed-learning workflows.
+
+<a id="field-r26"></a>
+**R26 - Interpretability:** [Captum introduction](https://captum.ai/docs/introduction).
+Model-attribution and interpretability methods for PyTorch.
+
+<a id="field-r27"></a>
+**R27 - Risk and governance:** [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework).
+Risk-management structure and companion resources, not automatic regulatory approval.
+
+<a id="field-r28"></a>
+**R28 - Human-AI interaction:** [Microsoft HAX Toolkit](https://www.microsoft.com/en-us/haxtoolkit/).
+Design guidance and practical tools for human-facing AI experiences.
+
+<a id="field-r29"></a>
+**R29 - Scientific machine learning:** [SciML overview](https://docs.sciml.ai/Overview/stable/).
+Differentiable modeling, numerical simulation and learning-based scientific workflows.
+
+<a id="field-r30"></a>
+**R30 - Evolutionary computation:** [DEAP documentation](https://deap.readthedocs.io/en/master/).
+Explicit evolutionary algorithms and reproducible population-based experiments.
+
+<a id="field-r31"></a>
+**R31 - Spiking networks:** [snnTorch documentation](https://snntorch.readthedocs.io/en/latest/).
+Spiking neuron models and gradient-based learning.
+
+<a id="field-r32"></a>
+**R32 - Quantum ML:** [IBM Quantum machine-learning course](https://quantum.cloud.ibm.com/learning/courses/quantum-machine-learning).
+Data encoding, quantum kernels and variational circuits; practical advantage remains an evidence question.
+
+<a id="field-r33"></a>
+**R33 - Research discipline:** [NeurIPS Paper Checklist Guidelines](https://neurips.cc/public/guides/PaperChecklist).
+Reproducibility, transparency, research ethics and limitations.
+
+[Field index](#ai-field-expansion) | [Application domains](#ai-domain-pathways) | [All months](#month-index)
+<!-- ADDED-AI-FIELD-END -->

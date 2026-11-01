@@ -20,6 +20,17 @@ adds 10 month-linked practical modules, from product/data and frontend work to
 identity, evaluation, deployment, operations and architecture decisions. It reuses
 the existing projects; its extra effort is stated separately from the original calendar.
 
+The appended [major AI-field expansion](FINAL-AI-ROADMAP.md#ai-field-expansion)
+contains **32 detailed discipline tracks and 10 application-domain pathways**:
+symbolic reasoning, uncertainty/causality, learning theory, perception, speech,
+generative/multimodal AI, RL, multi-agent systems, robotics, trust, scientific AI
+and research frontiers. Each track has prerequisites, builds, exit checks and
+resources. Month links mark prerequisite connections, not a promise to fit all
+this extra work into the original 22 months. All original text remains intact.
+
+This is a large document. Use local Markdown preview if the hosting site cannot
+render the entire file.
+
 ## Contents
 
 | File | What it is |
