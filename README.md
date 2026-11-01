@@ -2,10 +2,29 @@
 
 Self-directed AI / Machine Learning / Deep Learning engineering programme.
 
+## Start here
+
+Open the [Month 1-22 index](FINAL-AI-ROADMAP.md#month-index) in
+[`FINAL-AI-ROADMAP.md`](FINAL-AI-ROADMAP.md).
+
+- **Months 1-15: AI performance engineering**, including foundations and cloud/edge deployment.
+- **Months 16-22: AI systems architecture**, including hardware/software co-design.
+
+Each month links to its daily plan, full lessons and Previous/Next month.
+The document merges **only the four original roadmap/planning documents**, with
+every original word preserved. Added navigation is simplified; detailed indexes
+and verification are expandable. Original files remain unchanged.
+
+The [breadth and deployment checklist](FINAL-AI-ROADMAP.md#breadth-upgrade)
+adds 10 month-linked practical modules, from product/data and frontend work to
+identity, evaluation, deployment, operations and architecture decisions. It reuses
+the existing projects; its extra effort is stated separately from the original calendar.
+
 ## Contents
 
 | File | What it is |
 | --- | --- |
+| [`FINAL-AI-ROADMAP.md`](FINAL-AI-ROADMAP.md) | **Primary roadmap — full text, not a summary.** All four roadmaps, every original word preserved: 134,108 source tokens, 178 intact source blocks, all 660 daily entries, complete software/hardware syllabi and portfolio requirements. Includes added deployment guidance and byte-for-byte preservation verification. |
 | [`AI-ML-DL-COMPLETE-ROADMAP.md`](AI-ML-DL-COMPLETE-ROADMAP.md) | The full programme specification — 10 weekly modules, plus the conversion phase and the model-to-hardware specialisation track. 19 portfolio artefacts. |
 | [`textbook/WEEK-01-MATHEMATICS-FOUNDATIONS.md`](textbook/WEEK-01-MATHEMATICS-FOUNDATIONS.md) | Week 1 textbook, written from zero. 126 concepts: Python, NumPy, linear algebra, calculus, optimisation, information theory. |
 | [`reference/QUALCOMM-AI-STACK.md`](reference/QUALCOMM-AI-STACK.md) | The Qualcomm AI stack from model to hardware, explained for a beginner. Every layer diagrammed, the offline toolchain, graph partitioning, Hexagon NPU internals, heterogeneous CPU/GPU/NPU execution with measured evidence, Genie and Gen AI Builder, speculative decoding, and the datacenter branch. |
@@ -19,7 +38,8 @@ Self-directed AI / Machine Learning / Deep Learning engineering programme.
 
 ```text
 AI-Trainings/
-├── AI-ML-DL-COMPLETE-ROADMAP.md    # the plan
+├── FINAL-AI-ROADMAP.md            # start here: full word-preserving roadmap merge
+├── AI-ML-DL-COMPLETE-ROADMAP.md    # original ten-module curriculum
 ├── textbook/
 │   └── WEEK-01-MATHEMATICS-FOUNDATIONS.md
 ├── reference/
@@ -32,7 +52,7 @@ AI-Trainings/
 └── week01/                          # my code and deliverables (to come)
 ```
 
-## The roadmap in one table
+## Original ten-module curriculum (reference)
 
 | Week | Module                                                                                    |
 | ---- | ----------------------------------------------------------------------------------------- |
